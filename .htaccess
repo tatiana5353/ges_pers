@@ -1,0 +1,22 @@
+RewriteEngine On
+
+# deal with admin first
+RewriteCond %{REQUEST_URI} ^/gespers/(admin)
+RewriteRule ^admin/assets/(.*)$ backend/web/assets/$1 [L]
+RewriteRule ^admin/template/(.*)$ backend/web/template/$1 [L]
+
+RewriteCond %{REQUEST_URI} !^/gespers/backend/web/(assets|template)/
+RewriteCond %{REQUEST_URI} ^/gespers/(admin)
+RewriteRule ^.*$ backend/web/index.php [L]
+
+
+RewriteCond %{REQUEST_URI} ^/gespers/(assets|template|images)
+RewriteRule ^assets/(.*)$ frontend/web/assets/$1 [L]
+RewriteRule ^template/(.*)$ frontend/web/template/$1 [L]
+RewriteRule ^images/(.*)$ frontend/web/images/$1 [L]
+
+RewriteCond %{REQUEST_URI} !^/gespers/(frontend|backend)/web/(assets|template|images)/
+RewriteCond %{REQUEST_URI} !index.php
+RewriteCond %{REQUEST_FILENAME} !-f [OR]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ frontend/web/index.php
