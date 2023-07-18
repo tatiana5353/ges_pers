@@ -4,6 +4,9 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\Projet;
+use backend\models\Tache;
+use backend\models\TypeConge;
+use backend\models\TypeTache;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -25,8 +28,56 @@ class ProjetController extends Controller
                 'actions' => [
                     'delete' => ['POST'],
                 ],
-            ], */
-        ];
+            ], */];
+    }
+
+    /**
+     * Add Projet & Taches.
+     * @return mixed
+     */
+    public function actionSave_projet()
+    {
+        //print_r('toto');die;
+        if (Yii::$app->request->get()) {
+            $all_data = Yii::$app->request->get();
+            $libelle = urldecode($all_data['libelle']);
+            $all_tache_added = urldecode($all_data['all_tache_added']);
+
+            // Projet
+            $projet = new Projet();
+            $projet->libelle = $libelle;
+            $projet->created_at = date('Y-m-d H:i:s');
+            $projet->created_by = Yii::$app->user->identity->id;
+            $projet->statut = 0;
+            $projet->key_projet = Yii::$app->security->generateRandomString(32);
+
+            if ($projet->save()) {
+
+                $r = str_replace("###", "", $all_tache_added) . '+';
+                $e = explode("*+", $r)[0];
+
+                $all_data = explode("*", $e);
+                for ($i = 0; $i < sizeof($all_data); $i++) {
+                    $final_selected_value = explode(";;;", $all_data[$i]);
+
+                    $typetache = TypeTache::findOne($final_selected_value[0]);
+                    $tache = new Tache();
+                    $tache->key_tache =  Yii::$app->security->generateRandomString(32);
+                    $tache->designation = $final_selected_value[1];
+                    $tache->idtypetache = $typetache->id;
+                    $tache->idprojet = $projet->id;
+                    $tache->statut = 0;
+                    $tache->created_by = Yii::$app->user->identity->id;
+                    $tache->created_at = date('Y-m-d H:i:s');
+                    $tache->save();
+
+                    if ($i == sizeof($all_data) - 1) {
+                        Yii::$app->session->setFlash('success', 'Projet enregistrée avec succès');
+                        return 'ok';
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -55,11 +106,41 @@ class ProjetController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($key_projet)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $droit_projet = Utils::have_access('projet');
+        if ($droit_projet == 1) {
+
+            
+            $typetache = TypeTache::find()
+                ->where([
+
+                    'statut' => 1
+
+                ])->all();
+            $model = Projet::find()
+                ->where([
+                    'or',
+                    [
+                        'key_projet' => $key_projet,
+                        'statut' => 1
+                    ],
+                    [
+                        'key_projet' => $key_projet,
+                        'statut' => 0
+                    ]
+
+                ])->one();
+                $dataProvider = new ActiveDataProvider([
+                    'query' => Tache::find()
+                        ->where(['idprojet' => $model->id])->andWhere(['<>', 'statut', 3]), 'pagination' => ['pageSize' => 5]
+                ]);
+            return $this->render('view', [
+                'model' => $model,
+                'typetache' => $typetache,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
     }
 
     /**
@@ -73,44 +154,44 @@ class ProjetController extends Controller
         $droit_projet = Utils::have_access('projet');
         if ($droit_projet == 1) {
 
-            $model = new Projet();
-            if (Yii::$app->request->post()) {
+            $projet = new Projet();
+            /* if (Yii::$app->request->post()) {
 
-                if ($model->load($this->request->post())) {
-                    $model->created_at = date('Y-m-d H:i:s');
-                    $model->created_by = Yii::$app->user->identity->id;
-                    $model->statut = 1;
-                    $model->key_projet = Yii::$app->security->generateRandomString(32);
-                    $model->libelle = trim($model->libelle);
-                    $libelle = $model->libelle;
+                if ($projet->load($this->request->post())) {
+                    $projet->created_at = date('Y-m-d H:i:s');
+                    $projet->created_by = Yii::$app->user->identity->id;
+                    $projet->statut = 1;
+                    $projet->key_projet = Yii::$app->security->generateRandomString(32);
+                    $projet->libelle = trim($projet->libelle);
+                    $libelle = $projet->libelle;
                     $libelleFind = Projet::find()
                         ->where([
                             'libelle' => $libelle,
                             'statut' => 1
                         ])->one();
                     if ($libelleFind == null) {
-                        if ($model->save()) {
+                        if ($projet->save()) {
                             Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
                             return $this->redirect('all_projet');
                         } else {
 
-                            $model->loadDefaultValues();
+                            $projet->loadDefaultValues();
                             Yii::$app->getSession()->setFlash('error', 'Echec d\'enregistrement veuillez remplir tous les champ obligatoires');
                         }
                     } else {
                         Yii::$app->getSession()->setFlash('error', 'Projet déjà existant !');
-                        $model->loadDefaultValues();
+                        $projet->loadDefaultValues();
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('error', 'vous n\'avez rien renseigné !');
                 }
             } else {
                 //Yii::$app->getSession()->setFlash('info', 'veullez renseigner le formulaire');
-                $model->loadDefaultValues();
-            }
+                $projet->loadDefaultValues();
+            } */
 
             return $this->render('create', [
-                'model' => $model,
+                'projet' => $projet,
 
             ]);
         } else {
@@ -127,7 +208,7 @@ class ProjetController extends Controller
      */
     public function actionUpdate($key_projet)
     {
-        $droit_projet = Utils::have_access('conge');
+        $droit_projet = Utils::have_access('projet');
         if ($droit_projet == 1) {
             $model2 = new Projet();
             $model2->load($this->request->post());
@@ -196,19 +277,19 @@ class ProjetController extends Controller
                 if ($mt > 0) {
                     Yii::$app->getSession()->setFlash('error', 'Vous ne pouvez pas supprimer ce type de congé car il est déjà enregistré !');
                 }else{ */
-                    $model->statut = 3;
-                    $model->updated_by = Yii::$app->user->identity->id;
-                    $model->updated_at = date('Y-m-d H:i:s');
-    
-                    if ($model->save()) {
-                        Yii::$app->getSession()->setFlash('success', 'Projet supprimer avec succès !');
-                       // return $this->redirect('all_typeconge');
-                    } else {
-                        Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
-                    }
+                $model->statut = 3;
+                $model->updated_by = Yii::$app->user->identity->id;
+                $model->updated_at = date('Y-m-d H:i:s');
+
+                if ($model->save()) {
+                    Yii::$app->getSession()->setFlash('success', 'Projet supprimer avec succès !');
+                    // return $this->redirect('all_typeconge');
+                } else {
+                    Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
+                }
                 //}
             } else Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
-        } 
+        }
     }
 
     /**

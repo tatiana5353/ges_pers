@@ -98,14 +98,15 @@ echo $this->render('_modal');
                                         'delete' => function ($url, $data) {
 
                                             if ($data->statut == 1) {
-                                                $url = 'on_horaire?key_horaire=' . $data->key_horaire;
+                                                $url = 'off_horaire?key_horaire=' . $data->key_horaire;
                                                 return '<a title="' . Yii::t('app', 'delete') . '"  href="' . $url . '">'
                                                     . '<div class="col-lg-10 col-sm-9">
-                                                <input type="checkbox" style="width: 20px" class="checkbox form-control" id="agree" name="agree">
-                                              </div></a>';
+                                                    <input type="checkbox" style="width: 20px" class="checkbox form-control" id="agree" name="agree" checked>
+                                                  </div>
+                                                  </a>';
                                             } elseif ($data->statut == 2) {
-                                                $url = 'off_horaire?key_horaire=' . $data->key_horaire;
-                                                return '<a title="' . Yii::t('app', 'delete') . '"  href="' . $url . '" >'
+                                                $url = 'on_horaire?key_horaire=' . $data->key_horaire;
+                                                return '<a title="' . Yii::t('app', 'activer') . '"  href="' . $url . '" >'
                                                     . '<div class="col-lg-10 col-sm-9">
                                                     <input type="checkbox" style="width: 20px" class="checkbox form-control" id="agree" name="agree">
                                                   </div></a>';

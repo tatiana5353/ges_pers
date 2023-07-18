@@ -1,62 +1,67 @@
 <?php
 
 use backend\controllers\Utils;
-use yii\grid\GridView;
+use frontend\widgets\Alert;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\Projet */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = $model->libelle;
-$this->params['breadcrumbs'][] = ['label' => 'Projets', 'url' => ['index']];
+$this->title = 'Taches';
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
+echo $this->render('_modal');
 ?>
-<div class="projet-view">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <ol class="breadcrumb float-right" style="float: right;">
-                    <li class="breadcrumb-item"><a href="accueil">Accueil</a></li>
-                    <li class="breadcrumb-item"><a href="/gespers/admin/all_projet"> Liste des projets</a></li>
-                    <li class="breadcrumb-item active">Détail</li>
-                </ol>
 
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </div>
+<?= Alert::widget() 
+?>
 
-    <div class="panel panel-default" stle="background-color: #7dc3e8;">
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-lg-5">
-                    <div class="panel panel-default" stle="background-color: #7dc3e8;">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <h1><?= Html::encode($this->title) ?></h1>
-                            </h3>
-                        </div>
-                        <div class="panel-body">
-                            <?= DetailView::widget([
-                                'model' => $model,
-                                'attributes' => [
+<div class="tache-index">
 
-                                    'libelle',
+    <div class="horaire-index">
+        <div class="row">
+            <div class="row-content">
+                <div class="col-lg-8 p-r-0 title-margin-right">
+                    <div class="page-header">
+                        <div class="page-title">
+                            <div class="btn-lg btn-info waves-light " data-class="bg-info">
+                                <marquee behavior="alternate" direction="">
+                                    <?= Html::encode($this->title) ?>
+                                </marquee>
 
-                                ],
-                            ]) ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-7">
-                    <div class="panel panel-default" stle="background-color: #7dc3e8;">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <!--    <?= Html::encode($this->title) ?> -->
-                            </h3>
+
+                <div class="col-lg-4 p-l-1 title-margin-left">
+                    <div class="page-header">
+                        <div class="page-title">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="/gespers/admin/accueil">Accueil</a>
+                                </li>
+                                <li class="breadcrumb-item active">Liste des taches</li>
+                            </ol>
                         </div>
-                        <div class="panel-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-panel">
+            <div class="horaire-index">
+
+
+                <div class="row">
+
+                    <div class="col-sm-1">
+                    </div>
+                    <div class="col-sm-10">
+                        <p>
+                            <?= Html::a('Ajouter une tache', ['create'], ['class' => 'btn btn-info']) ?>
+                        </p>
+                        <div class="content-panel">
                             <?= GridView::widget([
                                 'layout' => '{items}{pager}',
                                 'showOnEmpty' => false,
@@ -84,11 +89,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'label' => 'Désignation',
                                         'value' => 'designation',
                                     ],
-                                    /*  [
+                                    [
                                         'label' => 'Description',
                                         'value' => 'description',
-                                    ], */
-
+                                    ],
+                                
                                     //'heure_debut',
                                     //'heure_fin',
                                     //'key_tache',
@@ -98,8 +103,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     //'updated_by',
                                     //'updated_at',
                                     //'idaffectation',
-                                    //'idprojet',
-
+                                    'idprojet',
+                                   
 
                                     [
                                         'class' => 'yii\grid\ActionColumn',
@@ -108,9 +113,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'buttons' => [
                                             'view' => function ($url, $data) {
                                                 $droit = Utils::have_access('traiterdemande');
-                                                //if (($data->statut == 0)) {
-                                                $url = 'view_tache?key_tache=' . $data->key_tache;
-                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
+                                                 //if (($data->statut == 0)) {
+                                                    $url = 'view_tache?key_tache=' . $data->key_tache;
+                                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
                                         <i class=" fa fa-eye"></i>
                                         </a>';
                                                 //}
@@ -143,13 +148,48 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ]
                                 ],
                             ]); ?>
+
+
                         </div>
+
                     </div>
                 </div>
+                <div class="col-sm-1">
+                </div>
+
             </div>
+
 
         </div>
     </div>
 
 
+
+
+
 </div>
+
+<script>
+    function delete_tache(key_element) {
+        document.getElementById('modalTitle').innerHTML = 'Confirmation de suppression';
+        document.getElementById('modalContent').innerHTML = 'Vous êtes sur le point de supprimer cette tache. Cette action est irréversible';
+        document.getElementById('keyElement').value = key_element;
+    }
+
+    function delete_real_enter() {
+        let url = "<?= Yii::$app->homeUrl ?>delete_tache";
+        let key_element = document.getElementById('keyElement').value;
+        if (key_element != '') {
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: {
+                    key_element: key_element
+                },
+                success: function(result) {
+                    document.location.reload();
+                }
+            });
+        }
+    }
+</script>

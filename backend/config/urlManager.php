@@ -9,6 +9,13 @@ $tab_url = array(
 	'forget_password' => 'site/forget_password',
 	'reset_password' => 'site/reset_password',
 
+
+	'all_user' => 'user/index',
+	'add_user' => 'user/create',
+	'delete_user' => 'user/delete',
+	'update_user' => 'user/update',
+	'view_user' => 'user/view',
+
 	//Typeconge
 	'all_typeconge' => 'typeconge/index',
 	'add_typeconge' => 'typeconge/create',
@@ -37,12 +44,32 @@ $tab_url = array(
 	'refuser_demande' => 'demande/refuser',
 	'refus_demande' => 'demande/refus',
 
+	'all_presence' => 'presence/index',
+	'add_presence' => 'presence/create',
+	'delete_presence' => 'presence/delete',
+	'update_presence' => 'presence/update',
+	'view_presence' => 'presence/view',
+
 	//Projet
 	'all_projet' => 'projet/index',
 	'add_projet' => 'projet/create',
 	'delete_projet' => 'projet/delete',
 	'update_projet' => 'projet/update',
 	'view_projet' => 'projet/view',
+	'save_projet' => 'projet/save_projet',
+
+	'all_affectation' => 'affectation/index',
+	'add_affectation' => 'affectation/create',
+	'delete_affectation' => 'affectation/delete',
+	'update_affectation' => 'affectation/update',
+	'view_affectation' => 'affectation/view',
+	'save_affectation' => 'affectation/save_projet',
+
+
+	'add_projettache' => 'projet/createtache',
+	'update_projettache' => 'projet/updatetache',
+	'delete_projettache' => 'projet/deletetache',
+	'finir_projettache' => 'projet/finirtache',
 
 	//Projettype de taches
 	'all_typetache' => 'typetache/index',
@@ -50,5 +77,12 @@ $tab_url = array(
 	'delete_typetache' => 'typetache/delete',
 	'update_typetache' => 'typetache/update',
 	'view_typetache' => 'typetache/view',
+
+	'all_tache' => 'tache/index',
+	'add_tache' => 'tache/create',
+	'delete_tache' => 'tache/delete',
+	'update_tache' => 'tache/update',
+	'view_tache' => 'tache/view',
+
 
 );

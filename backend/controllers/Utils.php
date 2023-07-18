@@ -4,11 +4,12 @@ namespace backend\controllers;
 use yii\web\Controller;
 use app\models\DemandeDepense;
 use app\models\Entree;
-use app\models\Profil;
-use app\models\ProfilFonctionnalite;
-use app\models\Fonctionnalite;
+use backend\models\Profil;
+use backend\models\ProfilFonctionnalite;
+use backend\models\Fonctionnalite;
 use app\models\Sortie;
-use app\models\User;
+use backend\models\ProfilFonctionnalite as ModelsProfilFonctionnalite;
+use backend\models\User;
 use Yii;
 
 
@@ -72,5 +73,16 @@ class Utils extends Controller
         }
 
 
+    }
+
+    public static function sexe($default=0)
+    {
+
+        $tab_modedon["M"] =  'M';
+        $tab_modedon["F"] =  'F';
+        
+		if(isset($tab_modedon[$default])) return $tab_modedon[$default]; 
+
+        return $tab_modedon;
     }
 }

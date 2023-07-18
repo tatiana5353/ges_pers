@@ -79,6 +79,20 @@ echo $this->render('_modal');
 
                                 [
                                     'class' => 'yii\grid\ActionColumn',
+                                    'template' => '{view}',
+                                    'headerOptions' => ['width' => '10'],
+                                    'buttons' => [
+                                        'view' => function ($url, $data) {
+                                            $url = 'view_projet?key_projet=' . $data->key_projet;
+                                            return '<a title="' . Yii::t('app', 'view') . '" class="btn btn-success btn-sm" href="' . $url . '">
+                                            <i class=" fa fa-eye"></i>
+                                            </a>';
+                                        },
+                                    ],
+                                ],
+
+                                [
+                                    'class' => 'yii\grid\ActionColumn',
                                     'template' => '{update}',
                                     'headerOptions' => ['width' => '15'],
                                     //'visible' => $droits[3] == 1 ? true : false,

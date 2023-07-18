@@ -67,58 +67,87 @@ class HoraireController extends Controller
      * @return mixed
      */
 
-     public function actionOn($key_horaire)
-     {
-         $droit_horaire = Utils::have_access('horaire');
-         if ($droit_horaire == 1) {
-             $model = $this->findModel($key_horaire);
-             if ($model != null) {
-                 //print($model->status);die;
-                 $model->statut = 1;
-                 $model->updated_by = Yii::$app->user->identity->id;
-                 $model->updated_at = date('Y-m-d H:i:s');
-                 if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                     Yii::$app->getSession()->setFlash('success', 'Activation réussie !');
-                     return $this->redirect(['/all_horaire']);
-                 } else {
-                     Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'activation !');
-                     return $this->redirect(['/all_horaire']);
-                 }
-             } else {
-                 Yii::$app->getSession()->setFlash('error', 'Horaire introuvable !');
-                 return $this->redirect(['/all_horaire']);
-             }
-         } else {
-             return $this->redirect('accueil');
-         }
-     }
- 
-     public function actionOff($key_horaire)
-     {
-         $droit_horaire = Utils::have_access('horaire');
-         if ($droit_horaire == 1) {
-             $model = $this->findModel($key_horaire);
-             if ($model != null) {
-                 //print($model->status);die;
-                 $model->statut = 2;
-                 $model->updated_by = Yii::$app->user->identity->id;
-                 $model->updated_at = date('Y-m-d H:i:s');
- 
-                 if ($model->save()) {
-                     Yii::$app->getSession()->setFlash('success', 'Désactivation réussie !');
-                     return $this->redirect(['/all_horaire']);
-                 } else {
-                     Yii::$app->getSession()->setFlash('error', 'Erreur lors de la désactivation !');
-                     return $this->redirect(['/all_horaire']);
-                 }
-             } else {
-                 Yii::$app->getSession()->setFlash('error', 'Horaire introuvable !');
-                 return $this->redirect(['/all_horaire']);
-             }
-         } else {
-             return $this->redirect('accueil');
-         }
-     }
+    public function actionOn($key_horaire)
+    {
+        $droit_horaire = Utils::have_access('horaire');
+        if ($droit_horaire == 1) {
+            $model =  Horaire::find()
+                ->where([
+                    'key_horaire' => $key_horaire,
+                    'statut' => 2
+                ])->one();
+
+            $horaire_on =  Horaire::find()
+                ->where([
+                    'statut' => 1
+                ])->one();
+
+            if ($horaire_on == null) {
+                if ($model != null) {
+                    $model->statut = 1;
+                    $model->updated_by = Yii::$app->user->identity->id;
+                    $model->updated_at = date('Y-m-d H:i:s');
+                    if ($model->save()) {
+                        Yii::$app->getSession()->setFlash('success', 'Activation réussie !');
+                        return $this->redirect(['/all_horaire']);
+                    } else {
+                        Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'activation !');
+                        return $this->redirect(['/all_horaire']);
+                    }
+                } else {
+                    Yii::$app->getSession()->setFlash('error', 'Horaire introuvable !');
+                    return $this->redirect(['/all_horaire']);
+                }
+            } else {
+                $horaire_on->statut = 2;
+                $horaire_on->updated_by = Yii::$app->user->identity->id;
+                $horaire_on->updated_at = date('Y-m-d H:i:s');
+                $model->statut = 1;
+                $model->updated_by = Yii::$app->user->identity->id;
+                $model->updated_at = date('Y-m-d H:i:s');
+                if (($model->save()) && ($horaire_on->save())) {
+                    Yii::$app->getSession()->setFlash('success', 'Activation réussie !');
+                    return $this->redirect(['/all_horaire']);
+                } else {
+                    Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'activation !');
+                    return $this->redirect(['/all_horaire']);
+                }
+            }
+        } else {
+            return $this->redirect('accueil');
+        }
+    }
+
+    public function actionOff($key_horaire)
+    {
+        $droit_horaire = Utils::have_access('horaire');
+        if ($droit_horaire == 1) {
+            $model =  Horaire::find()
+                ->where([
+                    'key_horaire' => $key_horaire,
+                    'statut' => 1
+                ])->one();
+            if ($model != null) {
+                //print($model->status);die;
+                $model->statut = 2;
+                $model->updated_by = Yii::$app->user->identity->id;
+                $model->updated_at = date('Y-m-d H:i:s');
+
+                if ($model->save()) {
+                    Yii::$app->getSession()->setFlash('success', 'Désactivation réussie !');
+                    return $this->redirect(['/all_horaire']);
+                } else {
+                    Yii::$app->getSession()->setFlash('error', 'Erreur lors de la désactivation !');
+                    return $this->redirect(['/all_horaire']);
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('error', 'Horaire introuvable !');
+                return $this->redirect(['/all_horaire']);
+            }
+        } else {
+            return $this->redirect('accueil');
+        }
+    }
 
     public function actionCreate()
     {

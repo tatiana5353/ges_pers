@@ -1,7 +1,12 @@
 <?php
 /* @var $this yii\web\View */
 
+use frontend\widgets\Alert;
+
 $this->title = 'GES_PERS';
+/* echo $this->render('_modal'); */
+?>
+<?= Alert::widget();
 ?>
 <div class="site-index">
 
