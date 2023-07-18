@@ -24,10 +24,10 @@ class TacheController extends Controller
     {
         return [
             'verbs' => [
-                /* 'class' => VerbFilter::className(),
+                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
-                ], */
+                ], 
             ], ];
     }
 
@@ -41,11 +41,8 @@ class TacheController extends Controller
         if ($droit == 1) {
             $findprojet = Projet::find()->where(['libelle' => 'tache individuelle'])->one();
             $dataProvider = new ActiveDataProvider([
-                'query' => Tache::find()->where(['not in','statut',3
-                ])
-                ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null])
-                                        
-            ]);
+                'query' => Tache::find()->where(['not in','statut',3])
+                ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null])]);
 
             return $this->render('index', [
                 'dataProvider' => $dataProvider,
@@ -81,12 +78,12 @@ class TacheController extends Controller
             $typetache = Typetache::find()
                 ->where(['statut' => 1])
                 ->all();
-            $projet = Projet::find()
+           /*  $projet = Projet::find()
                 ->where(['statut' => 1])
                 ->all();
             $affectation = Affectation::find()
                 ->where(['statut' => 1])
-                ->all();
+                ->all(); */
             if (Yii::$app->request->post()) {
                 if ($model->load(Yii::$app->request->post())) {
                     $model->created_at = date('Y-m-d H:i:s');
@@ -141,8 +138,6 @@ class TacheController extends Controller
             return $this->render('create', [
                 'model' => $model,
                 'typetache' => $typetache,
-                'projet' => $projet,
-                'affectation' => $affectation
             ]);
         } else {
             $this->redirect('accueil');
