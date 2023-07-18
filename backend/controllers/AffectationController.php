@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\Affectation;
+use backend\models\Tache;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -64,14 +65,16 @@ class AffectationController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Affectation();
+        $affectation = new Affectation();
+        $tache = new Tache();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($affectation->load(Yii::$app->request->post()) && $affectation->save()) {
+            return $this->redirect(['view', 'id' => $affectation->id]);
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'affectation' => $affectation,
+            'tache' => $tache
         ]);
     }
 
