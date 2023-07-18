@@ -2,20 +2,17 @@
 
 namespace backend\controllers;
 
-use backend\models\Horaire;
 use Yii;
-use backend\models\Presence;
-use common\models\LoginForm;
+use backend\models\Affectation;
 use yii\data\ActiveDataProvider;
-use yii\db\Expression as DbExpression;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * PresenceController implements the CRUD actions for Presence model.
+ * AffectationController implements the CRUD actions for Affectation model.
  */
-class PresenceController extends Controller
+class AffectationController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -23,38 +20,32 @@ class PresenceController extends Controller
     public function behaviors()
     {
         return [
-            /*  'verbs' => [
+            'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
                 ],
-            ], */];
+            ],
+        ];
     }
 
     /**
-     * Lists all Presence models.
+     * Lists all Affectation models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $droit_presence = Utils::have_access('vue_presence');
-        if ($droit_presence == 1) {
-            $dataProvider = new ActiveDataProvider([
-                'query' => Presence::find()
-                ->where(['DATE(created_at)' => new DbExpression('CURDATE()')]),
-            ]);
-    
-            return $this->render('index', [
-                'dataProvider' => $dataProvider,
-            ]);
-        }else {
-            $this->redirect('accueil');
-        } 
-       
+        $dataProvider = new ActiveDataProvider([
+            'query' => Affectation::find(),
+        ]);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
-     * Displays a single Presence model.
+     * Displays a single Affectation model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -67,33 +58,13 @@ class PresenceController extends Controller
     }
 
     /**
-     * Creates a new Presence model.
+     * Creates a new Affectation model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-
-        $droit_presence = Utils::have_access('presence');
-        $horaire = Horaire::find()
-            ->where(['statut' => 1])
-            ->one();
-        if ($droit_presence == 1) {
-            $model = new presence();
-            $model2 = new LoginForm();
-            if ($model2->load(Yii::$app->request->post()) && $model2->login()) {
-                $model->created_at = date('Y-m-d H:i:s');
-                $model->created_by = Yii::$app->user->identity->id;
-                $model->statut = 1;
-                $model->key_presence = Yii::$app->security->generateRandomString(32);
-                $model->heure_arrivee = date('H:I:S');
-                $model->idhoraire = $horaire->id;
-                $model->save();
-            }
-        }/* else {
-            $this->redirect('accueil');
-        } */
-        /* $model = new Presence();
+        $model = new Affectation();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -101,11 +72,11 @@ class PresenceController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-        ]); */
+        ]);
     }
 
     /**
-     * Updates an existing Presence model.
+     * Updates an existing Affectation model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -125,7 +96,7 @@ class PresenceController extends Controller
     }
 
     /**
-     * Deletes an existing Presence model.
+     * Deletes an existing Affectation model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -139,24 +110,18 @@ class PresenceController extends Controller
     }
 
     /**
-     * Finds the Presence model based on its primary key value.
+     * Finds the Affectation model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Presence the loaded model
+     * @return Affectation the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($key_presence)
+    protected function findModel($id)
     {
-        $model = Horaire::find()
-            ->where([
-                'key_horaire' => $key_presence,
-                'statut' => 1
-            ])->one();
-
-        if ($model != null) {
+        if (($model = Affectation::findOne($id)) !== null) {
             return $model;
-        } else {
-            return null;
         }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

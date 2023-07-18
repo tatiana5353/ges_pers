@@ -220,7 +220,7 @@ class TypetacheController extends Controller
      */
     protected function findModel($key_typetache)
     {
-        {
+        
             $model = Typetache::find()
                 ->where([
                     'key_typetache' => $key_typetache,
@@ -232,6 +232,6 @@ class TypetacheController extends Controller
             } else {
                 return null;
             }
-        }
+        
     }
 }

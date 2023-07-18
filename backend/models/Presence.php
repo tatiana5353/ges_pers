@@ -8,7 +8,6 @@ use Yii;
  * This is the model class for table "presence".
  *
  * @property int $id
- * @property string $libelle
  * @property string|null $justification
  * @property string|null $heure_arrivee
  * @property string|null $heure_depart
@@ -40,11 +39,10 @@ class Presence extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['libelle', 'key_presence', 'statut', 'created_by', 'created_at', 'idhoraire'], 'required'],
             [['justification'], 'string'],
             [['heure_arrivee', 'heure_depart', 'created_at', 'updated_at'], 'safe'],
+            [['key_presence', 'statut', 'created_by', 'created_at', 'idhoraire'], 'required'],
             [['statut', 'created_by', 'updated_by', 'idhoraire'], 'integer'],
-            [['libelle'], 'string', 'max' => 50],
             [['key_presence'], 'string', 'max' => 32],
             [['idhoraire'], 'exist', 'skipOnError' => true, 'targetClass' => Horaire::className(), 'targetAttribute' => ['idhoraire' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
@@ -59,7 +57,6 @@ class Presence extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'libelle' => 'Libelle',
             'justification' => 'Justification',
             'heure_arrivee' => 'Heure Arrivee',
             'heure_depart' => 'Heure Depart',
