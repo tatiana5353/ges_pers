@@ -49,13 +49,6 @@ $tache = new Tache();
         </div>
     </div>
 
-
-
-
-
-
-
-
     <!--  DATE PICKERS -->
     <div class="panel panel-default">
         <div class="panel-heading">

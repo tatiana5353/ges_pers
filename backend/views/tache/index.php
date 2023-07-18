@@ -103,7 +103,7 @@ echo $this->render('_modal');
                                     //'updated_by',
                                     //'updated_at',
                                     //'idaffectation',
-                                    //'idprojet',
+                                    'idprojet',
                                    
 
                                     [

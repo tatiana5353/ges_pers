@@ -12,7 +12,11 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($projet, 'designation')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'numero')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'key_affectation')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'statut')->textInput() ?>
 
     <?= $form->field($model, 'created_by')->textInput() ?>
 

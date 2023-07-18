@@ -155,7 +155,7 @@ class ProjetController extends Controller
         if ($droit_projet == 1) {
 
             $projet = new Projet();
-            if (Yii::$app->request->post()) {
+            /* if (Yii::$app->request->post()) {
 
                 if ($projet->load($this->request->post())) {
                     $projet->created_at = date('Y-m-d H:i:s');
@@ -188,7 +188,7 @@ class ProjetController extends Controller
             } else {
                 //Yii::$app->getSession()->setFlash('info', 'veullez renseigner le formulaire');
                 $projet->loadDefaultValues();
-            }
+            } */
 
             return $this->render('create', [
                 'projet' => $projet,

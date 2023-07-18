@@ -23,12 +23,12 @@ class TacheController extends Controller
     public function behaviors()
     {
         return [
-            /* 'verbs' => [
-                'class' => VerbFilter::className(),
+            'verbs' => [
+                /* 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
-                ],
-            ], */];
+                ], */
+            ], ];
     }
 
     /**
@@ -39,8 +39,12 @@ class TacheController extends Controller
     {
         $droit = Utils::have_access('tache');
         if ($droit == 1) {
+            $findprojet = Projet::find()->where(['libelle' => 'tache individuelle'])->one();
             $dataProvider = new ActiveDataProvider([
-                'query' => Tache::find()->where(['not in', 'statut', 3]),
+                'query' => Tache::find()->where(['not in','statut',3
+                ])
+                ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null])
+                                        
             ]);
 
             return $this->render('index', [
@@ -158,7 +162,7 @@ class TacheController extends Controller
         if ($droit == 1) {
             # code...
         }
-        $model = $this->findModel($id);
+        $model = $this->findModel($key_tache);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
