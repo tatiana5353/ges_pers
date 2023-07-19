@@ -89,7 +89,7 @@ class TypecongeController extends Controller
                     $model->created_by = Yii::$app->user->identity->id;
                     $model->statut = 1;
                     $model->key_typeconge = Yii::$app->security->generateRandomString(32);
-                    $model->libelle = trim($model->libelle);
+                    $model->libelle = trim(preg_replace('/\s+/', ' ', $model->libelle));
                     $libelle = $model->libelle;
                     $libelleFind = TypeConge::find()
                         ->where([
@@ -142,7 +142,7 @@ class TypecongeController extends Controller
             $model2->created_by = Yii::$app->user->identity->id;
             $model2->statut = 1;
             $model2->key_typeconge = Yii::$app->security->generateRandomString(32);
-            $model2->libelle = trim($model2->libelle);
+            $model2->libelle = trim(preg_replace('/\s+/', ' ', $model2->libelle));
             $model = $this->findModel($key_typeconge);
             if ($model != null) {
                 $model->updated_by = Yii::$app->user->identity->id;
@@ -156,7 +156,7 @@ class TypecongeController extends Controller
 
                 if ($libelleFind == null) {
 
-                    if ($model2->libelle == trim($model->libelle)) {
+                    if ($model2->libelle == trim(preg_replace('/\s+/', ' ', $model->libelle))) {
                         Yii::$app->getSession()->setFlash('info', 'Vous n\'avez apporter aucune modification !');
                         $model2->loadDefaultValues();
                     } else {
@@ -196,26 +196,33 @@ class TypecongeController extends Controller
         if ($droit_conge == 1) {
             $model = $this->findModel($key_element);
             if ($model != null) {
-                /* $mt = Typeconge::find()->where([
-                    'statut' => 1, 
-                    'idtypeconge' => $model->id
-                    ])->count();
+                $mt = Demande::find()->where([
+                    'or',
+                    [
+                        'statut' => 1,
+                        'idtypeconge' => $model->id
+                    ],
+                    [
+                        'statut' => 0,
+                        'idtypeconge' => $model->id
+                    ]
+                ])->count();
                 if ($mt > 0) {
                     Yii::$app->getSession()->setFlash('error', 'Vous ne pouvez pas supprimer ce type de congé car il est déjà enregistré !');
-                }else{ */
+                } else {
                     $model->statut = 3;
                     $model->updated_by = Yii::$app->user->identity->id;
                     $model->updated_at = date('Y-m-d H:i:s');
-    
+
                     if ($model->save()) {
                         Yii::$app->getSession()->setFlash('success', 'Type de congé supprimer avec succès !');
-                       // return $this->redirect('all_typeconge');
+                        // return $this->redirect('all_typeconge');
                     } else {
                         Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
                     }
-                //}
+                }
             } else Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
-        } 
+        }
     }
 
     public function actionDeletes($key_typeconge)
@@ -254,10 +261,16 @@ class TypecongeController extends Controller
      */
     protected function findModel($key_typeconge)
     {
-        if (($model = Typeconge::find()->where(['key_typeconge' => $key_typeconge])->one()) !== null) {
-            return $model;
-        }
+        $model = Typeconge::find()
+            ->where([
+                'key_typeconge' => $key_typeconge,
+                'statut' => 1
+            ])->one();
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        if ($model != null) {
+            return $model;
+        } else {
+            return null;
+        }
     }
 }
