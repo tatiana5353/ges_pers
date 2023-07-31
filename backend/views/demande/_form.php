@@ -22,9 +22,9 @@ use yii\widgets\ActiveForm;
                 ['class' => 'ui search dropdown']
             )->error(false)->label('<span class="text-dark">Type de congé</span><span class="text-danger">**</span>') ?>
 
-            <?= $form->field($model, 'debutconge')->textInput(['type' => 'datetime-local', 'required' => true]) ?>
+            <?= $form->field($model, 'debutconge')->textInput(['type' => 'datetime-local', 'required' => true])->label('<span class="text-dark">Debut-congé</span><span class="text-danger">**</span>') ?>
 
-            <?= $form->field($model, 'finconge')->textInput(['type' => 'datetime-local', 'required' => true]) ?>
+            <?= $form->field($model, 'finconge')->textInput(['type' => 'datetime-local', 'required' => true])->label('<span class="text-dark">Fin-congé</span><span class="text-danger">**</span>') ?>
 
         </div>
         <div class="col-lg-4">
@@ -33,7 +33,7 @@ use yii\widgets\ActiveForm;
     
     <div class="row">
             <div class="col-lg-12">
-                <?= $form->field($model, 'motif')->textarea(['rows' => 4,'required' => true, ]) ?>
+                <?= $form->field($model, 'motif')->textarea(['rows' => 4,'required' => true, ])->label('<span class="text-dark">Motif</span><span class="text-danger">**</span>') ?>
             </div>
         </div>
     </div>

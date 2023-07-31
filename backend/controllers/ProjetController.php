@@ -48,7 +48,7 @@ class ProjetController extends Controller
             $projet->libelle = $libelle;
             $projet->created_at = date('Y-m-d H:i:s');
             $projet->created_by = Yii::$app->user->identity->id;
-            $projet->statut = 0;
+            $projet->statut = 2;
             $projet->key_projet = Yii::$app->security->generateRandomString(32);
 
             if ($projet->save()) {
@@ -66,7 +66,7 @@ class ProjetController extends Controller
                     $tache->designation = $final_selected_value[1];
                     $tache->idtypetache = $typetache->id;
                     $tache->idprojet = $projet->id;
-                    $tache->statut = 0;
+                    $tache->statut = 2;
                     $tache->created_by = Yii::$app->user->identity->id;
                     $tache->created_at = date('Y-m-d H:i:s');
                     $tache->save();
@@ -89,7 +89,7 @@ class ProjetController extends Controller
         $droit = Utils::have_access('projet');
         if ($droit == 1) {
             $dataProvider = new ActiveDataProvider([
-                'query' => Projet::find()->where(['not in', 'statut', 3]),
+                'query' => Projet::find()->where(['and', ['not in', 'statut', 3]]),
             ]);
 
             return $this->render('index', [
@@ -111,7 +111,7 @@ class ProjetController extends Controller
         $droit_projet = Utils::have_access('projet');
         if ($droit_projet == 1) {
 
-            
+
             $typetache = TypeTache::find()
                 ->where([
 
@@ -123,18 +123,18 @@ class ProjetController extends Controller
                     'or',
                     [
                         'key_projet' => $key_projet,
-                        'statut' => 1
+                        'statut' => 0
                     ],
                     [
                         'key_projet' => $key_projet,
-                        'statut' => 0
+                        'statut' => 2
                     ]
 
                 ])->one();
-                $dataProvider = new ActiveDataProvider([
-                    'query' => Tache::find()
-                        ->where(['idprojet' => $model->id])->andWhere(['<>', 'statut', 3]), 'pagination' => ['pageSize' => 5]
-                ]);
+            $dataProvider = new ActiveDataProvider([
+                'query' => Tache::find()
+                    ->where(['idprojet' => $model->id])->andWhere(['<>', 'statut', 3]), 'pagination' => ['pageSize' => 5]
+            ]);
             return $this->render('view', [
                 'model' => $model,
                 'typetache' => $typetache,
@@ -199,6 +199,75 @@ class ProjetController extends Controller
         }
     }
 
+    public function actionCreates($key_projet)
+    {
+        $model = new Tache();
+        $droit_tache = utils::have_access('tache');
+        if ($droit_tache == 1) {
+            $typetache = Typetache::find()
+                ->where(['statut' => 1])
+                ->all();
+           /*  $projet = Projet::find()
+                ->where(['statut' => 1])
+                ->all();
+            $affectation = Affectation::find()
+                ->where(['statut' => 1])
+                ->all(); */
+            if (Yii::$app->request->post()) {
+                if ($model->load(Yii::$app->request->post())) {
+                    $model->created_at = date('Y-m-d H:i:s');
+                    $model->created_by = Yii::$app->user->identity->id;
+                    $model->statut = 2;
+                    $model->key_tache = Yii::$app->security->generateRandomString(32);
+                    $findprojet = Projet::find()
+                        ->where(['key_projet' => $key_projet])
+                        ->one();
+                    if ($findprojet != null) {
+                       $model->idprojet = $findprojet->id;
+                       /*  if ($newprojet->save()) {
+                            $id = $newprojet->id;
+                            $model->idprojet = $id;
+                        } */
+                    } else {
+                        Yii::$app->getSession()->setFlash('error', 'Cette tache n\'est pas rattachée à un probleme');
+                        $model->loadDefaultValues();
+                    }
+                    $model->designation = trim($model->designation);
+                    $designation = $model->designation;
+                    $id = $model->idtypetache;
+                    $finddesignation = Tache::find()
+                        ->where([
+                            'designation' => $designation,
+                            'idtypetache' => $id,
+                            'statut' => 2
+                        ])
+                        ->one();
+                    if ($finddesignation == null) {
+                        if ($model->save()) {
+                            Yii::$app->getSession()->setFlash('succes', 'Enregistrement réussie');
+                            return $this->redirect('all_tache');
+                        } else {
+                            Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'enregistrement!');
+                            $model->loadDefaultValues();
+                        }
+                    } else {
+                        Yii::$app->getSession()->setFlash('error', 'Tache avec meme désignation et type tache deja existant!');
+                        $model->loadDefaultValues();
+                    }
+                } else {
+                    $model->loadDefaultValues();
+                    Yii::$app->getSession()->setFlash('error', 'Veuillez remplir tous les champs');
+                }
+            }
+            return $this->render('createtache', [
+                'model' => $model,
+                'typetache' => $typetache,
+            ]);
+        } else {
+            $this->redirect('accueil');
+        }
+    }
+
     /**
      * Updates an existing Projet model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -212,12 +281,13 @@ class ProjetController extends Controller
         if ($droit_projet == 1) {
             $model2 = new Projet();
             $model2->load($this->request->post());
-            $model2->created_at = date('Y-m-d H:i:s');
-            $model2->created_by = Yii::$app->user->identity->id;
-            $model2->statut = 1;
-            $model2->key_projet = Yii::$app->security->generateRandomString(32);
-            $model2->libelle = trim($model2->libelle);
-            $model = $this->findModel($key_projet);
+            $model2->libelle = trim(preg_replace('/\s+/', ' ', $model2->libelle));
+            $model = Projet::find()
+            ->where(['or',
+                ['key_projet' => $key_projet,
+                'statut' => 2],  ['key_projet' => $key_projet,
+                'statut' => 0]
+            ])->one();
             if ($model != null) {
                 $model->updated_by = Yii::$app->user->identity->id;
                 $model->updated_at = date('Y-m-d H:i:s');
@@ -225,12 +295,10 @@ class ProjetController extends Controller
                 $id = $model->id;
                 $libelle = $model2->libelle;
                 $libelleFind = Projet::find()
-                    ->where(['libelle' => $libelle, 'statut' => 1])
+                    ->where(['or', ['libelle' => $libelle, 'statut' => 2], ['libelle' => $libelle, 'statut' => 0]])
                     ->andWhere(['<>', 'id', $id])->all();
-
                 if ($libelleFind == null) {
-
-                    if ($model2->libelle == trim($model->libelle)) {
+                    if ($model2->libelle == trim(preg_replace('/\s+/', ' ', $model->libelle))) {
                         Yii::$app->getSession()->setFlash('info', 'Vous n\'avez apporter aucune modification !');
                         $model2->loadDefaultValues();
                     } else {
@@ -244,7 +312,7 @@ class ProjetController extends Controller
                     $model2->loadDefaultValues();
                 }
             } else {
-                return $this->redirect('accueil');
+                
             }
 
             return $this->render('update', [
@@ -268,7 +336,11 @@ class ProjetController extends Controller
 
         $droit_projet = Utils::have_access('projet');
         if ($droit_projet == 1) {
-            $model = $this->findModel($key_element);
+            $model = Projet::find()
+                ->where([
+                    'key_projet' => $key_element,
+                    'statut' => 2
+                ])->one();
             if ($model != null) {
                 /* $mt = Typeconge::find()->where([
                     'statut' => 1, 

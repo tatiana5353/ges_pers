@@ -27,6 +27,22 @@ $this->params['breadcrumbs'][] = $this->title;
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+    <!-- Inclure la bibliothèque jQuery si ce n'est pas déjà fait -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<button id="btnQuitter">Quitter</button>
+
+<!-- Le script JavaScript pour gérer le clic sur le bouton "Quitter" -->
+<script>
+    $(document).ready(function() {
+        // Ajouter un gestionnaire d'événement au clic sur le bouton
+        $("#btnQuitter").on("click", function() {
+            // Utiliser la fonction history.back() pour revenir à la page précédente
+            history.back();
+        });
+    });
+</script>
+
     <div class="panel panel-default">
         <div class="row mt">
             <div class="col-md-12">

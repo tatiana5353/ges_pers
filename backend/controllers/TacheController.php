@@ -24,11 +24,12 @@ class TacheController extends Controller
     {
         return [
             'verbs' => [
-                 'class' => VerbFilter::className(),
+                'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
-                ], 
-            ], ];
+                ],
+            ],
+        ];
     }
 
     /**
@@ -41,13 +42,14 @@ class TacheController extends Controller
         if ($droit == 1) {
             $findprojet = Projet::find()->where(['libelle' => 'tache individuelle'])->one();
             $dataProvider = new ActiveDataProvider([
-                'query' => Tache::find()->where(['not in','statut',3])
-                ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null])]);
+                'query' => Tache::find()->where(['not in', 'statut', 3])
+                    ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null])
+            ]);
 
             return $this->render('index', [
                 'dataProvider' => $dataProvider,
             ]);
-        }else {
+        } else {
         }
         return $this->redirect('accueil');
     }
@@ -78,7 +80,7 @@ class TacheController extends Controller
             $typetache = Typetache::find()
                 ->where(['statut' => 1])
                 ->all();
-           /*  $projet = Projet::find()
+            /*  $projet = Projet::find()
                 ->where(['statut' => 1])
                 ->all();
             $affectation = Affectation::find()
@@ -88,10 +90,10 @@ class TacheController extends Controller
                 if ($model->load(Yii::$app->request->post())) {
                     $model->created_at = date('Y-m-d H:i:s');
                     $model->created_by = Yii::$app->user->identity->id;
-                    $model->statut = 0;
+                    $model->statut = 2;
                     $model->key_tache = Yii::$app->security->generateRandomString(32);
                     $findprojet = Projet::find()
-                        ->where(['statut' => 2])
+                        ->where(['libelle' => "tache individuelle"])
                         ->one();
                     if ($findprojet == null) {
                         $newprojet = new Projet();
@@ -115,7 +117,7 @@ class TacheController extends Controller
                         ->where([
                             'designation' => $designation,
                             'idtypetache' => $id,
-                            'statut' => 0
+                            'statut' => 2
                         ])
                         ->one();
                     if ($finddesignation == null) {
@@ -155,17 +157,56 @@ class TacheController extends Controller
     {
         $droit = utils::have_access('tache');
         if ($droit == 1) {
-            # code...
+            $typetache = Typetache::find()
+                ->where(['statut' => 1])
+                ->all();
+            $model = $this->findModel($key_tache);
+            //  if (Yii::$app->request->post()){
+            $model2 = new Tache();
+            if ($model2->load(Yii::$app->request->post())) {
+                $model2->designation = trim(preg_replace('/\s+/', ' ', $model2->designation));
+
+                if ($model != null) {
+                    $model->updated_by = Yii::$app->user->identity->id;
+                    $model->updated_at = date('Y-m-d H:i:s');
+
+                    $id = $model->id;
+                    $designation = $model2->designation;
+                    $libelleFind = Tache::find()
+                        ->where(['or', ['designation' => $designation, 'statut' => 0], ['designation' => $designation, 'statut' => 2]])
+                        ->andWhere(['<>', 'id', $id])->all();
+                    if ($libelleFind == null) {
+
+                        if ($model2->designation == trim(preg_replace('/\s+/', ' ', $model->designation))) {
+                            Yii::$app->getSession()->setFlash('info', 'Vous n\'avez apporter aucune modification !');
+                            $model2->loadDefaultValues();
+                        } else {
+                            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                                Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+                                return $this->redirect('all_tache');
+                            }
+                        }
+                    } else {
+                        Yii::$app->getSession()->setFlash('error', 'Tache déjà existante !');
+                        $model2->loadDefaultValues();
+                    }
+                } else {
+                }
+            }
+            /* } */
+            return $this->render('update', [
+                'model' => $model,
+                'typetache' => $typetache
+            ]);
+        } else {
+            $this->redirect('accueil');
         }
+
         $model = $this->findModel($key_tache);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
     }
 
     /**
@@ -194,7 +235,7 @@ class TacheController extends Controller
 
                 if ($model->save()) {
                     Yii::$app->getSession()->setFlash('success', 'Tache supprimée avec succès !');
-                    return $this->redirect('all_tache');
+                    //return $this->redirect('all_tache');
                 } else {
                     Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
                 }
@@ -214,8 +255,15 @@ class TacheController extends Controller
     {
         $model = Tache::find()
             ->where([
-                'key_tache' => $key_tache,
-                'statut' => 0
+                'or',
+                [
+                    'key_tache' => $key_tache,
+                    'statut' => 0
+                ],
+                [
+                    'key_tache' => $key_tache,
+                    'statut' => 2
+                ],
             ])->one();
 
         if ($model != null) {

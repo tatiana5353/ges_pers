@@ -1,18 +1,17 @@
 <?php
 
-use frontend\widgets\Alert;
 use yii\helpers\Html;
 
-/** @var yii\web\View $this */
-/** @var app\models\Horaire $model */
+/* @var $this yii\web\View */
+/* @var $model backend\models\Affectation */
 
-$this->title = 'Création d\'un horaire';
-$this->params['breadcrumbs'][] = ['label' => 'Horaires', 'url' => ['index']];
+$this->title = 'Create Affectation';
+$this->params['breadcrumbs'][] = ['label' => 'Affectations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<?= Alert::widget() ?>
-
-<div class="horaire-create">
+<div class="affectation-create">
+    <div id="alert_place_g">
+    </div>
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -20,8 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <li class="breadcrumb-item">
                         <a href="/gespers/admin/accueil">Accueil</a>
                     </li>
-                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_horaire">Liste des horaires</a></li>
-                    <li class="breadcrumb-item active">Création d'un horaire
+                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_affectation">Liste des affectations</a></li>
+                    <li class="breadcrumb-item active">Affectations
                     </li>
                 </ol>
 
@@ -34,26 +33,21 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="panel-body">
             <div class="content-panel">
-
-
-                <div class="row mb-2">
-                    <div class="col-sm-1">
+                <div class="row">
+                    <div class="col-lg-1">
                     </div>
-                    <div class="col-sm-10">
-
-                        <div class="task-content">
-                            <div class="typeconge-create">
-                                <?= $this->render('_form', [
-                                    'model' => $model,
-                                ]) ?>
-                            </div>
+                    <div class="col-lg-10">
+                        <div class="typeconge-create">
+                            <!-- <div class="task-content"> -->
+                            <?= $this->render('_form', [
+                                'affectation' => $affectation,
+                                'tache' => $tache
+                            ]) ?>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-sm-1">
-    </div>
+
 </div>

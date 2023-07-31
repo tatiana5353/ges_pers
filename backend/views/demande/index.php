@@ -8,160 +8,140 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Demandes';
+$this->title = 'Demandes de congés';
 $this->params['breadcrumbs'][] = $this->title;
 echo $this->render('_modal');
 echo $this->render('_modal_motif');
 ?>
 <?= Alert::widget() ?>
 <div class="demande-index">
-    <div class="container-fluid">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <ol class="breadcrumb float-right" style="float: right;">
+                    <li class="breadcrumb-item"><a href="accueil">Accueil</a></li>
+                    <li class="breadcrumb-item active">Liste des demandes de congés</li>
+                </ol>
 
-        <div class="row">
-            <div class="row-content">
-                <div class="col-lg-8 p-r-0 title-margin-right">
-                    <div class="page-header">
-                        <div class="page-title">
-                            <div class="btn-lg btn-info waves-light " data-class="bg-info">
-                                <marquee behavior="alternate" direction="">
-                                    <?= Html::encode($this->title) ?>
-                                </marquee>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-lg-4 p-l-1 title-margin-left">
-                <div class="page-header">
-                    <div class="page-title">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="/gespers/admin/accueil">Accueil</a>
-                            </li>
-                            <li class="breadcrumb-item active">Liste des demandes</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
     </div>
-    <div class="content-panel">
-        <div class="horaire-index">
+    <div class="panel panel-default">
+        <div class="panel-heading" style="background-color: #17a2b8;">
+            <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
+        </div>
+        <div class="panel-body">
+            <div class="content-panel">
 
 
-            <div class="row">
 
-                <div class="col-sm-1">
-                </div>
-                <div class="col-sm-10">
-                    <p>
-                        <?= Html::a('Create Demande', ['create'], ['class' => 'btn btn-info']) ?>
-                    </p>
+                <div class="row">
 
-                    <div class="content-panel">
-                        <?= GridView::widget([
-                            'layout' => '{items}{pager}',
-                            'showOnEmpty' => false,
-                            'emptyText' => Utils::emptyContent(),
-                            'dataProvider' => $dataProvider,
-                            'tableOptions' => [
-                                'class' => 'table table-bordered',
-                                'id' => 'hidden-table-info',
-                                'cellpadding' => "0",
-                                'cellspacing' => "0",
-                                'border' => "0",
-                                //'class' ="adv-table"
-                            ],
-                            'columns' => [
-                                ['class' => 'yii\grid\SerialColumn'],
 
-                                //'id',
-                            
-                                [
-                                    'label' => 'Personnel',
-                                    'value' => function ($data) {
-                                        return $data->createdBy->nom . ' ' . $data->createdBy->prenoms;
-                                    }
+                    <div class="col-sm-12">
+                      
+
+                        <div class="content-panel">
+                            <?= GridView::widget([
+                                'layout' => '{items}{pager}',
+                                'showOnEmpty' => false,
+                                'emptyText' => Utils::emptyContent(),
+                                'dataProvider' => $dataProvider,
+                                'tableOptions' => [
+                                    'class' => 'table table-bordered',
+                                    'id' => 'hidden-table-info',
+                                    'cellpadding' => "0",
+                                    'cellspacing' => "0",
+                                    'border' => "0",
+                                    //'class' ="adv-table"
                                 ],
-                                [
-                                    'label' => 'Numéro',
-                                    'value' => 'numero',
-                                ],
-                                [
-                                    'label' => 'Type de congé',
-                                    'value' => function ($data) {
-                                        return $data->idtypeconge0->libelle;
-                                    }
-                                ],
-                                [
-                                    'label' => 'Début de congé',
-                                    'format' => ['date', 'php:d-m-Y'],
-                                    'value' => 'debutconge',
-                                ],
+                                'columns' => [
+                                    ['class' => 'yii\grid\SerialColumn'],
 
-                                [
-                                    'label' => 'Fin de congé',
-                                    'format' => ['date', 'php:d-m-Y'],
-                                    'value' => 'debutconge',
-
-                                ],
-
-                                [
-                                    'attribute' => 'statut',
-                                    'header' => 'Statut',
-                                    /*  'filter' => ['Y'=>'Active', 'N'=>'Deactive'], */
-                                    'format' => 'raw',
-                                    'value' => function ($data) {
-                                       /*  $data = $data['statut']; */
-                                        if (($data->statut == 0)) {
-                                            return '<span class="label label-primary">EN ATTENTE</span>';
-                                        } elseif (($data->statut == 1)) {
-                                            return '<span class="label label-success"> ACCORDEE </span>';
-                                            /* } elseif ($data == '2') {
-                                            return 'Servie'; */
-                                        } elseif (($data->statut == 4)){
-                                            return '<span class="label label-danger"> REJETTEE </span>';
-                                        } else {
-                                            return '';
+                                   
+                                    [
+                                        'label' => 'Numéro',
+                                        'value' => 'numero',
+                                    ],
+                                    [
+                                        'label' => 'Personnel',
+                                        'value' => function ($data) {
+                                            return $data->createdBy->nom . ' ' . $data->createdBy->prenoms;
                                         }
-                                    },
-                                ],
+                                    ],
+                                   
+                                    [
+                                        'label' => 'Type de congé',
+                                        'value' => function ($data) {
+                                            return $data->idtypeconge0->libelle;
+                                        }
+                                    ],
+                                    [
+                                        'label' => 'Début de congé',
+                                        'format' => ['date', 'php:d-m-Y'],
+                                        'value' => 'debutconge',
+                                    ],
 
-                                //'motif:ntext',
+                                    [
+                                        'label' => 'Fin de congé',
+                                        'format' => ['date', 'php:d-m-Y'],
+                                        'value' => 'debutconge',
 
-                                //'motif_refus:ntext',
+                                    ],
 
-                                [
-                                    'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{view}',
-                                    'headerOptions' => ['width' => '15'],
-                                    'buttons' => [
-                                        'view' => function ($url, $data) {
-                                            $droit = Utils::have_access('traiterdemande');
-                                            if (($data->statut == 4)) {
-                                                $url = 'view_demande?key_demande=' . $data->key_demande;
-                                                return '<button type="button" class="btn btn-xs btn-success"><a title="' . Yii::t('app', 'Détail') . '" class="
-                                                " href="#" data-toggle="modal" data-target="#exampleModal2" onclick="affiche_motif(\'' . $data->motif_refus . '\')"> 
-                                                <i class=" fa fa-eye" style="color: red;"></i></a> </button>';
-                                            } else if (($data->statut == 0)) {
-                                                $url = 'view_demande?key_demande=' . $data->key_demande;
-                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
-                                    <i class=" fa fa-eye" style="color: blue;"></i>
-                                    </a>';
-                                            }else if ($droit == 1) {
-                                                $url = 'view_demande?key_demande=' . $data->key_demande;
-                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
-                                    <i class=" fa fa-eye"></i>
-                                    </a>';
+                                    [
+                                        'attribute' => 'statut',
+                                        'header' => 'Statut',
+                                        /*  'filter' => ['Y'=>'Active', 'N'=>'Deactive'], */
+                                        'format' => 'raw',
+                                        'value' => function ($data) {
+                                            /*  $data = $data['statut']; */
+                                            if (($data->statut == 0)) {
+                                                return '<span class="label label-primary">EN ATTENTE</span>';
+                                            } elseif (($data->statut == 1)) {
+                                                return '<span class="label label-success"> ACCORDEE </span>';
+                                                /* } elseif ($data == '2') {
+                                            return 'Servie'; */
+                                            } elseif (($data->statut == 4)) {
+                                                return '<span class="label label-danger"> REJETTEE </span>';
+                                            } else {
+                                                return '';
                                             }
                                         },
                                     ],
-                                ],
 
-                               /*  [
+                                    //'motif:ntext',
+
+                                    //'motif_refus:ntext',
+
+                                    [
+                                        'class' => 'yii\grid\ActionColumn',
+                                        'template' => '{view}',
+                                        'headerOptions' => ['width' => '15'],
+                                        'buttons' => [
+                                            'view' => function ($url, $data) {
+                                                $droit = Utils::have_access('traiterdemande');
+                                                if (($data->statut == 4)) {
+                                                    $url = 'view_demande?key_demande=' . $data->key_demande;
+                                                    return '<button type="button" class="btn btn-xs btn-success"><a title="' . Yii::t('app', 'Détail') . '" class="
+                                                " href="#" data-toggle="modal" data-target="#exampleModal2" onclick="affiche_motif(\'' . $data->motif_refus . '\')"> 
+                                                <i class=" fa fa-eye" style="color: red;"></i></a> </button>';
+                                                } else if (($data->statut == 0)) {
+                                                    $url = 'view_demande?key_demande=' . $data->key_demande;
+                                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
+                                            <i class=" fa fa-eye" style="color: blue;"></i>
+                                            </a>';
+                                                } else if ($droit == 1) {
+                                                    $url = 'view_demande?key_demande=' . $data->key_demande;
+                                                            return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
+                                            <i class=" fa fa-eye"></i>
+                                            </a>';
+                                                }
+                                            },
+                                        ],
+                                    ],
+
+                                    /*  [
                                     'class' => 'yii\grid\ActionColumn',
                                     'template' => '{update}',
                                     'headerOptions' => ['width' => '15'],
@@ -177,7 +157,7 @@ echo $this->render('_modal_motif');
                                         },
                                     ],
                                 ], */
-                                /* [
+                                    /* [
                                     'class' => 'yii\grid\ActionColumn',
                                     'template' => '{delete}',
                                     'headerOptions' => ['width' => '15'],
@@ -193,18 +173,14 @@ echo $this->render('_modal_motif');
                                     ],
                                 ] */
 
-                                //['class' => 'yii\grid\ActionColumn'],
-                            ],
-                        ]); ?>
+                                    //['class' => 'yii\grid\ActionColumn'],
+                                ],
+                            ]); ?>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-1">
-            </div>
-
         </div>
-
-
     </div>
 
 

@@ -1,9 +1,12 @@
 <?php
 
 use backend\controllers\Utils;
+use backend\models\Affectation;
+use backend\models\User;
 use frontend\widgets\Alert;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,51 +16,32 @@ $this->params['breadcrumbs'][] = $this->title;
 echo $this->render('_modal');
 ?>
 
-<?= Alert::widget() 
+<?= Alert::widget()
 ?>
 
 <div class="tache-index">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <ol class="breadcrumb float-right" style="float: right;">
+                    <li class="breadcrumb-item"><a href="accueil">Accueil</a></li>
+                    <li class="breadcrumb-item active">Liste des taches</li>
+                </ol>
 
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
     <div class="horaire-index">
-        <div class="row">
-            <div class="row-content">
-                <div class="col-lg-8 p-r-0 title-margin-right">
-                    <div class="page-header">
-                        <div class="page-title">
-                            <div class="btn-lg btn-info waves-light " data-class="bg-info">
-                                <marquee behavior="alternate" direction="">
-                                    <?= Html::encode($this->title) ?>
-                                </marquee>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 p-l-1 title-margin-left">
-                    <div class="page-header">
-                        <div class="page-title">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item">
-                                    <a href="/gespers/admin/accueil">Accueil</a>
-                                </li>
-                                <li class="breadcrumb-item active">Liste des taches</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #17a2b8;">
+                <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
             </div>
-        </div>
+            <div class="panel-body">
 
-        <div class="content-panel">
-            <div class="horaire-index">
 
 
                 <div class="row">
-
-                    <div class="col-sm-1">
-                    </div>
-                    <div class="col-sm-10">
+                    <div class="col-sm-12">
                         <p>
                             <?= Html::a('Ajouter une tache', ['create'], ['class' => 'btn btn-info']) ?>
                         </p>
@@ -89,11 +73,15 @@ echo $this->render('_modal');
                                         'label' => 'Désignation',
                                         'value' => 'designation',
                                     ],
-                                    [
-                                        'label' => 'Description',
+                                   /*  [
+                                        'header' => 'Description',
                                         'value' => 'description',
                                     ],
-                                
+                                    [
+                                        'attribute' => 'description',
+                                        'header' => 'Description',
+                                    ], */
+
                                     //'heure_debut',
                                     //'heure_fin',
                                     //'key_tache',
@@ -103,8 +91,8 @@ echo $this->render('_modal');
                                     //'updated_by',
                                     //'updated_at',
                                     //'idaffectation',
-                                    'idprojet',
-                                   
+                                    //'idprojet',
+
 
                                     [
                                         'class' => 'yii\grid\ActionColumn',
@@ -113,9 +101,9 @@ echo $this->render('_modal');
                                         'buttons' => [
                                             'view' => function ($url, $data) {
                                                 $droit = Utils::have_access('traiterdemande');
-                                                 //if (($data->statut == 0)) {
-                                                    $url = 'view_tache?key_tache=' . $data->key_tache;
-                                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
+                                                //if (($data->statut == 0)) {
+                                                $url = 'view_tache?key_tache=' . $data->key_tache;
+                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
                                         <i class=" fa fa-eye"></i>
                                         </a>';
                                                 //}
@@ -148,25 +136,29 @@ echo $this->render('_modal');
                                     ]
                                 ],
                             ]); ?>
+<!-- 
+                            <?= ListView::widget([
+                                'dataProvider' => $dataProvider,
+                                'showOnEmpty' => false,
+                                'emptyText' => Utils::emptyContent(),
+                                'itemView' => function ($model, $item, $key, $widgets) {
+                                    $affectation = User::findOne($model->idaffectation);
+                                    //  $tache = $model->tacheRel;
+                            ?>
 
 
+                            <?php   }
+                            ]);
+                            ?> -->
+
+                         
                         </div>
-
                     </div>
-                </div>
-                <div class="col-sm-1">
                 </div>
 
             </div>
-
-
         </div>
     </div>
-
-
-
-
-
 </div>
 
 <script>

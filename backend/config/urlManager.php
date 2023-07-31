@@ -53,6 +53,7 @@ $tab_url = array(
 	//Projet
 	'all_projet' => 'projet/index',
 	'add_projet' => 'projet/create',
+	'add_tacheprojet'  => 'projet/creates',
 	'delete_projet' => 'projet/delete',
 	'update_projet' => 'projet/update',
 	'view_projet' => 'projet/view',
@@ -63,12 +64,14 @@ $tab_url = array(
 	'delete_affectation' => 'affectation/delete',
 	'update_affectation' => 'affectation/update',
 	'view_affectation' => 'affectation/view',
-	'save_affectation' => 'affectation/save_projet',
+	'save_affectation' => 'affectation/save_affectation',
+	'tache_affectation' => 'affectation/tache_affectation',
 
 
 	'add_projettache' => 'projet/createtache',
 	'update_projettache' => 'projet/updatetache',
 	'delete_projettache' => 'projet/deletetache',
+	
 	'finir_projettache' => 'projet/finirtache',
 
 	//Projettype de taches

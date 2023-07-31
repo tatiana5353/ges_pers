@@ -45,16 +45,16 @@ class DemandeController extends Controller
             return $this->render('index', [
                 'dataProvider' => $dataProvider,
             ]);
-        } elseif($droit == 1) {
+        } elseif ($droit == 1) {
             $dataProvider = new ActiveDataProvider([
                 'query' => Demande::find()->where(['not in', 'statut', 3])
-                ->andWhere(['created_by' => Yii::$app->user->identity->id])
+                    ->andWhere(['created_by' => Yii::$app->user->identity->id])
             ]);
 
             return $this->render('indexe', [
                 'dataProvider' => $dataProvider,
             ]);
-        }else {
+        } else {
             return $this->redirect('accueil');
         }
     }
@@ -80,27 +80,26 @@ class DemandeController extends Controller
                     'key_demande' => $key_demande,
                     'statut' => 1
                 ])->one();
-              
+
             if ($model != null) {
-                $model->debutconge = date('d-m-Y H:i', strtotime($model->debutconge)); 
+                $model->debutconge = date('d-m-Y H:i', strtotime($model->debutconge));
                 $model->finconge = date('d-m-Y H:i', strtotime($model->finconge));
                 return $this->render('view', [
                     'model' => $model
                 ]);
             } elseif ($model2 != null) {
-                $model2->debutconge = date('d-m-y H:i', strtotime($model2->debutconge)); 
+                $model2->debutconge = date('d-m-y H:i', strtotime($model2->debutconge));
                 $model2->finconge = date('d-m-y H:i', strtotime($model2->finconge));
                 return $this->render('view', [
                     'model' => $model2
                 ]);
-            } {
-                return $this->redirect('accueil');
             }
             return $this->render('view', [
                 'model' => $model,
             ]);
+        } else {
+            return $this->redirect('accueil');
         }
-
     }
 
     /**
@@ -132,7 +131,7 @@ class DemandeController extends Controller
                     $model->numero = 'NE-' . date('md') . '-' . rand(11, 99);
                     $debutconge = $model->debutconge;
                     $finconge = $model->finconge;
-                   // print(strtotime($model->created_at));die;
+                    // print(strtotime($model->created_at));die;
                     if ((strtotime($debutconge) < strtotime($finconge))/*  && (strtotime($debutconge) >= strtotime($model->created_at)) */) {
                         if ($model->save()) {
                             Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
@@ -198,7 +197,7 @@ class DemandeController extends Controller
                     ->where(['statut' => 0])
                     ->andWhere(['<>', 'id', $id])->all(); */
                 if ($model->load(Yii::$app->request->post())) {
-                    
+
                     if ((strtotime($model2->finconge) >= strtotime($model->updated_at))) {
                         //print("fsqsq");die;
                         if ($model->save()) {
@@ -244,25 +243,18 @@ class DemandeController extends Controller
             if ($model != null) {
 
                 $model->statut = 4;
-                /* if ($iduser!=null) {
-                    $model->date_demande = date('Y-m-d', strtotime($model->date_demande));  
-                }else {
-                    $model->date_demande = date('Y-m-d', strtotime($model->created_at)); 
-                } */
-
                 $model->updated_by = Yii::$app->user->identity->id;
                 $model->updated_at = date('Y-m-d H:i:s');
 
                 $id = $model->id;
                 $numero = $model2->numero;
-                /* $date_demande = $model->created_at; */
                 $numeroFind = Demande::find()
                     ->where(['numero' => $numero, 'statut' => 0,])
                     ->andWhere(['<>', 'id', $id])->all();
-                    
+
                 if ($numeroFind == null) {
                     if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                       // print("gdgcsf");die;
+                        // print("gdgcsf");die;
                         Yii::$app->getSession()->setFlash('success', 'Vous venez de refuser la demande !');
                         return $this->redirect('all_demande');
                     } else {
@@ -299,7 +291,7 @@ class DemandeController extends Controller
                     'key_demande' => $key_element,
                     'statut' => 0
                 ])->one();
-                /* print($model->id);die; */
+            /* print($model->id);die; */
             if ($model != null) {
                 /* $mt = Typeconge::find()->where([
                     'statut' => 1, 

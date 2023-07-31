@@ -150,7 +150,7 @@ class TypetacheController extends Controller
 
                 if ($libelleFind == null) {
 
-                    if ($model2->libelle == trim(preg_replace('/\s+/', ' ', $model2->libelle))) {
+                    if ($model2->libelle == trim(preg_replace('/\s+/', ' ', $model->libelle))) {
                         Yii::$app->getSession()->setFlash('info', 'Vous n\'avez apporter aucune modification !');
                         $model2->loadDefaultValues();
                     } else {

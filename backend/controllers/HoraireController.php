@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\Horaire;
+use backend\models\Presence;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -148,7 +149,7 @@ class HoraireController extends Controller
             return $this->redirect('accueil');
         }
     }
-
+// statut 1 quand c'est on 2 quand c'est off
     public function actionCreate()
     {
         $droit_horaire = Utils::have_access('horaire');
@@ -158,15 +159,18 @@ class HoraireController extends Controller
                 if ($model->load($this->request->post())) {
                     $model->created_at = date('Y-m-d H:i:s');
                     $model->created_by = Yii::$app->user->identity->id;
-                    $model->statut = 1;
+                    $model->statut = 2;
                     $model->key_horaire = Yii::$app->security->generateRandomString(32);
                     $heurearrivee = $model->heure_arrivee;
                     $heuredepart = $model->heure_depart;
                     $heureFind = Horaire::find()
-                        ->where([
-                            'heure_arrivee' => $heurearrivee,
+                        ->where(['or',
+                           [ 'heure_arrivee' => $heurearrivee,
                             'heure_depart' => $heuredepart,
-                            'statut' => 1
+                            'statut' => 1],
+                            [ 'heure_arrivee' => $heurearrivee,
+                            'heure_depart' => $heuredepart,
+                            'statut' => 2]
                         ])->one();
                     if (($heuredepart > $heurearrivee) && ((strtotime($heuredepart) - strtotime($heurearrivee)) >= 8 * 60 * 60)) {
                         if ($heureFind == null) {
@@ -224,6 +228,8 @@ class HoraireController extends Controller
             $model2->created_by = Yii::$app->user->identity->id;
             $model2->statut = 1;
             $model2->key_horaire = Yii::$app->security->generateRandomString(32);
+            $model2->heure_arrivee = date('HH:mm', strtotime( $model2->heure_arrivee));
+            $model2->heure_depart = date('H:i:s', strtotime( $model2->heure_depart));
             $model = $this->findModel($key_horaire);
             if ($model != null) {
 
@@ -280,24 +286,24 @@ class HoraireController extends Controller
         if ($droit_horaire == 1) {
             $model = $this->findModel($key_element);
             if ($model != null) {
-                /* $mt = Typeconge::find()->where([
-                    'statut' => 1, 
-                    'idtypeconge' => $model->id
-                    ])->count();
+                $mt = Presence::find()->where([
+                    'idhoraire' => $model->id
+                    ])
+                    ->andWhere(['not in','statut',3])->count();
                 if ($mt > 0) {
-                    Yii::$app->getSession()->setFlash('error', 'Vous ne pouvez pas supprimer ce type de congé car il est déjà enregistré !');
-                }else{ */
+                    Yii::$app->getSession()->setFlash('error', 'Vous ne pouvez pas supprimer cet horaire car il est déjà enregistré en présence !');
+                }else{
                 $model->statut = 3;
                 $model->updated_by = Yii::$app->user->identity->id;
                 $model->updated_at = date('Y-m-d H:i:s');
 
                 if ($model->save()) {
-                    Yii::$app->getSession()->setFlash('success', 'Type de congé supprimer avec succès !');
+                    Yii::$app->getSession()->setFlash('success', 'Horaire supprimé avec succès !');
                     // return $this->redirect('all_typeconge');
                 } else {
                     Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
                 }
-                //}
+                }
             } else Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
         }
     }
@@ -313,9 +319,11 @@ class HoraireController extends Controller
     protected function findModel($key)
     {
         $model = Horaire::find()
-            ->where([
-                'key_horaire' => $key,
-                'statut' => 1
+            ->where(['or',
+                ['key_horaire' => $key,
+                'statut' => 1],
+                ['key_horaire' => $key,
+                'statut' => 2]
             ])->one();
 
         if ($model != null) {

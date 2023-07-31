@@ -5,6 +5,8 @@ namespace backend\controllers;
 use backend\models\Horaire;
 use Yii;
 use backend\models\Presence;
+use backend\models\Profil;
+use backend\models\User;
 use common\models\LoginForm;
 use yii\data\ActiveDataProvider;
 use yii\db\Expression as DbExpression;
@@ -39,18 +41,23 @@ class PresenceController extends Controller
     {
         $droit_presence = Utils::have_access('vue_presence');
         if ($droit_presence == 1) {
-            $dataProvider = new ActiveDataProvider([
-                'query' => Presence::find()
-                ->where(['DATE(created_at)' => new DbExpression('CURDATE()')]),
-            ]);
-    
-            return $this->render('index', [
-                'dataProvider' => $dataProvider,
-            ]);
-        }else {
+            $id_profil_employe = User::find()->where(['idprofil' => 2])->all();
+            $user = User::findOne(Yii::$app->user->id);
+            
+                $dataProvider = new ActiveDataProvider([
+                    'query' => Presence::find()
+                        ->where(['DATE(created_at)' => new DbExpression('CURDATE()')])
+                        ->orwhere(['<', 'created_at', date('Y-m-d 00:00:00')]),
+                        //->andWhere(['created_by' => Yii::$app->user->id]),
+                ]);
+
+                return $this->render('index', [
+                    'dataProvider' => $dataProvider,
+                ]);
+          
+        } else {
             $this->redirect('accueil');
-        } 
-       
+        }
     }
 
     /**

@@ -29,7 +29,6 @@ use yii\bootstrap\Html; ?>
         <ul>
           <li><a href="\gespers\admin\all_horaire">Horaires</a></li>
           <li><a href="\gespers\admin\all_typeconge">Type de congés</a></li>
-          <li><a href="\gespers\admin\all_sortie">Horaires</a></li>
         </ul>
       </li>
       <li><a href="javascript:;" class="sidebar-sub-toggle"><i class="ti-view-list-alt"></i>Planification des taches <span class="sidebar-collapse-icon ti-angle-down"></span></a>

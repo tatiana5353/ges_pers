@@ -42,9 +42,6 @@ echo $this->render('_modal');
             <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
         </div>
         <div class="panel-body">
-
-
-
             <div class="row">
 
                 <div class="col-sm-1">

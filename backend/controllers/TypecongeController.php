@@ -138,10 +138,6 @@ class TypecongeController extends Controller
         if ($droit_typeconge == 1) {
             $model2 = new TypeConge();
             $model2->load($this->request->post());
-            $model2->created_at = date('Y-m-d H:i:s');
-            $model2->created_by = Yii::$app->user->identity->id;
-            $model2->statut = 1;
-            $model2->key_typeconge = Yii::$app->security->generateRandomString(32);
             $model2->libelle = trim(preg_replace('/\s+/', ' ', $model2->libelle));
             $model = $this->findModel($key_typeconge);
             if ($model != null) {

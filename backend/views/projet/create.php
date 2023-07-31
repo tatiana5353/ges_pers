@@ -18,7 +18,6 @@ $tache = new Tache();
 <?= Alert::widget() ?>
 <div class="projet-create">
     <div id="alert_place_g"></div>
-
     <div class="row">
         <div class="col-lg-8 p-r-1 title-margin-right">
             <div class="page-header">
@@ -59,81 +58,78 @@ $tache = new Tache();
 
             <div class="col-lg-12">
 
-                <div class="">
-                    <form action="#" class="form-horizontal style-form">
-                        <?php $form = ActiveForm::begin(); ?>
-                        <div class="projet-form">
+                <!-- <div class=""> -->
+                <form action="#" class="style-form">
+                    <?php $form = ActiveForm::begin(); ?>
+                    <div class="projet-form">
+
+                        <div class="">
 
                             <div class="">
-
-                                <div class="">
-                                    <?= $form->field($projet, 'libelle')->textInput(['maxlength' => true, 'required' => true])->label('<h5>Nom du projet<span class="text-danger">**</span></h5>') ?>
-                                </div>
+                                <?= $form->field($projet, 'libelle')->textInput(['maxlength' => true, 'required' => true])->label('<h5>Nom du projet<span class="text-danger">**</span></h5>') ?>
                             </div>
-                            <div class="panel panel-default" style="background-color: #7dc3e8; color: #ffffff;">
-                                <!-- Contenu de la carte -->
-                                <div class="panel-body">
+                        </div>
+                        <div class="panel panel-default" style="background-color: #7dc3e8; color: #ffffff;">
+                            <!-- Contenu de la carte -->
+                            <div class="panel-body">
 
-                                    <div class="row clearfix">
-                                        <div id="alert_place"></div>
-                                        <div class="col-xs-3">
-                                            <?= $form->field($tache, 'idtypetache')->dropDownList(
-                                                ArrayHelper::map(
-                                                    TypeTache::find()->where(['statut' => 1])->all(),
-                                                    'id',
-                                                    'libelle',
-                                                ),
-                                                ['prompt' => 'Choisir un type de tache'],
-                                                ['class' => 'form-control']
-                                            )->error(false)->label('<h5>Type de tache:<span class="text-danger">**</span></h5>');
-                                            ?>
-                                        </div>
-                                        <div class="col-xs-3 col-xs-offset-1">
-                                            <?= $form->field($tache, 'designation')->textInput(['maxlength' => true, 'required' => true,])->label('<h5>Tache :<span class="text-danger">**</span></h5>'); ?>
-                                        </div>
-
-                                        <textarea name="all_tache_added" id="all_tache_added" cols="30" rows="10" style="display: none;"></textarea>
-
-                                        <div class="col-xs-4">
-                                            <button type="button" class="btn" style="background-color: #4DB6AC; color: #FFFFFF;" onclick="add_tache()"><i class="fa fa-plus"></i> Ajouter</button>
-                                            <?= Html::resetButton('<i class="fa fa fa-undo fx-8"></i>  Annuler', ['class' => 'btn btn-default']) ?>
-                                        </div>
-                                        <div class="clearfix"></div>
+                                <div class="row clearfix">
+                                    <div id="alert_place"></div>
+                                    <div class="col-xs-3">
+                                        <?= $form->field($tache, 'idtypetache')->dropDownList(
+                                            ArrayHelper::map(
+                                                TypeTache::find()->where(['statut' => 1])->all(),
+                                                'id',
+                                                'libelle',
+                                            ),
+                                            ['prompt' => 'Choisir un type de tache'],
+                                            ['class' => 'form-control']
+                                        )->error(false)->label('<h5>Type de tache:<span class="text-danger">**</span></h5>');
+                                        ?>
                                     </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </div>
-                            <table class="table" id="tab_temp_preview">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Type de tache</th>
-                                        <th scope="col">Tache</th>
-                                        <!-- <th scope="col">Motif</th>
-                                <th scope="col">Action</th> -->
-                                    </tr>
-                                </thead>
-                                <tbody id="rows">
+                                    <div class="col-xs-3 ">
+                                        <?= $form->field($tache, 'designation')->textInput(['maxlength' => true, 'required' => true,])->label('<h5>Tache :<span class="text-danger">**</span></h5>'); ?>
+                                    </div>
 
-                                </tbody>
-                            </table>
+                                    <textarea name="all_tache_added" id="all_tache_added" cols="30" rows="10" style="display: none;"></textarea>
+
+                                    <div class="col-xs-4">
+                                        <button type="button" class="btn" style="background-color: #4DB6AC; color: #FFFFFF;" onclick="add_tache()"><i class="fa fa-plus"></i> Ajouter</button>
+                                        <?= Html::resetButton('<i class="fa fa fa-undo fx-8"></i>  Annuler', ['class' => 'btn btn-default']) ?>
+                                    </div>
+
+                                </div>
+
+                            </div>
                         </div>
-                        <div class="card-footer">
-                            <button type="button" class="btn btn-primary" onclick="save_projet()">Valider</button>
-                            <!-- ?= Html::a(' Quitter', ['/all_demande'], ['class' => 'btn badge-danger']) ?> -->
-                        </div>
-                        <?php ActiveForm::end(); ?>
-                    </form>
-                </div>
+                        <table class="table" id="tab_temp_preview">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Type de tache</th>
+                                    <th scope="col">Tache</th>
+                                    <!-- <th scope="col">Motif</th>
+                                <th scope="col">Action</th> -->
+                                </tr>
+                            </thead>
+                            <tbody id="rows">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" onclick="save_projet()">Valider</button>
+                        <!-- ?= Html::a(' Quitter', ['/all_demande'], ['class' => 'btn badge-danger']) ?> -->
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </form>
+                <!-- </div> -->
 
                 <!-- /form-panel -->
             </div>
-            <div class="clearfix"></div>
         </div>
     </div>
     <!-- /col-lg-12 -->
 </div>
-
-
 
 <script>
     function add_tache() {
@@ -186,10 +182,6 @@ $tache = new Tache();
                     '<span aria-hidden="true">&times;</span>' +
                     '</button>' +
                     '</div>';
-
-
-
-
                 $('#alert_place').show();
                 $('#alert_place').html(msg);
 

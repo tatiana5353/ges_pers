@@ -19,143 +19,130 @@ echo $this->render('_modal');
 <?= Alert::widget() ?>
 
 <div class="horaire-index">
-    <div class="row">
-        <div class="row-content">
-            <div class="col-lg-8 p-r-0 title-margin-right">
-                <div class="page-header">
-                    <div class="page-title">
-                        <div class="btn-lg btn-info waves-light " data-class="bg-info">
-                            <marquee behavior="alternate" direction="">
-                                <?= Html::encode($this->title) ?>
-                            </marquee>
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <ol class="breadcrumb float-right" style="float: right;">
+                    <li class="breadcrumb-item"><a href="accueil">Accueil</a></li>
+                    <li class="breadcrumb-item active">Liste des horaires</li>
+                </ol>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 p-l-1 title-margin-left">
-                <div class="page-header">
-                    <div class="page-title">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="/gespers/admin/accueil">Accueil</a>
-                            </li>
-                            <li class="breadcrumb-item active">Liste des horaires</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
     </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" style="background-color: #17a2b8;">
+            <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
+        </div>
+        <div class="panel-body">
 
-    <div class="content-panel">
-        <div class="horaire-index">
+            <div class="content-panel">
+                <div class="horaire-index">
 
 
-            <div class="row">
+                    <div class="row">
 
-                <div class="col-sm-1">
-                </div>
-                <div class="col-sm-10">
-                    <p>
-                        <?= Html::a('Ajouter une horaire', ['create'], ['class' => 'btn btn-info']) ?>
-                    </p>
-                    <div class="content-panel">
-                        <?= GridView::widget([
-                            'layout' => '{items}{pager}',
-                            'showOnEmpty' => false,
-                            'emptyText' => Utils::emptyContent(),
-                            'dataProvider' => $dataProvider,
-                            'tableOptions' => [
-                                'class' => 'table table-bordered',
-                                //'id' => 'hidden-table-info',
-                                'cellpadding' => "0",
-                                'cellspacing' => "0",
-                                'border' => "0",
-                                //'class' ="adv-table"
-                            ],
-                            'columns' => [
-                                // ['class' => 'yii\grid\SerialColumn'],
+                        <div class="col-sm-1">
+                        </div>
+                        <div class="col-sm-10">
+                            <p>
+                                <?= Html::a('Ajouter un horaire', ['create'], ['class' => 'btn btn-info']) ?>
+                            </p>
+                            <div class="content-panel">
+                                <?= GridView::widget([
+                                    'layout' => '{items}{pager}',
+                                    'showOnEmpty' => false,
+                                    'emptyText' => Utils::emptyContent(),
+                                    'dataProvider' => $dataProvider,
+                                    'tableOptions' => [
+                                        'class' => 'table table-bordered',
+                                        //'id' => 'hidden-table-info',
+                                        'cellpadding' => "0",
+                                        'cellspacing' => "0",
+                                        'border' => "0",
+                                        //'class' ="adv-table"
+                                    ],
+                                    'columns' => [
 
-                                // 'id',
-                                //'template/libelle',
+                                        [
+                                            'label' => 'Heure d\'arrivee',
+                                            'format' => ['time', 'H:i'],
+                                            'value' => 'heure_arrivee'
+                                        ],
+                                        [
+                                            'label' => 'Heure de départ',
+                                            'format' => ['time', 'php:H:i'],
+                                            'value' => 'heure_depart'
+                                        ],
 
-                                [
-                                    'label' => 'Heure d\'arrivee',
-                                    'value' => 'heure_arrivee'
-                                ],
-                                [
-                                    'label' => 'Heure de départ',
-                                    'value' => 'heure_depart'
-                                ],
+                                        [
+                                            'class' => 'yii\grid\ActionColumn',
+                                            'template' => '{delete}',
+                                            'headerOptions' => ['width' => '15'],
+                                            'buttons' => [
+                                                'delete' => function ($url, $data) {
 
-                                [
-                                    'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{delete}',
-                                    'headerOptions' => ['width' => '15'],
-                                    'buttons' => [
-                                        'delete' => function ($url, $data) {
-
-                                            if ($data->statut == 1) {
-                                                $url = 'off_horaire?key_horaire=' . $data->key_horaire;
-                                                return '<a title="' . Yii::t('app', 'delete') . '"  href="' . $url . '">'
-                                                    . '<div class="col-lg-10 col-sm-9">
+                                                    if ($data->statut == 1) {
+                                                        $url = 'off_horaire?key_horaire=' . $data->key_horaire;
+                                                        return '<a title="' . Yii::t('app', 'Desactiver') . '"  href="' . $url . '">'
+                                                            . '<div class="col-xs-10 col-xs-9">
                                                     <input type="checkbox" style="width: 20px" class="checkbox form-control" id="agree" name="agree" checked>
                                                   </div>
                                                   </a>';
-                                            } elseif ($data->statut == 2) {
-                                                $url = 'on_horaire?key_horaire=' . $data->key_horaire;
-                                                return '<a title="' . Yii::t('app', 'activer') . '"  href="' . $url . '" >'
-                                                    . '<div class="col-lg-10 col-sm-9">
+                                                    } elseif ($data->statut == 2) {
+                                                        $url = 'on_horaire?key_horaire=' . $data->key_horaire;
+                                                        return '<a title="' . Yii::t('app', 'activer') . '"  href="' . $url . '" >'
+                                                            . '<div class="col-xs-10 col-xs-9">
                                                     <input type="checkbox" style="width: 20px" class="checkbox form-control" id="agree" name="agree">
                                                   </div></a>';
-                                            } else {
-                                                return null;
-                                            }
-                                        },
-                                    ],
-                                ],
+                                                    } else {
+                                                        return null;
+                                                    }
+                                                },
+                                            ],
+                                        ],
 
-                                [
-                                    'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{update}',
-                                    'headerOptions' => ['width' => '15'],
-                                    //'visible' => $droits[3] == 1 ? true : false,
-                                    'buttons' => [
-                                        'update' => function ($url, $data) {
-                                            // $url = 'index.php?r=horaire/update&key_horaire=' . $data->key_horaire;
-                                            $url = 'horaire/update?key_horaire=' . $data->key_horaire;
-                                            return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-sm" href="' . $url . '"><i class="fa fa-edit"></i></a>';
-                                        },
-                                    ],
-                                ],
-                                [
-                                    'class' => 'yii\grid\ActionColumn',
-                                    'template' => '{delete}',
-                                    'headerOptions' => ['width' => '15'],
-                                    'buttons' => [
-                                        'delete' => function ($url, $data) {
-                                            return '<a title="' . Yii::t('app', 'delete') . '" class="btn mini btn-danger btn-sm" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_horaire(\'' . $data->key_horaire . '\')">
+                                        [
+                                            'class' => 'yii\grid\ActionColumn',
+                                            'template' => '{update}',
+                                            'headerOptions' => ['width' => '15'],
+                                            //'visible' => $droits[3] == 1 ? true : false,
+                                            'buttons' => [
+                                                'update' => function ($url, $data) {
+                                                    // $url = 'index.php?r=horaire/update&key_horaire=' . $data->key_horaire;
+                                                    $url = 'horaire/update?key_horaire=' . $data->key_horaire;
+                                                    return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-sm" href="' . $url . '"><i class="fa fa-pencil"></i></a>';
+                                                },
+                                            ],
+                                        ],
+                                        [
+                                            'class' => 'yii\grid\ActionColumn',
+                                            'template' => '{delete}',
+                                            'headerOptions' => ['width' => '15'],
+                                            'buttons' => [
+                                                'delete' => function ($url, $data) {
+                                                    return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-sm" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_horaire(\'' . $data->key_horaire . '\')">
                                     <i class="fa fa-trash"></i>
                                             </a>';
-                                        },
+                                                },
+                                            ],
+                                        ]
                                     ],
-                                ]
-                            ],
-                        ]); ?>
+                                ]); ?>
 
 
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
                     </div>
 
                 </div>
-            </div>
-            <div class="col-sm-1">
-            </div>
 
+
+            </div>
         </div>
-
-
     </div>
 </div>
 
