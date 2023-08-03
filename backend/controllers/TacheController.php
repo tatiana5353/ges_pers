@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\Affectation;
 use backend\models\Projet;
+use backend\models\Suivie;
 use Yii;
 use backend\models\Tache;
 use backend\models\TypeTache;
@@ -54,6 +55,46 @@ class TacheController extends Controller
         return $this->redirect('accueil');
     }
 
+    public function actionValider($key_element)
+    {
+        $droit_demande = Utils::have_access('demande');
+        if ($droit_demande == 1) {
+            $model = Tache::find()
+                ->where([
+                    'key_tache' => $key_element,
+                    'statut' => 0
+                ])->one();
+
+            if ($model !== null) {
+                $idtache = $model->id;
+
+                $suivie = Suivie::find()
+                    ->where(['idtache' => $idtache])
+                    ->one();
+
+                if ($suivie !== null) {
+                    $model->statut = 1;
+                    $model->updated_by = Yii::$app->user->identity->id;
+                    $model->updated_at = date('Y-m-d H:i:s');
+                    $suivie->statut = 1;
+
+                    if ($model->save() && $suivie->save()) {
+                        Yii::$app->getSession()->setFlash('success', 'Tâche validée avec succès !');
+                    } else {
+                        Yii::$app->getSession()->setFlash('error', 'Erreur lors de la validation !');
+                    }
+                } else {
+                    Yii::$app->getSession()->setFlash('error', 'Suivie introuvable pour cette tâche !');
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('error', 'Tâche introuvable ou déjà validée !');
+            }
+        } else {
+            Yii::$app->getSession()->setFlash('error', 'Vous n\'avez pas le droit de valider la tâche !');
+        }
+    }
+
+
     /**
      * Displays a single Tache model.
      * @param integer $id
@@ -62,10 +103,38 @@ class TacheController extends Controller
      */
     public function actionView($key_tache)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($key_tache),
-        ]);
+        $tache = Tache::find()
+            ->where(['key_tache' => $key_tache])
+            ->andWhere(['in', 'statut', [0, 2, 1]])
+            ->one();
+        $tache1 = Tache::find()
+            ->where(['key_tache' => $key_tache])
+            ->andWhere(['in', 'statut', [1]])
+            ->one();
+
+        if ($tache !== null) {
+            $idtache = $tache->id;
+
+            $suivie = Suivie::find()
+                ->where(['idtache' => $idtache])
+                ->one();
+
+            if ($suivie !== null && ($suivie->statut == 0 || $tache->statut == 2)) {
+                return $this->render('view_2', [
+                    'model' => $tache,
+                    'suivie' => $suivie,
+                ]);
+            } else {
+                return $this->render('view', [
+                    'model' => $tache,
+                ]);
+            }
+        } else {
+            // Gérer le cas où la tâche n'est pas trouvée
+            throw new \yii\web\NotFoundHttpException('La tâche demandée n\'existe pas.');
+        }
     }
+
 
     /**
      * Creates a new Tache model.

@@ -18,11 +18,9 @@ use Yii;
  * @property int|null $idaffectation
  * @property int|null $idprojet
  * @property int $idtypetache
- * @property int|null $idsuivie
  *
  * @property Affectation $idaffectation0
  * @property Projet $idprojet0
- * @property Suivie $idsuivie0
  * @property TypeTache $idtypetache0
  * @property User $createdBy
  * @property User $updatedBy
@@ -44,13 +42,12 @@ class Tache extends \yii\db\ActiveRecord
     {
         return [
             [['designation', 'key_tache', 'statut', 'created_by', 'created_at', 'idtypetache'], 'required'],
-            [['statut', 'created_by', 'updated_by', 'idaffectation', 'idprojet', 'idtypetache', 'idsuivie'], 'integer'],
+            [['statut', 'created_by', 'updated_by', 'idaffectation', 'idprojet', 'idtypetache'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['designation'], 'string', 'max' => 50],
             [['key_tache'], 'string', 'max' => 32],
             [['idaffectation'], 'exist', 'skipOnError' => true, 'targetClass' => Affectation::className(), 'targetAttribute' => ['idaffectation' => 'id']],
             [['idprojet'], 'exist', 'skipOnError' => true, 'targetClass' => Projet::className(), 'targetAttribute' => ['idprojet' => 'id']],
-            [['idsuivie'], 'exist', 'skipOnError' => true, 'targetClass' => Suivie::className(), 'targetAttribute' => ['idsuivie' => 'id']],
             [['idtypetache'], 'exist', 'skipOnError' => true, 'targetClass' => TypeTache::className(), 'targetAttribute' => ['idtypetache' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
@@ -74,7 +71,6 @@ class Tache extends \yii\db\ActiveRecord
             'idaffectation' => 'Idaffectation',
             'idprojet' => 'Idprojet',
             'idtypetache' => 'Idtypetache',
-            'idsuivie' => 'Idsuivie',
         ];
     }
 
@@ -96,16 +92,6 @@ class Tache extends \yii\db\ActiveRecord
     public function getIdprojet0()
     {
         return $this->hasOne(Projet::className(), ['id' => 'idprojet']);
-    }
-
-    /**
-     * Gets query for [[Idsuivie0]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getIdsuivie0()
-    {
-        return $this->hasOne(Suivie::className(), ['id' => 'idsuivie']);
     }
 
     /**

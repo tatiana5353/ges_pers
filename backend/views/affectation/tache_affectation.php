@@ -1,6 +1,7 @@
 <?php
 
 use backend\controllers\Utils;
+use backend\models\Suivie;
 use backend\models\Tache;
 use backend\models\User;
 use frontend\widgets\Alert;
@@ -48,37 +49,69 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-1">
-                                        <button class="button-style">
+
+                                        <!-- <button class="button-style" action="/fairetache">
                                             <input type="checkbox" style="background-color: #fff; color: #000; width: 18px; height: 18px; border: none solid #000; padding: none; border-radius: none; cursor: pointer;" class="checkbox form-control" id="agree" name="agree" checked>
-                                            <!--  <?= Html::button('agree', ['class' => 'checkbox form-control', 'style' => 'width: 16px; height: 16px;',]) ?>
-                                            <?= Html::button('agree', ['class' => 'checkbox form-control', 'style' => 'width: 16px; height: 16px;',]) ?>
- -->
-                                        </button>
+                                            <= Html::button('agree', ['class' => 'checkbox form-control', 'style' => 'width: 16px; height: 16px;',]) ?>
+                                           <= Html::a('qfgu', ['fairetache'],['style'=>"background-color: #fff; color: #000; width: 18px; height: 18px; border: none solid #000; padding: none; border-radius: none; cursor: pointer;"]) ?>
+ 
+                                        </button> -->
+                                        <?php
+                                        $suivie = Suivie::find()
+                                            ->where(['idtache' => $model->id])
+                                            ->orderBy(['created_at' => SORT_DESC])
+                                            ->one();
+
+
+
+                                        if ($suivie->statut == 0) {
+                                        ?> <?= Html::a('<i class="fa fa-check"></i>', ['fairetache', 'key_tache' => $model->key_tache], ['class' => 'button-style']) ?>
+
+                                        <?php  } elseif ($suivie->statut == 1) {
+                                            ;
+                                        }else {
+                                        ?> <?= Html::a('<i class="fa fa-square-o"></i>', ['fairetache', 'key_tache' => $model->key_tache], ['class' => 'button-style']) ?>
+
+                                        <?php } ?>
+                                        <!-- <?= Html::a('<i class="glyphicon glyphicon-square-o"></i>', ['fairetache', 'key_tache' => $model->key_tache], ['class' => 'button-style']) ?>
+                                            -->
                                     </div>
-                                    <div class="col-xs-10">
-                                        <!-- <p> --> <?php echo $model->designation ?> <!-- </p> -->
-                                        <!-- <div class="row">
-                                    <div class="col-xs-0">
-                                    </div>
-                                    <div class="col-xs-9">
-                                        <p> Fin : <?php echo $model->idsuivie0->commentaire_assigant ?></p>
-                                    </div>
-                                </div> -->
-                                        <!-- <div class="row">
-                                            <div class="col-xs-0">
-                                            </div>
-                                            <div class="col-xs-9"> -->
-                                        Debut: <?php echo date('d/m/Y H:i', strtotime($model->idsuivie0->date_debut)); ?><!-- </p> -->
-                                        <!--  </div>
+                                    <?php
+                                    // $date_debut = Html::encode($suivie->date_debut);
+                                    $date_prob = $suivie->date_prob;
+                                    if ($suivie->statut == 0) { ?>
+                                        <div class="col-xs-10">
+                                            <del>
+                                                <?php echo $model->designation ?>
+                                                Debut: <?php echo $date_prob ?>
+                                                Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
+                                            </del>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-xs-0">
-                                            </div>
-                                            <div class="col-xs-9"> -->
-                                        <!-- <p> --> Fin :<?php echo date('d/m/Y H:i', strtotime($model->idsuivie0->date_prob)); ?><!-- </p> -->
-                                        <!--  </div>
-                                        </div> -->
-                                    </div>
+                                    <?php } elseif ($suivie->statut == 1) {
+                                    ?>
+
+                                        <div class="col-xs-9">
+                                            <del style="text-decoration-color: green;">
+                                                <?php echo $model->designation ?>
+                                                Debut: <?php echo $date_prob ?>
+                                                Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
+                                            </del>
+                                        </div>
+
+                                        <div class="col-xs-1">
+
+                                            <span style="background-color: #008000; color: #fff; padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">VALIDEE</span>
+                                        </div>
+                                    <?php  } else {
+                                    ?>
+                                        <div class="col-xs-10">
+                                            <?php echo $model->designation ?>
+                                            Debut: <?php echo $date_prob ?>
+                                            Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
+                                        </div>
+                                    <?php
+                                    } ?>
+
                                 </div>
                             </div>
                         </div>
@@ -106,7 +139,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <?= Html::checkbox('agree', $tache->statut != 2, ['class' => 'checkbox form-control', 'style' => 'width: 16px; height: 16px;',]) ?>
                                         </div>
                                         <div class="col-xs-10">
-                                            <?php
+                                            <php
                                             $designation = Html::encode($tache->designation);
                                             if ($tache->statut == 1) {
                                                 $designation = '<del>' . $designation . '</del>';

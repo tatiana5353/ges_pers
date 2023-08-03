@@ -19,10 +19,11 @@ use Yii;
  * @property string $created_at
  * @property int|null $updated_by
  * @property string|null $updated_at
+ * @property int|null $idtache
  *
  * @property User $createdBy
  * @property User $updatedBy
- * @property Tache[] $taches
+ * @property Tache $idtache0
  */
 class Suivie extends \yii\db\ActiveRecord
 {
@@ -43,10 +44,11 @@ class Suivie extends \yii\db\ActiveRecord
             [['date_debut', 'date_fin', 'date_prob', 'created_at', 'updated_at'], 'safe'],
             [['commentaire_assigant', 'commentaire_effectuant'], 'string'],
             [['key_suivie', 'statut', 'created_by', 'created_at'], 'required'],
-            [['statut', 'created_by', 'updated_by'], 'integer'],
+            [['statut', 'created_by', 'updated_by', 'idtache'], 'integer'],
             [['key_suivie'], 'string', 'max' => 32],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
+            [['idtache'], 'exist', 'skipOnError' => true, 'targetClass' => Tache::className(), 'targetAttribute' => ['idtache' => 'id']],
         ];
     }
 
@@ -68,6 +70,7 @@ class Suivie extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_by' => 'Updated By',
             'updated_at' => 'Updated At',
+            'idtache' => 'Idtache',
         ];
     }
 
@@ -92,12 +95,12 @@ class Suivie extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Taches]].
+     * Gets query for [[Idtache0]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTaches()
+    public function getIdtache0()
     {
-        return $this->hasMany(Tache::className(), ['idsuivie' => 'id']);
+        return $this->hasOne(Tache::className(), ['id' => 'idtache']);
     }
 }

@@ -14,10 +14,11 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="tache-view">
-
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
+            <button id="btnQuitter"><i class=" fa fa-arrow-left"></i></button>
+
                 <ol class="breadcrumb float-right" style="float: right;">
                     <li class="breadcrumb-item"><a href="accueil">Accueil</a></li>
                     <li class="breadcrumb-item"><a href="/gespers/admin/all_tache"> Liste des taches</a></li>
@@ -28,20 +29,20 @@ $this->params['breadcrumbs'][] = $this->title;
         </div><!-- /.container-fluid -->
     </div>
     <!-- Inclure la bibliothèque jQuery si ce n'est pas déjà fait -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<button id="btnQuitter">Quitter</button>
+    
 
-<!-- Le script JavaScript pour gérer le clic sur le bouton "Quitter" -->
-<script>
-    $(document).ready(function() {
-        // Ajouter un gestionnaire d'événement au clic sur le bouton
-        $("#btnQuitter").on("click", function() {
-            // Utiliser la fonction history.back() pour revenir à la page précédente
-            history.back();
+    <!-- Le script JavaScript pour gérer le clic sur le bouton "Quitter" -->
+    <script>
+        $(document).ready(function() {
+            // Ajouter un gestionnaire d'événement au clic sur le bouton
+            $("#btnQuitter").on("click", function() {
+                // Utiliser la fonction history.back() pour revenir à la page précédente
+                history.back();
+            });
         });
-    });
-</script>
+    </script>
 
     <div class="panel panel-default">
         <div class="row mt">
@@ -49,9 +50,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <section class="task-panel tasks-widget">
                     <div class="panel-heading">
                         <div class=" btn-lg waves-effect waves-light bg-info" data-class="bg-primary">
-                            <marquee behavior="alternate" direction="">
+                            
                                 Détail sur la tache :<h7><?= Html::encode($this->title) ?></h7>
-                            </marquee>
+                           
                         </div>
                     </div>
 
@@ -60,6 +61,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= DetailView::widget([
                             'model' => $model,
                             'attributes' => [
+
+                                [
+                                    'label' => 'Projet',
+                                    'value' => function ($data) {
+                                        return $data->idprojet0->libelle ?? '';
+                                    }
+                                ],
+
                                 [
                                     'label' => 'Type de tache',
                                     'value' => function ($data) {
@@ -67,13 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     }
                                 ],
                                 'designation',
-                                'description:ntext',
-                                [
-                                    'label' => 'Projet',
-                                    'value' => function ($data) {
-                                        return $data->idprojet0->libelle ?? '';
-                                    }
-                                ],
+                               // 'description:ntext',
 
                             ],
                         ])

@@ -2,6 +2,7 @@
 
 use backend\controllers\Utils;
 use backend\models\Affectation;
+use backend\models\Suivie;
 use backend\models\User;
 use frontend\widgets\Alert;
 use yii\helpers\Html;
@@ -60,8 +61,11 @@ echo $this->render('_modal');
                                     //'class' ="adv-table"
                                 ],
                                 'columns' => [
-                                    ['class' => 'yii\grid\SerialColumn'],
-
+                                    [
+                                        'class' => 'yii\grid\SerialColumn',
+                                        'headerOptions' => ['width' => '15'],
+                                        'header' => 'N°'
+                                    ],
                                     // 'id',
                                     [
                                         'label' => 'Type de tache',
@@ -73,26 +77,32 @@ echo $this->render('_modal');
                                         'label' => 'Désignation',
                                         'value' => 'designation',
                                     ],
-                                   /*  [
-                                        'header' => 'Description',
-                                        'value' => 'description',
-                                    ],
                                     [
-                                        'attribute' => 'description',
-                                        'header' => 'Description',
-                                    ], */
-
-                                    //'heure_debut',
-                                    //'heure_fin',
-                                    //'key_tache',
-                                    //'statut',
-                                    //'created_by',
-                                    //'created_at',
-                                    //'updated_by',
-                                    //'updated_at',
-                                    //'idaffectation',
-                                    //'idprojet',
-
+                                        'attribute' => 'statut',
+                                        'header' => 'Statut',
+                                        /*  'filter' => ['Y'=>'Active', 'N'=>'Deactive'], */
+                                        'format' => 'raw',
+                                        'label' => 'Etat',
+                                        'value' =>  function ($data) {
+                                            $suivie = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->orderBy(['created_at' => SORT_DESC])
+                                                ->one();
+                                            if ($data->statut !== 2) {
+                                                if (($suivie->statut == 0)) {
+                                                    return '<span style="background-color: #808080; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">REALISER</span>';
+                                                } elseif (($suivie->statut == 1)) {
+                                                    return '<span style="background-color: #5cb85c; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> VALIDEE </span>';
+                                                } elseif (($suivie->statut == 2)) {
+                                                    return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> AFFECTEE </span>';
+                                                } else {
+                                                    return '';
+                                                }
+                                            } else {
+                                                return '<span style="background-color: #D3D3D3; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> NON AFFECTEE </span>';
+                                            }
+                                        },
+                                    ],
 
                                     [
                                         'class' => 'yii\grid\ActionColumn',
@@ -110,6 +120,7 @@ echo $this->render('_modal');
                                             },
                                         ],
                                     ],
+
                                     [
                                         'class' => 'yii\grid\ActionColumn',
                                         'template' => '{update}',
@@ -136,22 +147,8 @@ echo $this->render('_modal');
                                     ]
                                 ],
                             ]); ?>
-<!-- 
-                            <?= ListView::widget([
-                                'dataProvider' => $dataProvider,
-                                'showOnEmpty' => false,
-                                'emptyText' => Utils::emptyContent(),
-                                'itemView' => function ($model, $item, $key, $widgets) {
-                                    $affectation = User::findOne($model->idaffectation);
-                                    //  $tache = $model->tacheRel;
-                            ?>
 
 
-                            <?php   }
-                            ]);
-                            ?> -->
-
-                         
                         </div>
                     </div>
                 </div>

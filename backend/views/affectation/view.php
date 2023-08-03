@@ -1,6 +1,7 @@
 <?php
 
 use backend\controllers\Utils;
+use backend\models\Suivie;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -8,7 +9,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Affectation */
 
-$this->title = "Employé " ;
+$this->title = "Employé ";
 $this->params['breadcrumbs'][] = ['label' => 'Affectations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -32,11 +33,11 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-lg-4">
                     <div class="panel panel-default" stle="background-color: #7dc3e8;">
-                        
-                            <div class="panel-heading" style="background-color: #17a2b8;">
-                                <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
-                            </div>
-                        
+
+                        <div class="panel-heading" style="background-color: #17a2b8;">
+                            <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
+                        </div>
+
                         <div class="panel-body">
                             <?= DetailView::widget([
                                 'model' => $model,
@@ -47,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     [
                                         'label' => 'Nom',
                                         'value' => function ($data) {
-                                            return $data->iduser0->nom . " ". $data->iduser0->prenoms ;
+                                            return $data->iduser0->nom . " " . $data->iduser0->prenoms;
                                         }
                                     ]
                                 ],
@@ -90,33 +91,68 @@ $this->params['breadcrumbs'][] = $this->title;
                                         }
                                     ],
 
+
+
+                                    [
+                                        'label' => 'Debut de la tache',
+                                        'value' => function ($model) {
+                                            $suivie = Suivie::find()
+                                                ->where(['idtache' => $model->id])
+                                                ->orderBy(['created_at' => SORT_DESC])
+                                                ->one();
+
+                                            return $suivie !== null ? date('d/m/Y H:i', strtotime($suivie->date_prob)) : 'Non disponible';
+                                        },
+                                    ],
+                                    [
+                                        'label' => 'Fin de la tache',
+                                        'value' => function ($model) {
+                                            $suivie = Suivie::find()
+                                                ->where(['idtache' => $model->id])
+                                                ->orderBy(['created_at' => SORT_DESC])
+                                                ->one();
+
+                                            return $suivie !== null ? date('d/m/Y H:i', strtotime($suivie->date_prob)) : 'Non disponible';
+                                        },
+                                    ],
+                                    [
+                                        'attribute' => 'statut',
+                                        'header' => 'Statut',
+                                        /*  'filter' => ['Y'=>'Active', 'N'=>'Deactive'], */
+                                        'format' => 'raw',
+                                        'label' => 'Etat',
+                                        'value' =>  function ($data) {
+                                            $suivie = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->orderBy(['created_at' => SORT_DESC])
+                                                ->one();
+                                            if (($suivie->statut == 0)) {
+                                                return '<span style="background-color: #337ab7; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">AFFECTEE</span>';
+                                            } elseif (($suivie->statut == 1)) {
+                                                return '<span style="background-color: #5cb85c; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> VALIDEE </span>';
+                                            } elseif (($suivie->statut == 2)) {
+                                                return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> NON AFFECTEE </span>';
+                                            } else {
+                                                return '';
+                                            }
+                                        },
+                                    ],
                                     [
                                         'class' => 'yii\grid\ActionColumn',
                                         'template' => '{view}',
                                         'headerOptions' => ['width' => '15'],
                                         'buttons' => [
                                             'view' => function ($url, $data) {
-                                                //$droit = Utils::have_access('traiteraffectation');
-                                                /* if (($data->statut == 4)) {
-                                        $url = 'view_affectation?key_affectation=' . $data->key_affectation;
-                                        return '<button type="button" class="btn btn-xs btn-success"><a title="' . Yii::t('app', 'Détail') . '" class="
-                                    " href="#" data-toggle="modal" data-target="#exampleModal2" onclick="affiche_motif(\'' . $data->motif_refus . '\')"> 
-                                    <i class=" fa fa-eye" style="color: red;"></i></a> </button>';
-                                    } else if (($data->statut == 0)) { */
+
                                                 $url = 'view_tache?key_tache=' . $data->key_tache;
                                                 return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
-                                <i class=" fa fa-eye"></i>
-                                </a>';
-                                                // }
-                                                /* } else if ($droit == 1) {
-                                        $url = 'view_affectation?key_affectation=' . $data->key_affectation;
-                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
-                                <i class=" fa fa-eye"></i>
-                                </a>';
-                                    } */
+                                                <i class=" fa fa-eye"></i>
+                                                </a>';
                                             },
                                         ],
                                     ],
+
+                                    
 
                                 ],
 

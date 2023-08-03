@@ -39,13 +39,19 @@ class AffectationController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Affectation::find(),
-        ]);
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+        $droit = Utils::have_access('consulter_affectation');
+        if ($droit == 1) {
+            $dataProvider = new ActiveDataProvider([
+                'query' => Affectation::find(),
+            ]);
+    
+            return $this->render('index', [
+                'dataProvider' => $dataProvider,
+            ]);
+        }else {
+           return $this->redirect('accueil');
+        }
+        
     }
 
     /**
@@ -56,33 +62,95 @@ class AffectationController extends Controller
      */
     public function actionView($key_affectation)
     {
-        {
-            $droit_projet = Utils::have_access('projet');
-            if ($droit_projet == 1) {
-    
-    
-                $user = User::find()
-                    ->where([
-    
-                        'status' => 10
-    
-                    ])->all();
-                $model = Affectation::find()
-                    ->where([
-                           'key_affectation' => $key_affectation,
-                            'statut' => 0
-                    ])->one();
-                $dataProvider = new ActiveDataProvider([
-                    'query' => Tache::find()
-                        ->where(['idaffectation' => $model->id])->andWhere(['<>', 'statut', 3]), 'pagination' => ['pageSize' => 5]
-                ]);
-                return $this->render('view', [
-                    'model' => $model,
-                    'user' => $user,
-                    'dataProvider' => $dataProvider,
-                ]);
-            }
+        $droit_projet = Utils::have_access('projet');
+        if ($droit_projet == 1) {
+
+
+            $user = User::find()
+                ->where([
+
+                    'status' => 10
+
+                ])->all();
+            $model = Affectation::find()
+                ->where([
+                    'key_affectation' => $key_affectation,
+                    'statut' => 0
+                ])->one();
+            $dataProvider = new ActiveDataProvider([
+                'query' => Tache::find()
+                    ->where(['idaffectation' => $model->id])->andWhere(['<>', 'statut', 3]), 'pagination' => ['pageSize' => 5]
+            ]);
+            return $this->render('view', [
+                'model' => $model,
+                'user' => $user,
+                'dataProvider' => $dataProvider,
+            ]);
         }
+    }
+
+    
+
+
+    public function actionFairetache($key_tache)
+    {
+        $model = new Suivie();
+        if (Yii::$app->request->post()) {
+
+            if ($model->load($this->request->post())) {
+                $tache = Tache::find()
+                    ->where([
+                        'key_tache' => $key_tache,
+                        'statut' => 0
+                    ])->one();
+                    $id = $tache->id;
+               // $idsuivie = $tache->idsuivie;
+                $suivie = Suivie::find()
+                    ->where([
+                        'idtache' => $id,
+                        'statut' => 2
+                    ])->one();
+                if ($suivie != null) {
+                    $suivie->updated_at = date('Y-m-d H:i:s');
+                    $suivie->updated_by = Yii::$app->user->identity->id;
+                    $suivie->statut = 0;
+                    $suivie->commentaire_effectuant = $model->commentaire_effectuant;
+                    if ($suivie->save()) {
+                        Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+                        return $this->redirect('tache_affectation');
+                    } else {
+                        Yii::$app->getSession()->setFlash('erreur', 'erreur lors de l\'enregistrement!');
+                        $suivie->loadDefaultValues();
+                    }
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('info', 'vous n\'avez rien renseigné !');
+            }
+        } else {
+            //Yii::$app->getSession()->setFlash('info', 'veullez renseigner le formulaire');
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('faire_tache', [
+            'model' => $model,
+
+        ]);
+    }
+
+    public function actionVue_realisation()
+    {
+        $idtache = Suivie::find()
+            ->select(['idtache'])
+            ->where(['statut' => 0]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => Tache::find()
+                ->where(['in', 'id', $idtache])
+        ]);
+
+        return $this->render('vue_realisation', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function getTacheRel()
@@ -115,6 +183,16 @@ class AffectationController extends Controller
                 $all_data = explode("*", $e);
                 for ($i = 0; $i < sizeof($all_data); $i++) {
                     $final_selected_value = explode(";;;", $all_data[$i]);
+
+                    $tache = Tache::findOne($final_selected_value[0]);
+                   // $tache->key_tache =  Yii::$app->security->generateRandomString(32);
+                    $tache->idaffectation = $affectation->id;
+                    $tache->statut = 0;
+                   /*  $tache->updated_by = Yii::$app->user->identity->id;
+                    $tache->updated_at = date('Y-m-d H:i:s'); */
+                    // $tache->idsuivie = $suivie->id;
+                    $tache->save();
+
                     $suivie = new Suivie();
                     $suivie->commentaire_assigant = $final_selected_value[1];
                     $suivie->date_debut = $final_selected_value[2];
@@ -122,17 +200,11 @@ class AffectationController extends Controller
                     $suivie->created_at = date('Y-m-d H:i:s');
                     $suivie->created_by = Yii::$app->user->identity->id;
                     $suivie->statut = 2;
+                    $suivie->idtache = $tache->id;
                     $suivie->key_suivie = Yii::$app->security->generateRandomString(32);
                     $suivie->save();
 
-                    $tache = Tache::findOne($final_selected_value[0]);
-                    $tache->key_tache =  Yii::$app->security->generateRandomString(32);
-                    $tache->idaffectation = $affectation->id;
-                    $tache->statut = 0;  
-                    $tache->updated_by = Yii::$app->user->identity->id;
-                    $tache->updated_at = date('Y-m-d H:i:s');
-                    $tache->idsuivie = $suivie-> id;
-                    $tache->save();
+
 
                     if ($i == sizeof($all_data) - 1) {
                         Yii::$app->session->setFlash('success', 'Affectation faite enregistrée avec succès');
@@ -171,10 +243,14 @@ class AffectationController extends Controller
             ->where(['iduser' => Yii::$app->user->identity->id]);
         /* $selectTache =  Tache::find()
             ->where(['in', 'idaffectation', $userAffectationId]); */
+            /* $idtache = Suivie::find()
+            ->select(['idtache']); */
+            
 
         $dataProvider = new ActiveDataProvider([
             'query' => Tache::find()
                 ->where(['in', 'idaffectation', $userAffectationId])
+               // ->andWhere(['in', 'id', $idtache])
         ]);
 
         return $this->render('tache_affectation', [

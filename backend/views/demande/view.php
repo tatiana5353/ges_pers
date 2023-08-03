@@ -42,16 +42,16 @@ echo $this->render('_modal_valider');
             </div> -->
     <div class="panel panel-default">
         <div class="panel-heading" style="background-color: #17a2b8;">
-            <h3 class="panel-title" style="color: #ffffff;">  Détail sur la demande N°:<?= Html::encode($this->title) ?></h3>
+            <h3 class="panel-title" style="color: #ffffff;"> Détail sur la demande N°:<?= Html::encode($this->title) ?></h3>
         </div>
         <div class="panel-body">
             <div class="content-panel">
                 <!-- <div class="panel panel-default"> -->
-                    <!-- <div class="row mt"> -->
-                        <!-- <div class="col-md-12"> -->
-                           <!--  <section class="task-panel tasks-widget"> -->
-                               
-                                <!-- // <div class="col-lg-3">
+                <!-- <div class="row mt"> -->
+                <!-- <div class="col-md-12"> -->
+                <!--  <section class="task-panel tasks-widget"> -->
+
+                <!-- // <div class="col-lg-3">
                                 <?php $droit_traitement = Utils::have_access('Demande');
                                 if ($droit_traitement == 1) { ?>
                                     <?= Html::a('Valider', ['validate', 'key_demande' => $model->key_demande], ['class' => 'btn btn-success ']) ?>
@@ -67,75 +67,75 @@ echo $this->render('_modal_valider');
                                     </div>
 
                                     </div> -->
-                                
-                                <!-- <div class="panel-body"> -->
-                                    <?= DetailView::widget([
-                                        'model' => $model,
-                                        'attributes' =>
-                                        [
 
-                                            [
-                                                'attribute' => 'numero',
-                                                'header' => 'Numéro',
-                                            ],
+                <!-- <div class="panel-body"> -->
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'attributes' =>
+                    [
 
-
-                                            [
-                                                'label' => 'Nom du personnel',
-                                                'value' => function ($data) {
-                                                    return $data->createdBy->nom . ' ' . $data->createdBy->prenoms;
-                                                }
-                                            ],
+                        [
+                            'attribute' => 'numero',
+                            'header' => 'Numéro',
+                        ],
 
 
+                        [
+                            'label' => 'Nom du personnel',
+                            'value' => function ($data) {
+                                return $data->createdBy->nom . ' ' . $data->createdBy->prenoms;
+                            }
+                        ],
 
-                                            [
-                                                'label' => 'Type de congé',
-                                                'value' => $model->idtypeconge0->libelle,
-                                            ],
 
-                                            [
-                                                'attribute' => 'motif',
-                                                'header' => 'Motif du congé',
-                                            ],
 
-                                            [
-                                                'attribute' => 'debutconge',
-                                                'header' => 'Debut de congé',
-                                            ],
-                                            [
-                                                'attribute' => 'finconge',
-                                                'header' => 'Fin de congé',
-                                            ],
-                                            [
-                                                'attribute' => 'statut',
-                                                'header' => 'Statut',
-                                                'format' => 'raw',
-                                                'value' => function ($data) {
-                                                    $data = $data['statut'];
-                                                    if ($data == '0') {
-                                                        return 'En attente';
-                                                    } elseif ($data == '1') {
-                                                        return 'Validée';
-                                                    } elseif ($data == '2') {
-                                                        return 'Servie';
-                                                    } elseif ($data == '4') {
-                                                        return 'Rejettée';
-                                                    }
-                                                },
-                                            ],
-                                        ],
-                                    ]) ?>
+                        [
+                            'label' => 'Type de congé',
+                            'value' => $model->idtypeconge0->libelle,
+                        ],
 
-                                    <div class="add-task-row">
+                        [
+                            'attribute' => 'motif',
+                            'header' => 'Motif du congé',
+                        ],
 
-                                        <?php $droit_traitement = Utils::have_access('traiterdemande');
-                                        $statut = $model->statut;
-                                        if ($droit_traitement == 1) {
-                                            if ($statut == 0) {
-                                        ?>
+                        [
+                            'attribute' => 'debutconge',
+                            'header' => 'Debut de congé',
+                        ],
+                        [
+                            'attribute' => 'finconge',
+                            'header' => 'Fin de congé',
+                        ],
+                        [
+                            'attribute' => 'statut',
+                            'header' => 'Statut',
+                            'format' => 'raw',
+                            'value' => function ($data) {
+                                $data = $data['statut'];
+                                if ($data == '0') {
+                                    return 'En attente';
+                                } elseif ($data == '1') {
+                                    return 'Validée';
+                                } elseif ($data == '2') {
+                                    return 'Servie';
+                                } elseif ($data == '4') {
+                                    return 'Rejettée';
+                                }
+                            },
+                        ],
+                    ],
+                ]) ?>
 
-                                                <!-- <= Html::a(
+                <div class="add-task-row">
+
+                    <?php $droit_traitement = Utils::have_access('traiterdemande');
+                    $statut = $model->statut;
+                    if ($droit_traitement == 1) {
+                        if ($statut == 0) {
+                    ?>
+
+                            <!-- <= Html::a(
                                         'Valider',
                                         ['validate', 'key_demande' => $model->key_demande],
                                         [
@@ -149,41 +149,41 @@ echo $this->render('_modal_valider');
                                                 },
                                             ],
                                         ]
-                                    ) ?> -->
+                                            ) ?> -->
 
 
 
-                                                <!-- <= Html::button('Valider', [
-                                        'class' => 'btn mini btn-danger btn-sm',
-                                        'data-toggle'=>'modal' ,
-                                        'data-target'=>'#exampleModal',
-                                        'onclick' => 'validate_demande("' . $model->key_demande . '")',
-                                    ]) ?> -->
+                            <!-- <= Html::button('Valider', [
+                                                'class' => 'btn mini btn-danger btn-sm',
+                                                'data-toggle'=>'modal' ,
+                                                'data-target'=>'#exampleModal',
+                                                'onclick' => 'validate_demande("' . $model->key_demande . '")',
+                                            ]) ?> -->
 
-                                                <?php
-                                                //echo Html::a('<i class="icon fas fa-check">Validé</i>', ['valider', 'key' => $model->key_demande], ['onclick'=>'valider_demande(\'' . $data->key_demande . '\')', 'class' => 'btn btn-info btn-sm']);
-                                                /* echo Html::a('<i class="icon fas fa-check">Validé</i>', ['valider', 'key' => $model->key_demande],
-                                    ['onclick'=>'valider_demande(\'' . $model->key_demande . '\')', 'class' => 'btn btn-info btn-sm']); */
-                                                /* echo Html::a(
-                                        '<i class="icon fas fa-check">Validé</i>',
-                                        '#',
-                                        ['onclick' => 'valider_demande(\'' . $model->key_demande . '\')', 'class' => 'btn btn-info btn-sm']
-                                    ); */
-                                                echo '<button type="button" onclick="valider_demande(\'' . $model->key_demande . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#exampleModal"><i class="icon fas fa-check"></i> Validé</button>';
+                            <?php
+                            //echo Html::a('<i class="icon fas fa-check">Validé</i>', ['valider', 'key' => $model->key_demande], ['onclick'=>'valider_demande(\'' . $data->key_demande . '\')', 'class' => 'btn btn-info btn-sm']);
+                            /* echo Html::a('<i class="icon fas fa-check">Validé</i>', ['valider', 'key' => $model->key_demande],
+                                            ['onclick'=>'valider_demande(\'' . $model->key_demande . '\')', 'class' => 'btn btn-info btn-sm']); */
+                            /* echo Html::a(
+                                                '<i class="icon fas fa-check">Validé</i>',
+                                                '#',
+                                                ['onclick' => 'valider_demande(\'' . $model->key_demande . '\')', 'class' => 'btn btn-info btn-sm']
+                                            ); */
+                            echo '<button type="button" onclick="valider_demande(\'' . $model->key_demande . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#exampleModal"><i class="icon fas fa-check"></i> Validé</button>';
 
-                                                ?>
+                            ?>
 
 
-                                                <?= Html::a('Refuser', ['refus', 'key_demande' => $model->key_demande], ['class' => 'btn btn-danger m-b-10 m-l-5']) ?>
-                                            <?php    } ?>
+                            <?= Html::a('Refuser', ['refus', 'key_demande' => $model->key_demande], ['class' => 'btn btn-danger m-b-10 m-l-5']) ?>
+                        <?php    } ?>
 
-                                        <?php  } ?>
-                                    </div>
-                               <!--  </div> -->
-                            <!-- </section> -->
-                        <!-- </div> -->
-                        <!-- /col-md-12-->
-                    <!-- </div> -->
+                    <?php  } ?>
+                </div>
+                <!--  </div> -->
+                <!-- </section> -->
+                <!-- </div> -->
+                <!-- /col-md-12-->
+                <!-- </div> -->
                 <!-- </div> -->
             </div>
         </div>

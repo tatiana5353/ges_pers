@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'libelle')->textInput(['maxlength' => true, 'required' => true])->label('<h5>Libelle<span class="text-danger">**</span></h5>
 
-') ?>
+    ') ?>
 
     <!-- <?= $form->field($model, 'key_typeconge')->textInput(['maxlength' => true]) ?>
 
@@ -28,13 +28,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'updated_at')->textInput() ?> -->
 
-                <div class="add-task-row mb-2">
-                    
-                    <div class="form-group">
-                        <?= Html::submitButton('Enregistrer', ['class' => 'btn btn-primary m-b-10 m-l-5  ']) ?></button>
-                        <?= Html::resetButton(' Annuler ', ['class' => 'btn btn-default m-b-10 m-l-7 ']) ?></button>
-                    </div>
-                </div>
+    <div class="add-task-row mb-2">
+
+        <div class="form-group">
+            <?= Html::submitButton('Enregistrer', ['class' => 'btn btn-primary m-b-10 m-l-5  ']) ?></button>
+            <?= Html::resetButton(' Annuler ', ['class' => 'btn btn-default m-b-10 m-l-7 ']) ?></button>
+        </div>
+    </div>
     <?php ActiveForm::end(); ?>
 
 </div>

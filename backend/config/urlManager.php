@@ -66,12 +66,13 @@ $tab_url = array(
 	'view_affectation' => 'affectation/view',
 	'save_affectation' => 'affectation/save_affectation',
 	'tache_affectation' => 'affectation/tache_affectation',
-
+	'faire_tache' => 'affectation/faire_tache',
+	'vue_realisation' => 'affectation/vue_realisation',
 
 	'add_projettache' => 'projet/createtache',
 	'update_projettache' => 'projet/updatetache',
 	'delete_projettache' => 'projet/deletetache',
-	
+
 	'finir_projettache' => 'projet/finirtache',
 
 	//Projettype de taches
@@ -86,6 +87,7 @@ $tab_url = array(
 	'delete_tache' => 'tache/delete',
 	'update_tache' => 'tache/update',
 	'view_tache' => 'tache/view',
+	'valider_tache' => 'tache/valider',
 
 
 );
