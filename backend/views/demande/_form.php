@@ -8,6 +8,10 @@ use yii\widgets\ActiveForm;
 /* @var $model backend\models\Demande */
 /* @var $form yii\widgets\ActiveForm */
 ?>
+<?php
+// Obtenez la date actuelle avec l'heure au format YYYY-MM-DD HH:MM:SS
+$currentDate = date('Y-m-d H:i');
+?>
 
 <div class="demande-form">
 
@@ -18,13 +22,13 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'idtypeconge')->dropdownlist(
                 ArrayHelper::map($typeconge, 'id', 'libelle'),
-                ['prompt' => 'choisir un type de congé', 'required' => true],
+                ['prompt' => 'choisir un type d\'absence', 'required' => true],
                 ['class' => 'ui search dropdown']
-            )->error(false)->label('<span class="text-dark">Type de congé</span><span class="text-danger">**</span>') ?>
+            )->error(false)->label('<span class="text-dark">Type d\'absence</span><span class="text-danger">**</span>') ?>
 
-            <?= $form->field($model, 'debutconge')->textInput(['type' => 'datetime-local', 'required' => true])->label('<span class="text-dark">Debut-congé</span><span class="text-danger">**</span>') ?>
+            <?= $form->field($model, 'debutconge')->textInput(['type' => 'datetime-local', 'required' => true, 'min' => $currentDate])->label('<span class="text-dark">Debut-Absence</span><span class="text-danger">**</span>') ?>
 
-            <?= $form->field($model, 'finconge')->textInput(['type' => 'datetime-local', 'required' => true])->label('<span class="text-dark">Fin-congé</span><span class="text-danger">**</span>') ?>
+            <?= $form->field($model, 'finconge')->textInput(['type' => 'datetime-local', 'required' => true, 'min' => $currentDate])->label('<span class="text-dark">Fin-Absence</span><span class="text-danger">**</span>') ?>
 
         </div>
         <div class="col-lg-4">

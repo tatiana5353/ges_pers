@@ -139,7 +139,9 @@ class AffectationController extends Controller
 
     public function actionVue_realisation()
     {
-        $idtache = Suivie::find()
+        $droit = Utils::have_access('consulter_affectation');
+        if ($droit == 1) {
+            $idtache = Suivie::find()
             ->select(['idtache'])
             ->where(['statut' => 0]);
 
@@ -151,6 +153,10 @@ class AffectationController extends Controller
         return $this->render('vue_realisation', [
             'dataProvider' => $dataProvider,
         ]);
+        }else {
+            return $this->redirect('accueil');
+        }
+      
     }
 
     public function getTacheRel()

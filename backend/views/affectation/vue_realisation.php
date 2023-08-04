@@ -8,7 +8,7 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'NOMS DES PERSONNES A QUI LES TACHES SONT ASSIGNEES';
+$this->title = 'TACHES REALISEES';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?= Alert::widget() ?>
