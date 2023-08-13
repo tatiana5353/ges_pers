@@ -26,8 +26,7 @@ class TypetacheController extends Controller
                 'actions' => [
                     'delete' => ['POST'],
                 ],
-            ], */
-        ];
+            ], */];
     }
 
     /**
@@ -82,7 +81,7 @@ class TypetacheController extends Controller
                     $model->created_by = Yii::$app->user->identity->id;
                     $model->statut = 1;
                     $model->key_typetache = Yii::$app->security->generateRandomString(32);
-                    $model->libelle =trim(preg_replace('/\s+/', ' ', $model->libelle));
+                    $model->libelle = trim(preg_replace('/\s+/', ' ', $model->libelle));
                     $libelle = $model->libelle;
                     $libelleFind = Typetache::find()
                         ->where([
@@ -131,48 +130,51 @@ class TypetacheController extends Controller
         $droit_typetache = Utils::have_access('conge');
         if ($droit_typetache == 1) {
             $model2 = new Typetache();
-            $model2->load($this->request->post());
-            $model2->created_at = date('Y-m-d H:i:s');
-            $model2->created_by = Yii::$app->user->identity->id;
-            $model2->statut = 1;
-            $model2->key_typetache = Yii::$app->security->generateRandomString(32);
-            $model2->libelle = trim(preg_replace('/\s+/', ' ', $model2->libelle));
             $model = $this->findModel($key_typetache);
-            if ($model != null) {
-                $model->updated_by = Yii::$app->user->identity->id;
-                $model->updated_at = date('Y-m-d H:i:s');
+            if ($model2->load($this->request->post())) {
+                $model2->created_at = date('Y-m-d H:i:s');
+                $model2->created_by = Yii::$app->user->identity->id;
+                $model2->statut = 1;
+                $model2->key_typetache = Yii::$app->security->generateRandomString(32);
+                $model2->libelle = trim(preg_replace('/\s+/', ' ', $model2->libelle));
+               
+                if ($model != null) {
+                    $model->updated_by = Yii::$app->user->identity->id;
+                    $model->updated_at = date('Y-m-d H:i:s');
 
-                $id = $model->id;
-                $libelle = $model2->libelle;
-                $libelleFind = Typetache::find()
-                    ->where(['libelle' => $libelle, 'statut' => 1])
-                    ->andWhere(['<>', 'id', $id])->all();
+                    $id = $model->id;
+                    $libelle = $model2->libelle;
+                    $libelleFind = Typetache::find()
+                        ->where(['libelle' => $libelle, 'statut' => 1])
+                        ->andWhere(['<>', 'id', $id])->all();
 
-                if ($libelleFind == null) {
+                    if ($libelleFind == null) {
 
-                    if ($model2->libelle == trim(preg_replace('/\s+/', ' ', $model->libelle))) {
-                        Yii::$app->getSession()->setFlash('info', 'Vous n\'avez apporter aucune modification !');
-                        $model2->loadDefaultValues();
-                    } else {
-                        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                            Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
-                            return $this->redirect('all_typetache');
-                        }else {
+                        if ($model2->libelle == trim(preg_replace('/\s+/', ' ', $model->libelle))) {
+                            Yii::$app->getSession()->setFlash('info', 'Vous n\'avez apporter aucune modification !');
                             $model2->loadDefaultValues();
-                           Yii::$app->getSession()->setFlash('error', 'Echec d\'enregistrement veuillez bien remplir tous les champ obligatoires');
+                        } else {
+                            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                                Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+                                return $this->redirect('all_typetache');
+                            } else {
+                                $model2->loadDefaultValues();
+                                Yii::$app->getSession()->setFlash('error', 'Echec d\'enregistrement veuillez bien remplir tous les champ obligatoires');
+                            }
                         }
+                    } else {
+                        Yii::$app->getSession()->setFlash('error', 'Type de tache déjà existant !');
+                        $model2->loadDefaultValues();
                     }
                 } else {
-                    Yii::$app->getSession()->setFlash('error', 'Type de tache déjà existant !');
-                    $model2->loadDefaultValues();
+                    return $this->redirect('accueil');
                 }
-            } else {
-                return $this->redirect('accueil');
             }
+
 
             return $this->render('update', [
                 'model' => $model,
-                /* 'model' => $model2, */
+
             ]);
         } else {
             return $this->redirect('accueil');
@@ -193,28 +195,37 @@ class TypetacheController extends Controller
         if ($droit_typetache == 1) {
             $model = $this->findModel($key_element);
             if ($model != null) {
-                $mt = Tache::find()->where(['or',
-                ['statut' => 1, 
-                'idtypetache' => $model->id],
-                ['statut' => 0, 
-                'idtypetache' => $model->id]
+                $mt = Tache::find()->where([
+                    'or',
+                    [
+                        'statut' => 1,
+                        'idtypetache' => $model->id
+                    ],
+                    [
+                        'statut' => 0,
+                        'idtypetache' => $model->id
+                    ],
+                    [
+                        'statut' => 2,
+                        'idtypetache' => $model->id
+                    ]
                 ])->count();
                 if ($mt > 0) {
-                    Yii::$app->getSession()->setFlash('error', 'Vous ne pouvez pas supprimer ce type de congé car il est déjà enregistré !');
-                }else{
+                    Yii::$app->getSession()->setFlash('error', 'Vous ne pouvez pas supprimer ce type de tache car il est déjà enregistré !');
+                } else {
                     $model->statut = 3;
                     $model->updated_by = Yii::$app->user->identity->id;
                     $model->updated_at = date('Y-m-d H:i:s');
-    
+
                     if ($model->save()) {
                         Yii::$app->getSession()->setFlash('success', 'Type de tache supprimer avec succès !');
-                       // return $this->redirect('all_typeconge');
+                        // return $this->redirect('all_typeconge');
                     } else {
                         Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
                     }
                 }
             } else Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
-        } 
+        }
     }
 
     /**
@@ -226,18 +237,17 @@ class TypetacheController extends Controller
      */
     protected function findModel($key_typetache)
     {
-        
-            $model = Typetache::find()
-                ->where([
-                    'key_typetache' => $key_typetache,
-                    'statut' => 1
-                ])->one();
-    
-            if ($model != null) {
-                return $model;
-            } else {
-                return null;
-            }
-        
+
+        $model = Typetache::find()
+            ->where([
+                'key_typetache' => $key_typetache,
+                'statut' => 1
+            ])->one();
+
+        if ($model != null) {
+            return $model;
+        } else {
+            return null;
+        }
     }
 }

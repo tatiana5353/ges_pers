@@ -228,6 +228,7 @@ class AffectationController extends Controller
      */
     public function actionCreate()
     {
+        //Yii::$app->getSession()->setFlash('success', 'Alert marche top top !');
         $affectation = new Affectation();
         $tache = new Tache();
         $suivie = new Suivie();
@@ -242,6 +243,50 @@ class AffectationController extends Controller
             'suivie' => $suivie
         ]);
     }
+
+    public function actionCreatetache($idaffectation, $designation, $datedebut , $dateprob, $commentaire)
+    {
+       // Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+       // print('rrr');die;
+        $droit = utils::have_access('tache');
+        if ($droit == 1) {
+            $tache = Tache::find()
+                ->where(['id' => $designation, /* 'idaffectation' => $idAffectation */])
+                ->andWhere(['not in', 'statut', 3])
+                ->one();
+            if ($tache != null) {
+               // $tache = new Tache();
+                //$tache->designation = $designation;
+                $tache->idaffectation= $idaffectation;
+                //$tache->idprojet = $idprojet;
+                $tache->updated_by = Yii::$app->user->identity->id;
+                $tache->statut = 0;
+               // $tache->created_at = date('Y-m-d H:i:s');
+                //$tache->key_tache = Yii::$app->security->generateRandomString(32);
+                $tache->save();
+                $suivie = new Suivie();
+                $suivie->created_by = Yii::$app->user->identity->id;
+                $suivie->statut = 2;
+                $suivie->created_at = date('Y-m-d H:i:s');
+                $suivie->key_suivie = Yii::$app->security->generateRandomString(32);
+                $suivie->idtache = $tache->id;
+                $suivie->commentaire_assigant = $commentaire;
+                $suivie->date_debut = $datedebut;
+                $suivie->date_prob =$dateprob ;
+
+                if ($suivie->save()) {
+                    Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+                } else {
+                    Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'enregistrement!');
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('error', 'Cette tache existe déjà dans ce projet!');
+            }
+        } else {
+            $this->redirect('accueil');
+        }
+    }
+
     public function actionTache_affectation()
     {
         $userAffectationId = Affectation::find()

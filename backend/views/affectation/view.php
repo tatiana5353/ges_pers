@@ -2,6 +2,7 @@
 
 use backend\controllers\Utils;
 use backend\models\Suivie;
+use frontend\widgets\Alert;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -13,6 +14,8 @@ $this->title = "Employé ";
 $this->params['breadcrumbs'][] = ['label' => 'Affectations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+echo Alert::widget();
+echo $this->render('_modal_createtache');
 ?>
 <div class="affectation-view">
     <div class="content-header">
@@ -64,6 +67,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             </h3>
                         </div>
                         <div class="panel-body">
+                            <p> <?php
+                                echo '<button type="button" onclick="create_tacheaffectation(\'' . $model->id . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#createTacheaffectation"><i class="glyphicon glyphicon-plus"></i> </button>';
+
+                                ?></p>
                             <?= GridView::widget([
                                 'layout' => '{items}{pager}',
                                 'showOnEmpty' => false,
@@ -101,7 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 ->orderBy(['created_at' => SORT_DESC])
                                                 ->one();
 
-                                            return $suivie !== null ? date('d/m/Y H:i', strtotime($suivie->date_prob)) : 'Non disponible';
+                                            return $suivie !== null ? date('d-m-Y H:i', strtotime($suivie->date_debut)) : 'Non disponible';
                                         },
                                     ],
                                     [
@@ -112,7 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 ->orderBy(['created_at' => SORT_DESC])
                                                 ->one();
 
-                                            return $suivie !== null ? date('d/m/Y H:i', strtotime($suivie->date_prob)) : 'Non disponible';
+                                            return  $suivie !== null ? date('d-m-Y H:i', strtotime($suivie->date_prob)) : 'Non disponible';
                                         },
                                     ],
                                     [
@@ -127,11 +134,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 ->orderBy(['created_at' => SORT_DESC])
                                                 ->one();
                                             if (($suivie->statut == 0)) {
-                                                return '<span style="background-color: #337ab7; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">AFFECTEE</span>';
+                                                return '<span style="background-color: #337ab7; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">REALISEE</span>';
                                             } elseif (($suivie->statut == 1)) {
                                                 return '<span style="background-color: #5cb85c; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> VALIDEE </span>';
                                             } elseif (($suivie->statut == 2)) {
-                                                return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> NON AFFECTEE </span>';
+                                                return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> NON REALISEE </span>';
                                             } else {
                                                 return '';
                                             }
@@ -152,7 +159,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ],
                                     ],
 
-                                    
+
 
                                 ],
 
@@ -165,3 +172,45 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+
+<script>
+    function create_tacheaffectation(idaffectation) {
+        document.getElementById('createTacheTitle').innerHTML = 'Ajout d\'une tache à l\'affectation';
+        document.getElementById('idAffectation').value = idaffectation;
+    }
+
+    function create_tache_enter() {
+        let url = "<?= Yii::$app->homeUrl ?>create_tacheaffectation";
+        let idaffectation = document.getElementById('idAffectation').value;
+        let designation = document.getElementById('createtacheDesignation').value;
+        let dateDebut = document.getElementById('createtacheDebut').value;
+        let dateProb = document.getElementById('createtacheProb').value;
+        let commentaire = document.getElementById('createtacheCommentaire').value;
+        var currentDate = new Date().toISOString().split('T')[0];
+        if (dateDebut > currentDate) {
+            alert('La date ne peut pas être dans le futur.');
+            return false;
+        } else {
+            if (idaffectation != '') {
+                //alert(idaffectation+'g'+designation+'r'+commentaire);
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    data: {
+                        idaffectation: idaffectation,
+                        designation: designation,
+                        datedebut: dateDebut,
+                        dateprob: dateProb,
+                        commentaire: commentaire
+                        /*   idtype_tache: idtype_tache,
+                          designation: designation,
+                          idprojet: idprojet */
+                    },
+                    success: function(result) {
+                        document.location.reload();
+                    }
+                });
+            }
+        }
+    }
+</script>

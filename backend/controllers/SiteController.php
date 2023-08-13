@@ -73,7 +73,7 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $droit_presence = Utils::have_access('presence');
+            /* $droit_presence = Utils::have_access('presence');
             $horaire = Horaire::find()
                 ->where(['statut' => 1])
                 ->one();
@@ -101,7 +101,7 @@ class SiteController extends Controller
                 }
             }
 
-            $model2->save();
+            $model2->save(); */
             /* if ($model2->save()) {
                 $hnor_arrivee = $horaire->heure_arrivee;
                if ($formattedDateTime > $hnor_arrivee) {
@@ -120,7 +120,7 @@ class SiteController extends Controller
     public function actionLogout()
     {
         $droit_presence = Utils::have_access('presence');
-        if ($droit_presence !== 1) {
+        /* if ($droit_presence !== 1) {
             $presence = Presence::find()
             ->where(['created_by' => Yii::$app->user->identity->id])
             ->andWhere(['OR', ['statut' => 1], ['statut' => 2]])
@@ -130,7 +130,7 @@ class SiteController extends Controller
         $presence->heure_depart = date('Y-m-d H:i:s');
         $presence->statut = 3;
         $presence->save();
-        }
+        } */
         
         Yii::$app->user->logout();
         return $this->goHome();

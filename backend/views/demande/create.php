@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Demande */
 
-$this->title = 'Ajouter une demande de congé';
+$this->title = 'Ajouter une demande d\'absence';
 $this->params['breadcrumbs'][] = ['label' => 'Demandes', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -20,8 +20,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <li class="breadcrumb-item">
                         <a href="/gespers/admin/accueil">Accueil</a>
                     </li>
-                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_demande">Liste des demandes de congés</a></li>
-                    <li class="breadcrumb-item active">Création d'une demande de congés
+                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_demande">Liste des demandes</a></li>
+                    <li class="breadcrumb-item active">Création d'une demande 
                     </li>
                 </ol>
 

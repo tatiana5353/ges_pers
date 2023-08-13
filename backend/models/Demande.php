@@ -41,7 +41,7 @@ class Demande extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['motif', 'numero', 'debutconge', 'finconge', 'key_demande', 'statut', 'created_by', 'created_at', 'idtypeconge'], 'required'],
+            [['motif', 'numero', 'finconge', 'key_demande', 'statut', 'created_by', 'created_at', 'idtypeconge'], 'required'],
             [['motif', 'motif_refus'], 'string'],
             [['debutconge', 'finconge', 'created_at', 'updated_at'], 'safe'],
             [['statut', 'created_by', 'updated_by', 'idtypeconge'], 'integer'],

@@ -24,8 +24,8 @@ $this->params['breadcrumbs'][] = 'Update';
                     <li class="breadcrumb-item">
                         <a href="/gespers/admin/accueil">Accueil</a>
                     </li>
-                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_demande">Liste des demandes de congés</a></li>
-                    <li class="breadcrumb-item active">Création d'une demande de congés
+                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_demande">Liste des demandes</a></li>
+                    <li class="breadcrumb-item active">Refus d'une demande 
                     </li>
                 </ol>
 
@@ -58,13 +58,13 @@ $this->params['breadcrumbs'][] = 'Update';
 
                                             <?= $form->field($model, 'idtypeconge')->dropdownlist(
                                                 ArrayHelper::map($typeconge, 'id', 'libelle'),
-                                                ['prompt' => 'choisir un type de congé', 'required' => true, 'disabled' => true,],
+                                                ['prompt' => 'choisir un type d\'absence', 'required' => true, 'disabled' => true,],
                                                 ['class' => 'ui search dropdown']
-                                            )->error(false)->label('<span class="text-dark">Type de congé</span><span class="text-danger"></span>') ?>
+                                            )->error(false)->label('<span class="text-dark">Type d\'absence</span><span class="text-danger"></span>') ?>
 
-                                            <?= $form->field($model, 'debutconge')->textInput(['type' => 'datetime-local', 'disabled' => true, 'required' => true])->label('<span class="text-dark">Début de congé</span><span class="text-danger"></span>') ?>
+                                            <?= $form->field($model, 'debutconge')->textInput(['type' => 'datetime-local', 'disabled' => true, 'required' => true])->label('<span class="text-dark">Début d\'absence</span><span class="text-danger"></span>') ?>
 
-                                            <?= $form->field($model, 'finconge')->textInput(['type' => 'datetime-local', 'disabled' => true, 'required' => true])->label('<span class="text-dark">Fin de congé</span><span class="text-danger"></span>') ?>
+                                            <?= $form->field($model, 'finconge')->textInput(['type' => 'datetime-local', 'disabled' => true, 'required' => true])->label('<span class="text-dark">Fin d\'absence</span><span class="text-danger"></span>') ?>
 
                                         </div>
                                         <div class="col-lg-4">
@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = 'Update';
 
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <?= $form->field($model, 'motif')->textarea(['rows' => 4, 'required' => true, 'disabled' => true,])->label('<span class="text-dark">Motif du congé</span><span class="text-danger"></span>') ?>
+                                            <?= $form->field($model, 'motif')->textarea(['rows' => 3, 'required' => true, 'disabled' => true,])->label('<span class="text-dark">Motif de l\'absence</span><span class="text-danger"></span>') ?>
                                         </div>
                                     </div>
                                 </div>
@@ -83,7 +83,7 @@ $this->params['breadcrumbs'][] = 'Update';
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-lg-12">
-                                                <?= $form->field($model, 'motif_refus')->textarea(['rows' => 4, 'required' => true,])->label('<span class="text-dark">Motif du refus</span><span class="text-danger">**</span>') ?>
+                                                <?= $form->field($model, 'motif_refus')->textarea(['rows' => 3, 'required' => true,])->label('<span class="text-dark">Motif du refus</span><span class="text-danger">**</span>') ?>
                                             </div>
                                         </div>
                                     </div>

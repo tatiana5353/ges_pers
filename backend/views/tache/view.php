@@ -1,6 +1,8 @@
 <?php
 
 use backend\controllers\Utils;
+use backend\models\Affectation;
+use backend\models\Suivie;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -17,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-            <button id="btnQuitter"><i class=" fa fa-arrow-left"></i></button>
+                <button id="btnQuitter"><i class=" fa fa-arrow-left"></i></button>
 
                 <ol class="breadcrumb float-right" style="float: right;">
                     <li class="breadcrumb-item"><a href="accueil">Accueil</a></li>
@@ -31,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Inclure la bibliothèque jQuery si ce n'est pas déjà fait -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    
+
 
     <!-- Le script JavaScript pour gérer le clic sur le bouton "Quitter" -->
     <script>
@@ -43,51 +45,91 @@ $this->params['breadcrumbs'][] = $this->title;
             });
         });
     </script>
-
     <div class="panel panel-default">
-        <div class="row mt">
-            <div class="col-md-12">
-                <section class="task-panel tasks-widget">
-                    <div class="panel-heading">
-                        <div class=" btn-lg waves-effect waves-light bg-info" data-class="bg-primary">
-                            
-                                Détail sur la tache :<h7><?= Html::encode($this->title) ?></h7>
-                           
-                        </div>
+        <div class="panel-heading" style="background-color: #17a2b8;">
+            <h3 class="panel-title" style="color: #ffffff;">    Détail sur la tache : <h7><?= Html::encode($this->title) ?></h7></h3>
+        </div>
+        <div class="panel-body">
+            <div class="panel panel-default">
+                <div class="row mt">
+                    <div class="col-md-12">
+                        <section class="task-panel tasks-widget">
+                           <!--  <div class="panel-heading">
+                                <div class=" btn-lg waves-effect waves-light bg-info" data-class="bg-primary">
+
+                                    Détail sur la tache :<h7><?= Html::encode($this->title) ?></h7>
+
+                                </div>
+                            </div> -->
+
+                            </p>
+                            <div class="panel-body">
+                                <?= DetailView::widget([
+                                    'model' => $model,
+                                    'attributes' => [
+
+                                        [
+                                            'label' => 'Projet',
+                                            'value' => function ($data) {
+                                                return $data->idprojet0->libelle ?? '';
+                                            }
+                                        ],
+
+                                      
+                                        [
+                                            'label' => 'Type de tâche',
+                                            'value' => function ($data) {
+                                                return $data->idtypetache0->libelle;
+                                            }
+                                        ],
+                                        [
+                                            'label' => 'designation de la tâche',
+                                            'attribute' => 'designation'
+                                        ],
+
+                                        // 'description:ntext',
+                                        [
+                                            'label' => 'Description de la tache ',
+                                            'value' => function ($data) {
+                                                $suivie = Suivie::find()
+                                                    ->where(['idtache' => $data->id])
+                                                    ->orderBy(['created_at' => SORT_DESC])
+                                                    ->one();
+                                                
+                                                return $suivie->commentaire_assigant ?? 'Non assignée';
+                                            }
+                                        ],
+                                        [
+
+                                            'label' => 'Responsable',
+                                            'value' =>
+        
+                                            function ($data) {
+                                                $affectation = Affectation::find()
+                                                    ->where(['id' => $data->idaffectation])
+                                                    ->one();
+                                                    if ($affectation != null) {
+                                                        return $affectation->iduser0->nom . ' ' . $affectation->iduser0->prenoms ?? '';
+        
+                                                    }else {
+                                                        return 'Pas défini';
+        
+                                                    }
+                                            }
+        
+                                        ],
+                                    ],
+                                ])
+                                ?>
+
+                                <div class="add-task-row">
+                                </div>
+                            </div>
+                        </section>
                     </div>
-
-                    </p>
-                    <div class="panel-body">
-                        <?= DetailView::widget([
-                            'model' => $model,
-                            'attributes' => [
-
-                                [
-                                    'label' => 'Projet',
-                                    'value' => function ($data) {
-                                        return $data->idprojet0->libelle ?? '';
-                                    }
-                                ],
-
-                                [
-                                    'label' => 'Type de tache',
-                                    'value' => function ($data) {
-                                        return $data->idtypetache0->libelle;
-                                    }
-                                ],
-                                'designation',
-                               // 'description:ntext',
-
-                            ],
-                        ])
-                        ?>
-
-                        <div class="add-task-row">
-                        </div>
-                    </div>
-                </section>
+                    <!-- /col-md-12-->
+                </div>
             </div>
-            <!-- /col-md-12-->
         </div>
     </div>
 </div>

@@ -42,10 +42,17 @@ class TacheController extends Controller
         $droit = Utils::have_access('tache');
         if ($droit == 1) {
             $findprojet = Projet::find()->where(['libelle' => 'tache individuelle'])->one();
+            $statusOrder = [0=> 1, // Statut 2 doit être trié en premier
+            2=> 2, // Statut 1 doit être trié en deuxième
+            1 => 3, ];
             $dataProvider = new ActiveDataProvider([
                 'query' => Tache::find()->where(['not in', 'statut', 3])
-                    ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null])
-            ]);
+                    ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null]),
+                    'sort' => [
+                        'defaultOrder' => ['statut' => $statusOrder],
+                    ],
+            ])
+            ;
 
             return $this->render('index', [
                 'dataProvider' => $dataProvider,
@@ -119,7 +126,7 @@ class TacheController extends Controller
                 ->where(['idtache' => $idtache])
                 ->one();
 
-            if ($suivie !== null && ($suivie->statut == 0 || $tache->statut == 2)) {
+            if ($suivie !== null && ($suivie->statut == 0 || $tache->statut == 2 || $tache->statut ==1)) {
                 return $this->render('view_2', [
                     'model' => $tache,
                     'suivie' => $suivie,
@@ -143,18 +150,14 @@ class TacheController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Tache();
+        //print('rrtttt');die;
         $droit_tache = utils::have_access('tache');
         if ($droit_tache == 1) {
+            $model = new Tache();
             $typetache = Typetache::find()
                 ->where(['statut' => 1])
                 ->all();
-            /*  $projet = Projet::find()
-                ->where(['statut' => 1])
-                ->all();
-            $affectation = Affectation::find()
-                ->where(['statut' => 1])
-                ->all(); */
+
             if (Yii::$app->request->post()) {
                 if ($model->load(Yii::$app->request->post())) {
                     $model->created_at = date('Y-m-d H:i:s');
@@ -285,8 +288,10 @@ class TacheController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
+
     public function actionDelete($key_element)
     {
+        //print('rrtttt');die;
         $droit_tache = Utils::have_access('tache');
         if ($droit_tache == 1) {
             $model = $this->findModel($key_element);
@@ -310,6 +315,31 @@ class TacheController extends Controller
                 }
                 //}
             } else Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
+        }
+    }
+
+    public function actionCreatesuivie($key_element, $commentaire, $datedebut, $dateprob)
+    {
+        //Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+        //print('rrr');die;
+        $droit = utils::have_access('tache');
+        if ($droit == 1) {
+            $suivie = new Suivie();
+            $suivie->commentaire_assigant = $commentaire;
+            $suivie->date_debut = $datedebut;
+            $suivie->date_prob = $dateprob;
+            $suivie->idtache = $key_element;
+            $suivie->created_by = Yii::$app->user->identity->id;
+            $suivie->statut = 2;
+            $suivie->created_at = date('Y-m-d H:i:s');
+            $suivie->key_suivie = Yii::$app->security->generateRandomString(32);
+            if ($suivie->save()) {
+                Yii::$app->getSession()->setFlash('success', 'rejet de la réalisation !');
+            } else {
+                Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'enregistrement!');
+            }
+        } else {
+            $this->redirect('accueil');
         }
     }
 

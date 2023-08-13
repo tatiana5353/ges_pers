@@ -60,6 +60,11 @@ echo $this->render('_modal');
                                     'border' => "0"
                                 ],
                                 'columns' => [
+                                    [
+                                        'class' => 'yii\grid\SerialColumn',
+                                        'headerOptions' => ['width' => '15'],
+                                        'header' => 'N°'
+                                    ],
 
                                     [
                                         'label' => 'Libellé',

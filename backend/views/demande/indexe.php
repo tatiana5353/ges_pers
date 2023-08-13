@@ -8,7 +8,7 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Demandes de congés';
+$this->title = 'Demandes d\'absences';
 $this->params['breadcrumbs'][] = $this->title;
 echo $this->render('_modal');
 echo $this->render('_modal_motif');
@@ -20,7 +20,7 @@ echo $this->render('_modal_motif');
             <div class="row mb-2">
                 <ol class="breadcrumb float-right" style="float: right;">
                     <li class="breadcrumb-item"><a href="accueil">Accueil</a></li>
-                    <li class="breadcrumb-item active">Liste des demandes de congés</li>
+                    <li class="breadcrumb-item active">Liste des demandes d'absence</li>
                 </ol>
 
             </div><!-- /.row -->
@@ -40,7 +40,7 @@ echo $this->render('_modal_motif');
 
                     <div class="col-sm-12">
                         <p>
-                            <?= Html::a('Ajouter demande', ['create'], ['class' => 'btn btn-info']) ?>
+                            <?= Html::a('Ajouter une demande', ['create'], ['class' => 'btn btn-info']) ?>
                         </p>
 
                         <div class="content-panel">
@@ -58,7 +58,11 @@ echo $this->render('_modal_motif');
                                     //'class' ="adv-table"
                                 ],
                                 'columns' => [
-                                    ['class' => 'yii\grid\SerialColumn'],
+                                    [
+                                        'class' => 'yii\grid\SerialColumn',
+                                        'headerOptions' => ['width' => '15'],
+                                        'header' => 'N°'
+                                    ],
 
                                     //'id',
                                     [
@@ -66,14 +70,14 @@ echo $this->render('_modal_motif');
                                         'value' => 'numero',
                                     ],
                                     [
-                                        'label' => 'Type de congé',
+                                        'label' => 'Type d\'absence',
                                         'value' => function ($data) {
                                             return $data->idtypeconge0->libelle;
                                         }
                                     ],
                                     [
-                                        'label' => 'Début de congé',
-                                        'format' => ['date', 'php:d-m-Y'],
+                                        'label' => 'Début d\'absence',
+                                        'format' => ['date', 'php:d-m-Y H:i'],
                                         'value' => function ($data) {
                                             if (($data->created_by == Yii::$app->user->identity->id)) {
                                                 return $data->debutconge;
@@ -83,11 +87,11 @@ echo $this->render('_modal_motif');
                                     ],
 
                                     [
-                                        'label' => 'Fin de congé',
-                                        'format' => ['date', 'php:d-m-Y'],
+                                        'label' => 'Fin d\'absence',
+                                        'format' => ['date', 'php:d-m-Y H:i'],
                                         'value' => function ($data) {
                                             if (($data->created_by == Yii::$app->user->identity->id)) {
-                                                return date('y-m-d', strtotime($data->finconge));
+                                                return $data->finconge;
                                             }
                                         }
 
@@ -126,16 +130,16 @@ echo $this->render('_modal_motif');
                                             'view' => function ($url, $data) {
                                                 if (($data->statut == 4) && ($data->created_by == Yii::$app->user->identity->id)) {
                                                     $url = 'view_demande?key_demande=' . $data->key_demande;
-                                                    return '<button type="button" class="btn btn-xs btn-success"><a title="' . Yii::t('app', 'Détail') . '" class="" href="#" data-toggle="modal" data-target="#exampleModal2" onclick="affiche_motif(\'' . $data->motif_refus . '\')"> 
-                                                <i class=" fa fa-eye" style="color: red;"></i></a> </button>';
+                                                    return '<button type="button" class="btn btn-xs btn-info"><a title="' . Yii::t('app', 'Détail') . '" class="" href="#" data-toggle="modal" data-target="#exampleModal2" onclick="affiche_motif(\'' . $data->motif_refus . '\')"> 
+                                                <i class=" fa fa-eye" style ="color:white";"></i></a> </button>';
                                                 } else if (($data->statut == 0) && ($data->created_by == Yii::$app->user->identity->id)) {
                                                     $url = 'view_demande?key_demande=' . $data->key_demande;
-                                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
-                                    <i class=" fa fa-eye" style="color: blue;"></i>
+                                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '">
+                                    <i class=" fa fa-eye" ></i>
                                     </a>';
                                                 } else if ($data->created_by == Yii::$app->user->identity->id) {
                                                     $url = 'view_demande?key_demande=' . $data->key_demande;
-                                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
+                                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '">
                                     <i class=" fa fa-eye"></i>
                                     </a>';
                                                 }
@@ -200,12 +204,12 @@ echo $this->render('_modal_motif');
         document.getElementById('keyElement').value = key_element;
     }
 
-    function affiche_motif(key_element) {
+    function affiche_motif(motif_refus) {
 
         document.getElementById('modalTitle2').innerHTML = 'Motif de rejet';
         document.getElementById('modalContent2').innerHTML =
             'Cette demande a été rejeté pour le motif suivant : ';
-        document.getElementById('keyElement2').value = key_element;
+        document.getElementById('keyElement2').value = motif_refus;
     }
 
     function validate_sortie(key_element) {

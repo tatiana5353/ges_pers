@@ -39,7 +39,9 @@ class DemandeController extends Controller
         $droit = Utils::have_access('demande_perso');
         if ($droit_traitement == 1) {
             $dataProvider = new ActiveDataProvider([
-                'query' => Demande::find()->where(['not in', 'statut', 3]),
+                'query' => Demande::find()->orderBy([
+                    'statut' => SORT_ASC
+                ])->where(['not in', 'statut', 3]),
             ]);
 
             return $this->render('index', [
@@ -47,7 +49,10 @@ class DemandeController extends Controller
             ]);
         } elseif ($droit == 1) {
             $dataProvider = new ActiveDataProvider([
-                'query' => Demande::find()->where(['not in', 'statut', 3])
+                'query' => Demande::find()
+                    ->orderBy([
+                        'statut' => SORT_ASC
+                    ])->where(['not in', 'statut', 3])
                     ->andWhere(['created_by' => Yii::$app->user->identity->id])
             ]);
 
@@ -131,17 +136,17 @@ class DemandeController extends Controller
                     $model->numero = 'NE-' . date('md') . '-' . rand(11, 99);
                     $debutconge = $model->debutconge;
                     $finconge = $model->finconge;
-                    // print(strtotime($model->created_at));die;
-                    if ((strtotime($debutconge) < strtotime($finconge))/*  && (strtotime($debutconge) >= strtotime($model->created_at)) */) {
+
+                    if ((strtotime($finconge) > strtotime($debutconge)) && ((strtotime($finconge) - strtotime($debutconge)) > 30 * 60)) {
                         if ($model->save()) {
                             Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
                             return $this->redirect('all_demande');
                         } else {
                             $model->loadDefaultValues();
-                            Yii::$app->getSession()->setFlash('error', 'Echec d\'enregistrement veuillez remplir tous les champ obligatoires');
+                            Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'enregistrement');
                         }
                     } else {
-                        Yii::$app->getSession()->setFlash('error', '☻ ♥☺♦♣♠○◘•♥☻Vos dates de début de congé et de fin de congé ne peut pas etre inférieur à la date actuelle!');
+                        Yii::$app->getSession()->setFlash('error', '☻☺L\'heure de fin d\'absence doit etre superieur à l\'heure de debut de votre demande');
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('error', 'vous n\'avez rien renseigné !');
@@ -198,8 +203,8 @@ class DemandeController extends Controller
                     ->andWhere(['<>', 'id', $id])->all(); */
                 if ($model->load(Yii::$app->request->post())) {
 
-                    if ((strtotime($model2->finconge) >= strtotime($model->updated_at))) {
-                        //print("fsqsq");die;
+                    if ((strtotime($model2->finconge) >= strtotime($model2->debutconge)) && ((strtotime($model2->finconge) - strtotime($model2->debutconge)) > 30 * 60)) {
+
                         if ($model->save()) {
                             Yii::$app->getSession()->setFlash('success', 'Modification réussie !');
                             return $this->redirect('all_demande');
@@ -207,7 +212,7 @@ class DemandeController extends Controller
                             Yii::$app->getSession()->setFlash('error', 'Echec lors de l\'enregistrement !');
                         }
                     } else {
-                        Yii::$app->getSession()->setFlash('error', '☻ ♥☺♦♣♠○◘•♥☻Vos dates de début de congé et de fin de congé ne peut pas etre inférieur à la date actuelle!');
+                        Yii::$app->getSession()->setFlash('error', 'Votre heure de retour doit etre supérieur a l\'heure de début de demande!');
                     }
                 } else {
 
@@ -233,44 +238,44 @@ class DemandeController extends Controller
                 ->where(['statut' => 1])
                 ->all();
             $model2 = new Demande();
-            $model2->load($this->request->post());
             $model = Demande::find()
                 ->where([
                     'key_demande' => $key_demande,
                     'statut' => 0
                 ])->one();
-            //$iduser = $model->iduser;
-            if ($model != null) {
+            if ($model2->load($this->request->post())) {
 
-                $model->statut = 4;
-                $model->updated_by = Yii::$app->user->identity->id;
-                $model->updated_at = date('Y-m-d H:i:s');
+                if ($model != null) {
 
-                $id = $model->id;
-                $numero = $model2->numero;
-                $numeroFind = Demande::find()
-                    ->where(['numero' => $numero, 'statut' => 0,])
-                    ->andWhere(['<>', 'id', $id])->all();
+                    $model->statut = 4;
+                    $model->updated_by = Yii::$app->user->identity->id;
+                    $model->updated_at = date('Y-m-d H:i:s');
 
-                if ($numeroFind == null) {
-                    if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                        // print("gdgcsf");die;
-                        Yii::$app->getSession()->setFlash('success', 'Vous venez de refuser la demande !');
-                        return $this->redirect('all_demande');
+                    $id = $model->id;
+                    $numero = $model2->numero;
+                    $numeroFind = Demande::find()
+                        ->where(['numero' => $numero, 'statut' => 0,])
+                        ->andWhere(['<>', 'id', $id])->all();
+
+                    if ($numeroFind == null) {
+                        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                            // print("gdgcsf");die;
+                            Yii::$app->getSession()->setFlash('success', 'Vous venez de refuser la demande !');
+                            return $this->redirect('all_demande');
+                        } else {
+                            Yii::$app->getSession()->setFlash('error', 'erreur lors de l\'enregistrement !');
+                            $model2->loadDefaultValues();
+                        }
                     } else {
-                        Yii::$app->getSession()->setFlash('error', 'erreur lors de l\'enregistrement !');
+                        Yii::$app->getSession()->setFlash('error', ' !');
                         $model2->loadDefaultValues();
                     }
                 } else {
-                    Yii::$app->getSession()->setFlash('error', ' !');
-                    $model2->loadDefaultValues();
+                    Yii::$app->getSession()->setFlash('error', 'Demande non existante!');
+
+                    return $this->redirect('all_demande');
                 }
-            } else {
-                Yii::$app->getSession()->setFlash('error', 'Demande non existante!');
-
-                return $this->redirect('all_demande');
             }
-
             return $this->render('refus', [
                 'model' => $model,
                 'typeconge' => $typeconge,

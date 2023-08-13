@@ -58,6 +58,10 @@ $tab_url = array(
 	'update_projet' => 'projet/update',
 	'view_projet' => 'projet/view',
 	'save_projet' => 'projet/save_projet',
+	'delete_tacheprojet' => 'projet/deletetache',
+	'update_tacheprojet' => 'projet/updatetache',
+	'create_tacheprojet' => 'projet/createtache',
+
 
 	'all_affectation' => 'affectation/index',
 	'add_affectation' => 'affectation/create',
@@ -68,26 +72,28 @@ $tab_url = array(
 	'tache_affectation' => 'affectation/tache_affectation',
 	'faire_tache' => 'affectation/faire_tache',
 	'vue_realisation' => 'affectation/vue_realisation',
-
-	'add_projettache' => 'projet/createtache',
+	'create_tacheaffectation' => 'affectation/createtache',
+	
+	/* 'add_projettache' => 'projet/createtache',
 	'update_projettache' => 'projet/updatetache',
 	'delete_projettache' => 'projet/deletetache',
-
+ */
 	'finir_projettache' => 'projet/finirtache',
 
-	//Projettype de taches
+	//Type de taches
 	'all_typetache' => 'typetache/index',
 	'add_typetache' => 'typetache/create',
 	'delete_typetache' => 'typetache/delete',
 	'update_typetache' => 'typetache/update',
 	'view_typetache' => 'typetache/view',
-
+	
 	'all_tache' => 'tache/index',
 	'add_tache' => 'tache/create',
 	'delete_tache' => 'tache/delete',
 	'update_tache' => 'tache/update',
 	'view_tache' => 'tache/view',
 	'valider_tache' => 'tache/valider',
+	'refus_tache' => 'tache/createsuivie'
 
 
 );

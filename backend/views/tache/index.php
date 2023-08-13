@@ -12,7 +12,7 @@ use yii\widgets\ListView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Taches';
+$this->title = 'Liste des tâches';
 $this->params['breadcrumbs'][] = $this->title;
 echo $this->render('_modal');
 ?>
@@ -44,7 +44,7 @@ echo $this->render('_modal');
                 <div class="row">
                     <div class="col-sm-12">
                         <p>
-                            <?= Html::a('Ajouter une tache', ['create'], ['class' => 'btn btn-info']) ?>
+                            <?= Html::a('Ajouter une tâche', ['create'], ['class' => 'btn btn-info']) ?>
                         </p>
                         <div class="content-panel">
                             <?= GridView::widget([
@@ -128,8 +128,13 @@ echo $this->render('_modal');
                                         //'visible' => $droits[3] == 1 ? true : false,
                                         'buttons' => [
                                             'update' => function ($url, $data) {
-                                                $url = 'update_tache?key_tache=' . $data->key_tache;
-                                                return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
+                                                $suivie = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->one();
+                                                if ($data->statut == 2 || $suivie->statut == 2 ) {
+                                                    $url = 'update_tache?key_tache=' . $data->key_tache;
+                                                    return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
+                                                }
                                             },
                                         ],
                                     ],
@@ -139,9 +144,11 @@ echo $this->render('_modal');
                                         'headerOptions' => ['width' => '15'],
                                         'buttons' => [
                                             'delete' => function ($url, $data) {
-                                                return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_tache(\'' . $data->key_tache . '\')">
+                                                if ($data->statut == 2) {
+                                                    return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_tache(\'' . $data->key_tache . '\')">
                                         <i class="fa fa-trash"></i>
                                                 </a>';
+                                                }
                                             },
                                         ],
                                     ]

@@ -32,7 +32,7 @@ AppAsset::register($this);
     <?= $this->render('_gauche')
     ?>
     <?= $this->beginBody() ?>
-    <div class="container">
+    
 
         <section id="main-content">
             <section class="wrapper site-min-height">
@@ -51,7 +51,7 @@ AppAsset::register($this);
         </section>
 
 
-    </div>
+   
     <!-- </div> -->
 
     <footer class="footer">
@@ -62,7 +62,7 @@ AppAsset::register($this);
 
     <script type="/text/javascript" src="template/lib/jquery.backstretch.min.js"></script>
     <script>
-        $.backstretch("template/img/logo.jpg", {
+        $.backstretch("template/img/log.jpg", {
             speed: 500
         });
     </script>

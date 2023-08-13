@@ -11,6 +11,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 
 /**
  * ProjetController implements the CRUD actions for Projet model.
@@ -207,7 +208,7 @@ class ProjetController extends Controller
             $typetache = Typetache::find()
                 ->where(['statut' => 1])
                 ->all();
-           /*  $projet = Projet::find()
+            /*  $projet = Projet::find()
                 ->where(['statut' => 1])
                 ->all();
             $affectation = Affectation::find()
@@ -223,8 +224,8 @@ class ProjetController extends Controller
                         ->where(['key_projet' => $key_projet])
                         ->one();
                     if ($findprojet != null) {
-                       $model->idprojet = $findprojet->id;
-                       /*  if ($newprojet->save()) {
+                        $model->idprojet = $findprojet->id;
+                        /*  if ($newprojet->save()) {
                             $id = $newprojet->id;
                             $model->idprojet = $id;
                         } */
@@ -275,6 +276,73 @@ class ProjetController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
+
+    public function actionUpdatetache($key_tache, $idtype_tache, $designation)
+    {
+        //Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+        //print('rrr');
+        $droit = utils::have_access('tache');
+        if ($droit == 1) {
+            
+            $tache = Tache::find()
+                ->where(['key_tache' => $key_tache])
+                ->andWhere(['not in', 'statut', [3, 1]])
+                ->one();
+            $searchTache = Tache::find()
+                ->where(['designation' => trim($designation), 'idtypetache' => $idtype_tache, 'idprojet' => $tache->idprojet])
+                ->andWhere(['not in', 'statut', 3])
+                ->one();
+            if ($searchTache == null) {
+                $tache->designation = $designation;
+                $tache->idtypetache = $idtype_tache;
+                $tache->updated_by = Yii::$app->user->identity->id;
+                $tache->updated_at = date('Y-m-d H:i:s');
+                if ($tache->save()) {
+                    Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+                } else {
+                    Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'enregistrement!');
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('error', 'Cette tache existe déjà dans ce projet!');
+            }
+        } else {
+            $this->redirect('accueil');
+        }
+    }
+
+    public function actionCreatetache($idprojet, $idtype_tache, $designation)
+    {
+        //Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+       // print('rrr');die;
+        $droit = utils::have_access('tache');
+        if ($droit == 1) {
+            $searchTache = Tache::find()
+                ->where(['designation' => trim($designation), 'idtypetache' => $idtype_tache, 'idprojet' => $idprojet])
+                ->andWhere(['not in', 'statut', 3])
+                ->one();
+            if ($searchTache == null) {
+                $tache = new Tache();
+                $tache->designation = $designation;
+                $tache->idtypetache = $idtype_tache;
+                $tache->idprojet = $idprojet;
+                $tache->created_by = Yii::$app->user->identity->id;
+                $tache->statut = 2;
+                $tache->created_at = date('Y-m-d H:i:s');
+                $tache->key_tache = Yii::$app->security->generateRandomString(32);
+                if ($tache->save()) {
+                    Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+                } else {
+                    Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'enregistrement!');
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('error', 'Cette tache existe déjà dans ce projet!');
+            }
+        } else {
+            $this->redirect('accueil');
+        }
+    }
+
+    
     public function actionUpdate($key_projet)
     {
         $droit_projet = Utils::have_access('projet');
@@ -283,11 +351,18 @@ class ProjetController extends Controller
             $model2->load($this->request->post());
             $model2->libelle = trim(preg_replace('/\s+/', ' ', $model2->libelle));
             $model = Projet::find()
-            ->where(['or',
-                ['key_projet' => $key_projet,
-                'statut' => 2],  ['key_projet' => $key_projet,
-                'statut' => 0]
-            ])->one();
+                ->where([
+                    'or',
+                    [
+                        'key_projet' => $key_projet,
+                        'statut' => 2
+                    ],
+                    [
+                        'key_projet' => $key_projet,
+                        'statut' => 0
+                    ]
+                ])->one();
+            $currentPageUrl = Yii::$app->request->absoluteUrl;
             if ($model != null) {
                 $model->updated_by = Yii::$app->user->identity->id;
                 $model->updated_at = date('Y-m-d H:i:s');
@@ -303,7 +378,10 @@ class ProjetController extends Controller
                         $model2->loadDefaultValues();
                     } else {
                         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                            Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+                            Yii::$app->getSession()->setFlash('success', 'Modification réussie !');
+                            //Yii::$app->session->set('previousPage', Yii::$app->request->referrer);
+
+                            // Rediriger vers la page précédente après la sauvegarde réussie du modèle
                             return $this->redirect('all_projet');
                         }
                     }
@@ -312,7 +390,6 @@ class ProjetController extends Controller
                     $model2->loadDefaultValues();
                 }
             } else {
-                
             }
 
             return $this->render('update', [
@@ -330,7 +407,33 @@ class ProjetController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * 
      */
+    public function actionDeletetache($key_element)
+    {
+
+        $droit_tache = Utils::have_access('tache');
+        if ($droit_tache == 1) {
+
+            $model = Tache::find()
+                ->where(['key_tache' => $key_element])
+                ->andWhere(['not in', 'statut', 3])->one();
+            if ($model != null) {
+
+                $model->statut = 3;
+                $model->updated_by = Yii::$app->user->identity->id;
+                $model->updated_at = date('Y-m-d H:i:s');
+                if ($model->save()) {
+                    Yii::$app->getSession()->setFlash('success', 'Tache supprimée avec succès !');
+                    //return $this->redirect('all_tache');
+                } else {
+                    //print('rrtttt');die;
+                    Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
+                }
+            } else Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
+        }
+    }
+
     public function actionDelete($key_element)
     {
 

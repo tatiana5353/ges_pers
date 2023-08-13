@@ -93,7 +93,7 @@ class AppAsset extends AssetBundle
         "template/lib/bootstrap-daterangepicker/moment.min.js",
         "template/lib/bootstrap-timepicker/js/bootstrap-timepicker.js",
         "template/lib/advanced-form-components.js",
-
+        
     ];
 
     public $depends = [

@@ -81,7 +81,7 @@ echo $this->render('_modal_valider');
 
 
                         [
-                            'label' => 'Nom du personnel',
+                            'label' => 'Nom de l\'employé',
                             'value' => function ($data) {
                                 return $data->createdBy->nom . ' ' . $data->createdBy->prenoms;
                             }
@@ -90,22 +90,22 @@ echo $this->render('_modal_valider');
 
 
                         [
-                            'label' => 'Type de congé',
+                            'label' => 'Type d\'absence',
                             'value' => $model->idtypeconge0->libelle,
                         ],
 
                         [
                             'attribute' => 'motif',
-                            'header' => 'Motif du congé',
+                            'header' => 'Motif de l\'absence',
                         ],
 
                         [
                             'attribute' => 'debutconge',
-                            'header' => 'Debut de congé',
+                            'label' => 'Debut d\'absence',
                         ],
                         [
                             'attribute' => 'finconge',
-                            'header' => 'Fin de congé',
+                            'label' => 'Fin d\'absence',
                         ],
                         [
                             'attribute' => 'statut',
@@ -169,7 +169,7 @@ echo $this->render('_modal_valider');
                                                 '#',
                                                 ['onclick' => 'valider_demande(\'' . $model->key_demande . '\')', 'class' => 'btn btn-info btn-sm']
                                             ); */
-                            echo '<button type="button" onclick="valider_demande(\'' . $model->key_demande . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#exampleModal"><i class="icon fas fa-check"></i> Validé</button>';
+                            echo '<button type="button" onclick="valider_demande(\'' . $model->key_demande . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#exampleModal"><i class="icon fa fa-check"></i> Validé</button>';
 
                             ?>
 

@@ -65,15 +65,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
                                         if ($suivie->statut == 0) {
-                                        ?> <?= Html::a('<i class="fa fa-check"></i>', ['fairetache', 'key_tache' => $model->key_tache], ['class' => 'button-style']) ?>
-
-                                        <?php  } elseif ($suivie->statut == 1) {
-                                            ;
-                                        }else {
-                                        ?> <?= Html::a('<i class="fa fa-square-o"></i>', ['fairetache', 'key_tache' => $model->key_tache], ['class' => 'button-style']) ?>
+                                        ?> <i class="fa fa-check" style="color:#3498db; font-size: 18px;"></i>
+                                        <?php  } elseif ($suivie->statut == 1) {;
+                                        } else {
+                                        ?> <span class="button-style">
+                                                <?= Html::a('<i class="fa fa-square-o" style="color:#3498db; font-size: 18px;"></i>', ['fairetache', 'key_tache' => $model->key_tache]) ?>
+                                            </span>
+                                            
+                                            
 
                                         <?php } ?>
-                                        <!-- <?= Html::a('<i class="glyphicon glyphicon-square-o"></i>', ['fairetache', 'key_tache' => $model->key_tache], ['class' => 'button-style']) ?>
+                                        <!-- <= Html::a('<i class="glyphicon glyphicon-square-o"></i>', ['fairetache', 'key_tache' => $model->key_tache], ['class' => 'button-style']) ?>
                                             -->
                                     </div>
                                     <?php
@@ -81,33 +83,44 @@ $this->params['breadcrumbs'][] = $this->title;
                                     $date_prob = $suivie->date_prob;
                                     if ($suivie->statut == 0) { ?>
                                         <div class="col-xs-10">
-                                            <del>
-                                                <?php echo $model->designation ?>
-                                                Debut: <?php echo $date_prob ?>
+                                            <del style="font-size: 16px;">
+                                                <?php echo $model->designation ?> &nbsp;
+                                                Debut: <?php echo $date_prob ?> &nbsp;
                                                 Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
                                             </del>
+
+                                        </div>
+                                        <div class="col-xs-1">
+                                        <a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-sucdcess" href="' . $url . '">
+                                            <i class=" fa fa-eye" style="font-size: 18px;"></i>
+                                        </a>
                                         </div>
                                     <?php } elseif ($suivie->statut == 1) {
                                     ?>
 
                                         <div class="col-xs-9">
-                                            <del style="text-decoration-color: green;">
-                                                <?php echo $model->designation ?>
-                                                Debut: <?php echo $date_prob ?>
+                                            <del style="text-decoration-color:#17a2b8; font-size: 16px;">
+                                                <?php echo $model->designation ?> &nbsp;
+                                                Debut: <?php echo $date_prob ?> &nbsp;
                                                 Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
                                             </del>
                                         </div>
+                                        <div class="col-xs-1"></div>
+                                        <div class="col-xs-1" style="font-size: 16px;">
 
-                                        <div class="col-xs-1">
-
-                                            <span style="background-color: #008000; color: #fff; padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">VALIDEE</span>
+                                            <span style="background-color: #3498db; color: #fff; padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">VALIDEE</span>
                                         </div>
                                     <?php  } else {
                                     ?>
-                                        <div class="col-xs-10">
-                                            <?php echo $model->designation ?>
-                                            Debut: <?php echo $date_prob ?>
+                                        <div class="col-xs-10" style="text-decoration-color: green; font-size: 16px;">
+                                            <?php echo $model->designation ?> &nbsp;
+                                            Debut: <?php echo $date_prob ?> &nbsp;
                                             Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
+                                        </div>
+                                        <div class="col-xs-1">
+                                        <a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-sucdcess" href="' . $url . '">
+                                            <i class=" fa fa-eye" style="font-size: 18px;"></i>
+                                        </a>
                                         </div>
                                     <?php
                                     } ?>

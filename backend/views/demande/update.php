@@ -20,8 +20,8 @@ $this->params['breadcrumbs'][] = 'Update';
                     <li class="breadcrumb-item">
                         <a href="/gespers/admin/accueil">Accueil</a>
                     </li>
-                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_demande">Liste des demandes de congés</a></li>
-                    <li class="breadcrumb-item active">Modification d'une demande de congés
+                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_demande">Liste des demandes</a></li>
+                    <li class="breadcrumb-item active">Modification d'une demande 
                     </li>
                 </ol>
 

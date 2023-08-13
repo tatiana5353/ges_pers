@@ -2,6 +2,8 @@
 
 use backend\controllers\TypetacheController;
 use backend\controllers\Utils;
+use backend\models\Suivie;
+use backend\models\Tache;
 use backend\models\TypeTache;
 use frontend\widgets\Alert;
 use yii\grid\GridView;
@@ -11,16 +13,19 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Projet */
 
-$this->title = 'Projet:' . ' ' . $model->libelle;
+$this->title = 'Projet :' . ' ' . $model->libelle;
 $this->params['breadcrumbs'][] = ['label' => 'Projets', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+
 ?>
 <?= Alert::widget();
 echo $this->render('_modal');
+echo $this->render('_modal_updatetache');
+echo $this->render('_modal_createtache');
 $typetache = TypeTache::find()
-->where(['statut' => 1])
-->all();
+    ->where(['statut' => 1])
+    ->all();
 ?>
 <div class="projet-view">
     <div class="content-header">
@@ -90,13 +95,17 @@ $typetache = TypeTache::find()
                 </div>
                 <div class="col-lg-8">
                     <div class="panel panel-default" stle="background-color: #7dc3e8;">
-                        <div class="panel-heading" style="background-color: #17a2b8;">
+                        <div class="panel-heading" style="background-color: #17a2b8; color:#ffffff">
                             <h3 class="panel-title">
                                 Les taches du projet<!--    <?= Html::encode($this->title) ?> -->
                             </h3>
                         </div>
                         <div class="panel-body">
-                            <p> <?php echo Html::a('<i class="glyphicon glyphicon-plus"></i>', ['creates', 'key_projet' => $model->key_projet], ['class' => 'btn btn-primary ']); ?> </p>
+                            <!-- <p> <php echo Html::a('<i class="glyphicon glyphicon-plus"></i>', ['creates', 'key_projet' => $model->key_projet], ['class' => 'btn btn-primary ']); ?> </p> -->
+                            <p> <?php
+                           echo '<button type="button" onclick="create_tacheprojet(\'' . $model->id . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#createTache"><i class="glyphicon glyphicon-plus"></i> </button>';
+
+                            ?></p>
 
                             <?= GridView::widget([
                                 'layout' => '{items}{pager}',
@@ -150,8 +159,13 @@ $typetache = TypeTache::find()
                                         //'visible' => $droits[3] == 1 ? true : false,
                                         'buttons' => [
                                             'update' => function ($url, $data) {
-                                                $url = 'update_tache?key_tache=' . $data->key_tache;
-                                                return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
+                                                $suivie = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->one();
+                                                if ($data->statut == 2 || $suivie->statut == 2 ) {
+                                                    $url = 'update_tache?key_tache=' . $data->key_tache;
+                                                    return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
+                                                }
                                             },
                                         ],
                                     ],
@@ -161,9 +175,11 @@ $typetache = TypeTache::find()
                                         'headerOptions' => ['width' => '15'],
                                         'buttons' => [
                                             'delete' => function ($url, $data) {
-                                                return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_tache(\'' . $data->key_tache . '\')">
+                                                if ($data->statut == 2) {
+                                                    return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_tache(\'' . $data->key_tache . '\')">
                                         <i class="fa fa-trash"></i>
                                                 </a>';
+                                                }
                                             },
                                         ],
                                     ]
@@ -182,16 +198,18 @@ $typetache = TypeTache::find()
 </div>
 
 <script>
-    function delete_tache(key_element) {
+    //Delete tache
+    function delete_tacheprojet(key_element) {
         document.getElementById('modalTitle').innerHTML = 'Confirmation de suppression';
         document.getElementById('modalContent').innerHTML = 'Vous êtes sur le point de supprimer cette tache. Cette action est irréversible';
         document.getElementById('keyElement').value = key_element;
     }
 
     function delete_real_enter() {
-        let url = "<?= Yii::$app->homeUrl ?>delete_tache";
+        let url = "<?= Yii::$app->homeUrl ?>delete_tacheprojet";
         let key_element = document.getElementById('keyElement').value;
         if (key_element != '') {
+            //alert('ggggg');
             $.ajax({
                 url: url,
                 method: 'GET',
@@ -204,4 +222,66 @@ $typetache = TypeTache::find()
             });
         }
     }
+
+    //Update tache
+    function update_tacheprojet(key_tache, type_tache, designation) {
+        document.getElementById('updateTacheTitle').innerHTML = 'Modification de la tache';
+        //document.getElementById('updateTacheContent').innerHTML = 'Vous êtes sur le point de supprimer cette tache. Cette action est irréversible';
+
+        document.getElementById('tache-idtypetache').value = type_tache;
+        document.getElementById('tacheDesignation').value = designation;
+        document.getElementById('keyTache').value = key_tache;
+    }
+
+    function update_tache_enter() {
+        let url = "<?= Yii::$app->homeUrl ?>update_tacheprojet";
+        let key_tache = document.getElementById('keyTache').value;
+        let idtype_tache = document.getElementById('tache-idtypetache').value;
+        let designation = document.getElementById('tacheDesignation').value;
+        if (key_tache != '') {
+            //alert('ggggg');
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: {
+                    idtype_tache: idtype_tache,
+                    designation: designation,
+                    key_tache: key_tache
+                },
+                success: function(result) {
+                    document.location.reload();
+                }
+            });
+        }
+    }
+
+    //create tache
+
+    function create_tacheprojet(idprojet) {
+        document.getElementById('createTacheTitle').innerHTML = 'Ajout d\'une tache au projet';
+        document.getElementById('idProjet').value = idprojet;
+    }
+    
+    function create_tache_enter() {
+        let url = "<?= Yii::$app->homeUrl ?>create_tacheprojet";
+        let idprojet = document.getElementById('idProjet').value;
+        let idtype_tache = document.getElementById('idCreatetypetache').value;
+        let designation = document.getElementById('createtacheDesignation').value;
+        if (idprojet != '') {
+            //alert(idprojet+'g'+idtype_tache+'r'+designation);
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: {
+                    idtype_tache: idtype_tache,
+                    designation: designation,
+                    idprojet: idprojet
+                },
+                success: function(result) {
+                    document.location.reload();
+                }
+            });
+        }
+    }
+
 </script>

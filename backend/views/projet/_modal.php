@@ -11,7 +11,7 @@
       <div class="modal-body" id="modalContent">
         ...
       </div>
-      <input type="hidden" value="" id="keyElement">
+      <input type="hidden" value="" id="keyElement"> <!-- hidden -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
         <button type="button" class="btn btn-info" onclick="delete_real_enter()">Valider</button>

@@ -1,7 +1,9 @@
 <?php
 
+use backend\models\Demande;
 use backend\models\Tache;
 use backend\models\User;
+use frontend\widgets\Alert;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -12,6 +14,7 @@ use yii\helpers\Html;
 $this->title = 'Create Affectation';
 $this->params['breadcrumbs'][] = ['label' => 'Affectations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$currentDate = date('Y-m-d H:i');
 ?>
 <div class="affectation-create">
     <div id="alert_place_g"></div>
@@ -42,10 +45,38 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="col-lg-10">
                         <div class="affectation-form">
                             <form action="#">
-                                <?php $form = ActiveForm::begin(); ?>
+                                <?php $form = ActiveForm::begin();
+                                $id = Demande::find()
+                                    ->select('created_by')
+                                    ->where(['<', 'finconge',  $currentDate])
+                                    ->andwhere(['statut' => 1]);
+
+                                $usersTacheId = [];
+                                $allUser = User::find()->where(['status' => 10])->all();
+                                for ($i = 0; $i < sizeof($allUser); $i++) {
+                                    $demandes = Demande::find()
+                                        ->where(['created_by' =>  $allUser[$i]->id])
+                                        ->andwhere(['statut' => 1])->all();
+                                    for ($i = 0; $i < sizeof($demandes); $i++) {
+                                        if (($demandes[$i]->finconge < $currentDate)) {
+                                            $usersTacheId[] = $allUser[$i]->id;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+
+
+
+                                /* for ($i = 0; $i < sizeof($userSansBulletin); $i++) {
+                                    $userSansBulletin[$i]->nom = $userSansBulletin[$i]->nom . ' ' . $userSansBulletin[$i]->prenoms;
+                                } */
+
+                                ?>
                                 <?= $form->field($affectation, 'iduser')->dropDownList(
                                     ArrayHelper::map(
-                                        User::find()->where(['status' => 10])->all(),
+                                        User::find()->where(['status' => 10])
+                                            ->andwhere(['not in', 'id', $usersTacheId])->all(),
                                         'id',
                                         'nom',
                                     ),
@@ -83,9 +114,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                             </div>
 
                                             <div class="col-lg-6">
-                                                <?= $form->field($suivie, 'date_debut')->textInput(['type' => 'datetime-local', 'required' => true])->label('<h5>Date-debut<span class="text-danger">**</span></h5>') ?>
+                                                <?= $form->field($suivie, 'date_debut')->textInput(['type' => 'Datetime-local', 'required' => true, 'min' => $currentDate])->label('<h5>Date-debut<span class="text-danger">**</span></h5>') ?>
 
-                                                <?= $form->field($suivie, 'date_prob')->textInput(['type' => 'datetime-local', 'required' => true])->label('<h5>Date-limite<span class="text-danger">**</span></h5>') ?>
+                                                <?= $form->field($suivie, 'date_prob')->textInput(['type' => 'datetime-local', 'required' => true, 'min' => $currentDate])->label('<h5>Date-limite<span class="text-danger">**</span></h5>') ?>
 
                                             </div>
                                         </div>
@@ -150,10 +181,12 @@ $this->params['breadcrumbs'][] = $this->title;
             var search_position = old_tache_added.search('###' + tache + ';;;' + description + ';;;' + date_debut + ';;;' + date_fin);
 
             if (search_position >= 0) {
-                msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' + ' <div class="alert-body">' +
+                msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' +
+                    ' <div class="alert-body">' +
                     ' Cette tache est déjà ajoutée à la liste </div> </div>';
                 $('#alert_place').show();
                 $('#alert_place').html(msg);
+
             } else {
 
                 var new_data = tache + ';;;' + description + ';;;' + date_debut + ';;;' + date_fin;
@@ -202,7 +235,7 @@ $this->params['breadcrumbs'][] = $this->title;
             }
 
         } else {
-            msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' +
+            var msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' +
                 '<div class="alert-body">' +
                 'Veuillez renseigner les champs' +
                 '</div>' +

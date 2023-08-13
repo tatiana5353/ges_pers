@@ -10,21 +10,36 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Projet */
 
-$this->title = 'Create Projet';
+$this->title = 'Creation d\'un projet';
 $this->params['breadcrumbs'][] = ['label' => 'Projets', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $tache = new Tache();
 ?>
 <?= Alert::widget() ?>
 <div class="projet-create">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <ol class="breadcrumb float-right" style="float: right;">
+                    <li class="breadcrumb-item">
+                        <a href="/gespers/admin/accueil">Accueil</a>
+                    </li>
+                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_typetache">Liste des projets</a></li>
+                    <li class="breadcrumb-item active">Création d'un projet
+                    </li>
+                </ol>
+
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
     <div id="alert_place_g"></div>
-    <div class="row">
+    <!--  <div class="row">
         <div class="col-lg-8 p-r-1 title-margin-right">
             <div class="page-header">
                 <div class="page-title">
                     <div class="btn-lg btn-info waves-light " data-class="bg-info">
                         <marquee behavior="alternate" direction="">
-                            <?= Html::encode($this->title) ?>
+                            <= Html::encode($this->title) ?>
                         </marquee>
 
                     </div>
@@ -46,15 +61,15 @@ $tache = new Tache();
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!--  DATE PICKERS -->
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Titre de la carte</h3>
+        <div class="panel-heading" style="background-color: #17a2b8;">
+            <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
         </div>
         <div class="panel-body">
-            Contenu de la carte
+          
 
             <div class="col-lg-12">
 
@@ -75,7 +90,7 @@ $tache = new Tache();
 
                                 <div class="row clearfix">
                                     <div id="alert_place"></div>
-                                    <div class="col-xs-3">
+                                    <div class="col-xs-4">
                                         <?= $form->field($tache, 'idtypetache')->dropDownList(
                                             ArrayHelper::map(
                                                 TypeTache::find()->where(['statut' => 1])->all(),
@@ -87,7 +102,7 @@ $tache = new Tache();
                                         )->error(false)->label('<h5>Type de tache:<span class="text-danger">**</span></h5>');
                                         ?>
                                     </div>
-                                    <div class="col-xs-3 ">
+                                    <div class="col-xs-4 ">
                                         <?= $form->field($tache, 'designation')->textInput(['maxlength' => true, 'required' => true,])->label('<h5>Tache :<span class="text-danger">**</span></h5>'); ?>
                                     </div>
 

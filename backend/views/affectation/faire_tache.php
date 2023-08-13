@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;?>
 
 <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'commentaire_effectuant')->textarea(['rows' => 4,'required' => true, ])->label('<span class="text-dark">Motif</span><span class="text-danger">**</span>')
+    <?= $form->field($model, 'commentaire_effectuant')->textarea(['rows' => 4,'required' => true, ])->label('<span class="text-dark">Description sur la tache</span><span class="text-danger">**</span>')
 
     ?>
 
