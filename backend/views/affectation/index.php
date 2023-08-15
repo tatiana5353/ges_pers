@@ -66,11 +66,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             'value' => 'numero'
                         ],
 
-                      
+
                         [
                             'label' => 'Employé',
                             'value' => function ($data) {
-                                return $data->iduser0->nom.' '.$data->iduser0->prenoms ;
+                                return $data->iduser0->nom . ' ' . $data->iduser0->prenoms;
                             }
                         ],
 
@@ -87,41 +87,15 @@ $this->params['breadcrumbs'][] = $this->title;
                             'format' => 'raw',
                             'value' => function ($affectations) {
                                 $taches = Tache::find()
-                                ->where(['idaffectation' => $affectations->id])
-                                ->andwhere(['not in','statut',3])->all();
-                            
-                              
-                                    
-                                    $hasRealized = false;
-                                    $allValidated = true;
-                                    
-                                    foreach ($taches as $tache) {
-                                        $suivie = Suivie::find()->where(['idtache' => $tache->id])->one();
-                                        
-                                        if ($suivie) {
-                                            if ($suivie->statut == 2) {
-                                                $affectationStatus = '<span class="label label-primary">EN ATTENTE</span>';
-                                                $allValidated = false;
-                                            } elseif ($suivie->statut == 0) {
-                                                $hasRealized = true;
-                                                $allValidated = false;
-                                            } elseif ($suivie->statut == 1) {
-                                                $hasRealized = true;
-                                            }
-                                        }
-                                    }
-                                    
-                                    if ($allValidated) {
-                                        $affectationStatus = '<span class="label label-succes">VALIDEE</span>';
-                                    } elseif ($hasRealized) {
-                                        $affectationStatus = '<span class="label label-info">EN REALISATION</span>';
-                                    }
-                                    
-                                    // Afficher le statut de l'affectation dans la ligne de la liste
-                                    return $affectationStatus;
-                                
-                                
-                            
+                                    ->where(['idaffectation' => $affectations->id])
+                                    ->andwhere(['not in', 'statut', 3])->all();
+                                if ($affectations->statut == 1) {
+                                    return '<span class="label label-primary">TERMINEE</span>';
+                                } elseif ($affectations->statut == 0) {
+                                    return '<span class="label label-warning">EN COURS</span>';
+                                } elseif ($affectations->statut == 2) {
+                                    return '<span class="label label-default">EN ATTENTE</span>';
+                                }
                             }
                         ],
 
@@ -139,7 +113,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <i class=" fa fa-eye" style="color: red;"></i></a> </button>';
                                     } else if (($data->statut == 0)) { */
                                     $url = 'view_affectation?key_affectation=' . $data->key_affectation;
-                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
+                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '">
                                 <i class=" fa fa-eye"></i>
                                 </a>';
                                     // }

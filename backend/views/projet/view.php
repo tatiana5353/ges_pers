@@ -103,9 +103,9 @@ $typetache = TypeTache::find()
                         <div class="panel-body">
                             <!-- <p> <php echo Html::a('<i class="glyphicon glyphicon-plus"></i>', ['creates', 'key_projet' => $model->key_projet], ['class' => 'btn btn-primary ']); ?> </p> -->
                             <p> <?php
-                           echo '<button type="button" onclick="create_tacheprojet(\'' . $model->id . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#createTache"><i class="glyphicon glyphicon-plus"></i> </button>';
+                                echo '<button type="button" onclick="create_tacheprojet(\'' . $model->id . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#createTache"><i class="glyphicon glyphicon-plus"></i> </button>';
 
-                            ?></p>
+                                ?></p>
 
                             <?= GridView::widget([
                                 'layout' => '{items}{pager}',
@@ -160,9 +160,9 @@ $typetache = TypeTache::find()
                                         'buttons' => [
                                             'update' => function ($url, $data) {
                                                 $suivie = Suivie::find()
-                                                ->where(['idtache' => $data->id])
-                                                ->one();
-                                                if ($data->statut == 2 || $suivie->statut == 2 ) {
+                                                    ->where(['idtache' => $data->id])
+                                                    ->one();
+                                                if ($data->statut == 2 || $suivie->statut == 2) {
                                                     $url = 'update_tache?key_tache=' . $data->key_tache;
                                                     return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
                                                 }
@@ -239,19 +239,32 @@ $typetache = TypeTache::find()
         let idtype_tache = document.getElementById('tache-idtypetache').value;
         let designation = document.getElementById('tacheDesignation').value;
         if (key_tache != '') {
-            //alert('ggggg');
-            $.ajax({
-                url: url,
-                method: 'GET',
-                data: {
-                    idtype_tache: idtype_tache,
-                    designation: designation,
-                    key_tache: key_tache
-                },
-                success: function(result) {
-                    document.location.reload();
-                }
-            });
+            alert(idtype_tache);
+            if (idtype_tache != '') {
+
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    data: {
+                        idtype_tache: idtype_tache,
+                        designation: designation,
+                        key_tache: key_tache
+                    },
+                    success: function(result) {
+                        document.location.reload();
+                    }
+                });
+            }else{
+                var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                            ' Veuillez renseigner tous les champs obligatoires' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                            '</div>';
+                        //$('#alert_place_g').show();
+                        $('#alert_place').html(err);
+            }
         }
     }
 
@@ -261,14 +274,16 @@ $typetache = TypeTache::find()
         document.getElementById('createTacheTitle').innerHTML = 'Ajout d\'une tache au projet';
         document.getElementById('idProjet').value = idprojet;
     }
-    
+
     function create_tache_enter() {
         let url = "<?= Yii::$app->homeUrl ?>create_tacheprojet";
         let idprojet = document.getElementById('idProjet').value;
         let idtype_tache = document.getElementById('idCreatetypetache').value;
         let designation = document.getElementById('createtacheDesignation').value;
         if (idprojet != '') {
+            if (idtype_tache != '') {
             //alert(idprojet+'g'+idtype_tache+'r'+designation);
+            if (designation != '') {
             $.ajax({
                 url: url,
                 method: 'GET',
@@ -281,7 +296,26 @@ $typetache = TypeTache::find()
                     document.location.reload();
                 }
             });
+         } else{
+            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                            ' Veuillez la désignation de la tâche' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                            '</div>';
+                        //$('#alert_place_g').show();
+                        $('#alert_place').html(err);
+            }
+        }else{
+                var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                            ' Veuillez renseigner tous les champs obligatoires' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                            '</div>';
+                        //$('#alert_place_g').show();
+                        $('#alert_place').html(err);
+            }
         }
     }
-
 </script>

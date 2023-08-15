@@ -12,10 +12,13 @@ use yii\widgets\ListView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Affectations';
+$this->title = 'Mes tâches à réaliser';
 $this->params['breadcrumbs'][] = $this->title;
+echo $this->render('_modal_fairetache');
 ?>
-<?= Alert::widget() ?>
+<?= Alert::widget() 
+?>
+
 <div class="affectation-index">
 
     <div class="content-header">
@@ -68,11 +71,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ?> <i class="fa fa-check" style="color:#3498db; font-size: 18px;"></i>
                                         <?php  } elseif ($suivie->statut == 1) {;
                                         } else {
-                                        ?> <span class="button-style">
+                                            echo '<button type="button" onclick="faire_tache(\'' . $model->key_tache . '\')" class="btn" data-toggle="modal" data-target="#fairetache"><i class="fa fa-square-o" style="color:#3498db; font-size: 18px;"></i> </button>';  
+                                            
+                                        ?>
+                                           
+                                            <span class="button-style">
                                                 <?= Html::a('<i class="fa fa-square-o" style="color:#3498db; font-size: 18px;"></i>', ['fairetache', 'key_tache' => $model->key_tache]) ?>
                                             </span>
-                                            
-                                            
+
+
 
                                         <?php } ?>
                                         <!-- <= Html::a('<i class="glyphicon glyphicon-square-o"></i>', ['fairetache', 'key_tache' => $model->key_tache], ['class' => 'button-style']) ?>
@@ -91,15 +98,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                         </div>
                                         <div class="col-xs-1">
-                                        <a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-sucdcess" href="' . $url . '">
-                                            <i class=" fa fa-eye" style="font-size: 18px;"></i>
-                                        </a>
+                                            <a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-sucdcess" href="' . $url . '">
+                                                <i class=" fa fa-eye" style="font-size: 18px;"></i>
+                                            </a>
                                         </div>
                                     <?php } elseif ($suivie->statut == 1) {
                                     ?>
 
                                         <div class="col-xs-9">
-                                            <del style="text-decoration-color:#17a2b8; font-size: 16px;">
+                                            <del style="text-decoration-color:#17a2b8; font-size: 13px;">
                                                 <?php echo $model->designation ?> &nbsp;
                                                 Debut: <?php echo $date_prob ?> &nbsp;
                                                 Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
@@ -108,7 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <div class="col-xs-1"></div>
                                         <div class="col-xs-1" style="font-size: 16px;">
 
-                                            <span style="background-color: #3498db; color: #fff; padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">VALIDEE</span>
+                                            <span style=" color:#3498db  ; padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">VALIDEE</span>
                                         </div>
                                     <?php  } else {
                                     ?>
@@ -118,9 +125,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                             Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
                                         </div>
                                         <div class="col-xs-1">
-                                        <a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-sucdcess" href="' . $url . '">
-                                            <i class=" fa fa-eye" style="font-size: 18px;"></i>
-                                        </a>
+                                            <a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-sucdcess" href="' . $url . '">
+                                                <i class=" fa fa-eye" style="font-size: 18px;"></i>
+                                            </a>
                                         </div>
                                     <?php
                                     } ?>
@@ -136,15 +143,43 @@ $this->params['breadcrumbs'][] = $this->title;
             ]);
 
             ?>
-
-
-
-
-
-
         </div>
     </div>
 </div>
+
+<script>
+    function faire_tache(key_tache) {
+        document.getElementById('fairetacheTitle').innerHTML = 'Description sur la tâche éffectuée';
+        document.getElementById('keytache').value = key_tache;
+    }
+
+    function fairetache_enter() {
+        let url = "<?= Yii::$app->homeUrl ?>fairetaches";
+        let keytache = document.getElementById('keytache').value;
+        let commentaire = document.getElementById('fairetacheCommentaire').value;
+        //var currentDate = new Date().toISOString().split('T')[0];
+       
+            if (keytache != '') {
+                //alert(keytache+'g'+'r'+commentaire);
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    data: {
+                        keytache: keytache,
+                        commentaire: commentaire
+                        /*   idtype_tache: idtype_tache,
+                          designation: designation,
+                          idprojet: idprojet */
+                    },
+                    success: function(result) {
+                        document.location.reload();
+                    }
+                });
+            }
+       
+    }
+</script>
+
 <!--    <?php foreach ($dataProvider->getModels() as $tache) : ?>
                                 <div class="panel panel-default">
                                     <div class="panel-body">

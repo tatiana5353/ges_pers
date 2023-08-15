@@ -16,8 +16,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="container-fluid">
             <div class="row mb-2">
                 <ol class="breadcrumb float-right" style="float: right;">
-                    <li class="breadcrumb-item"><a href="accueil">Accueil</a></li>
-                    <li class="breadcrumb-item active">Liste des taches</li>
+                    <li class="breadcrumb-item">
+                        <a href="/gespers/admin/accueil">Accueil</a>
+                    </li>
+                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_tache">Liste des tâches</a></li>
+                    <li class="breadcrumb-item active">Création d'une tâche
+                    </li>
                 </ol>
 
             </div><!-- /.row -->

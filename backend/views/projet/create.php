@@ -32,7 +32,7 @@ $tache = new Tache();
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
-    <div id="alert_place_g"></div>
+    
     <!--  <div class="row">
         <div class="col-lg-8 p-r-1 title-margin-right">
             <div class="page-header">
@@ -69,8 +69,8 @@ $tache = new Tache();
             <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
         </div>
         <div class="panel-body">
-          
 
+        <div id="alert_place_g"></div>
             <div class="col-lg-12">
 
                 <!-- <div class=""> -->
@@ -158,10 +158,18 @@ $tache = new Tache();
             var search_position = old_tache_added.search('###' + typetache + ';;;' + designation);
 
             if (search_position >= 0) {
-                msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' + ' <div class="alert-body">' +
+                /* msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' + ' <div class="alert-body">' +
                     ' Cette tache est déjà ajoutée à la liste </div> </div>';
                 $('#alert_place').show();
-                $('#alert_place').html(msg);
+                $('#alert_place').html(msg); */
+                var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                    'Cette tâche est déjà ajoutée à la liste' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span>' +
+                    '</button>' +
+                    '</div>';
+                //$('#alert_place_g').show();
+                $('#alert_place').html(err);
             } else {
 
                 var new_data = typetache + ';;;' + designation;
@@ -187,33 +195,27 @@ $tache = new Tache();
 
                 document.getElementById('tache-idtypetache').value = '';
                 document.getElementById('tache-designation').value = '';
-
-
-                msg = '<div class="alert alert-success alert-dismissible show fade" style="margin-bottom: 30px">' +
-                    '<div class="alert-body">' +
-                    'Tache ajoutée avec succès' +
-                    '</div>' +
+                var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                    'Tâche ajoutée avec success' +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">&times;</span>' +
                     '</button>' +
                     '</div>';
-                $('#alert_place').show();
-                $('#alert_place').html(msg);
+                //$('#alert_place_g').show();
+                $('#alert_place').html(err);
 
             }
 
         } else {
-            msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' +
-                '<div class="alert-body">' +
-                'Veuillez renseigner les champs' +
-                '</div>' +
+
+            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                'Veuillez renseigner  les champs obligatoires' +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                 '<span aria-hidden="true">&times;</span>' +
                 '</button>' +
                 '</div>';
-
-            $('#alert_place').show();
-            $('#alert_place').html(msg);
+            //$('#alert_place_g').show();
+            $('#alert_place').html(err);
         }
     }
 
@@ -246,21 +248,31 @@ $tache = new Tache();
                         if (result == "ok") {
                             document.location.href = "<?php Yii::$app->homeUrl ?>all_projet";
                         } else {
-                            var err = '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
-                                'Erreur lors de l\'enregistrement !' +
+
+                            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                                'Erreur lors de l\enregistrement' +
                                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                                 '<span aria-hidden="true">&times;</span>' +
                                 '</button>' +
                                 '</div>';
+                            //$('#alert_place_g').show();
                             $('#alert_place_g').html(err);
                         }
                     }
                 }
             });
         } else {
-            var err = '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
-                'Veuillez renseigner tous les champs obligatoire' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' + '<span aria-hidden="true">&times;</span>' + '</button>' + '</div>';
+            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                'Veuillez renseigner tous les champs obligatoires' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>';
+            //$('#alert_place_g').show();
             $('#alert_place_g').html(err);
+            $('html, body').animate({
+                scrollTop: $('#place_croll').offset().top
+            }, 200);
         }
     }
 </script>

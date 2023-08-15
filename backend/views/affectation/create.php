@@ -11,13 +11,15 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Affectation */
 
-$this->title = 'Create Affectation';
+$this->title = 'Création d\'une affectation ';
 $this->params['breadcrumbs'][] = ['label' => 'Affectations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $currentDate = date('Y-m-d H:i');
 ?>
-<div class="affectation-create">
-    <div id="alert_place_g"></div>
+
+<div id="alert_place_c"></div>
+<div id="place_croll"></div>
+<div class="affectation-create" id="">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -33,11 +35,13 @@ $currentDate = date('Y-m-d H:i');
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
+
     <div class="panel panel-default">
         <div class="panel-heading" style="background-color: #17a2b8;">
             <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
         </div>
         <div class="panel-body">
+            <div id="alert_place_g"></div>
             <div class="content-panel">
                 <div class="row">
                     <div class="col-lg-1">
@@ -149,6 +153,7 @@ $currentDate = date('Y-m-d H:i');
                                 <div class="card-footer">
                                     <!-- <div class="form-group"> -->
 
+                                    <div id="alert_place_a"></div>
                                     <button type="button" class="btn btn-primary" onclick="save_affectation()">Valider</button>
                                     <!-- ?= Html::a(' Quitter', ['/all_demande'], ['class' => 'btn badge-danger']) ?> -->
                                     <!-- </div> -->
@@ -174,77 +179,117 @@ $currentDate = date('Y-m-d H:i');
         var description = $('#suivie-commentaire_assigant').val();
         var date_debut = $('#suivie-date_debut').val();
         var date_fin = $('#suivie-date_prob').val();
+        var currentdate = new Date();
 
         if (tache != '' && description != '' && date_debut != '' && date_fin != '') {
 
             var old_tache_added = $("#all_tache_added").val();
-            var search_position = old_tache_added.search('###' + tache + ';;;' + description + ';;;' + date_debut + ';;;' + date_fin);
+            var search_position = old_tache_added.search('###' + tache);
+            var date_fin_obj = new Date(date_fin); // Convertir la chaîne date_fin en un objet Date
+            var date_debut_obj = new Date(date_debut);
+            
+            if (date_debut_obj > currentdate) {
+                if (date_fin_obj > currentdate) {
+                    if (date_fin_obj > date_debut_obj) {
+                        
+                    
+                    if (search_position >= 0) {
 
-            if (search_position >= 0) {
-                msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' +
-                    ' <div class="alert-body">' +
-                    ' Cette tache est déjà ajoutée à la liste </div> </div>';
-                $('#alert_place').show();
-                $('#alert_place').html(msg);
+                        var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                            ' Cette tache est déjà ajoutée à la liste' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                            '</div>';
+                        //$('#alert_place_g').show();
+                        $('#alert_place').html(err);
 
-            } else {
+                    } else {
 
-                var new_data = tache + ';;;' + description + ';;;' + date_debut + ';;;' + date_fin;
+                        var new_data = tache + ';;;' + description + ';;;' + date_debut + ';;;' + date_fin;
 
-                $("#all_tache_added").val(old_tache_added + '###' + new_data + '*');
+                        $("#all_tache_added").val(old_tache_added + '###' + new_data + '*');
+
+                        var newCell = document.createElement("td");
+                        var newCell1 = document.createElement("td");
+                        var newCell2 = document.createElement("td");
+                        var newCell3 = document.createElement("td");
+                        var newCell4 = document.createElement("td");
+
+                        newCell.innerHTML = tache_text;
+                        newCell1.innerHTML = description;
+                        newCell2.innerHTML = date_debut;
+                        newCell3.innerHTML = date_fin;
+                        newCell4.innerHTML = '<i class="fa fa-trash" style="color:red" onclick="delete_tache(\'' + new_data + '\', this)"></i>';
+
+                        var newRow = document.createElement("tr");
+
+                        newRow.append(newCell);
+                        newRow.append(newCell1);
+                        newRow.append(newCell2);
+                        newRow.append(newCell3);
+                        newRow.append(newCell4);
+
+                        document.getElementById("rows").appendChild(newRow);
+
+                        document.getElementById('tache-designation').value = '';
+                        document.getElementById('suivie-commentaire_assigant').value = '';
+                        document.getElementById('suivie-date_debut').value = '';
+                        document.getElementById('suivie-date_prob').value = '';
+
+                        var err = '<div class="alert alert-info alert-dismissible" role="alert">' +
+                            'Tache ajoutée avec succès' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                            '</div>';
+                        //$('#alert_place_g').show();
+                        $('#alert_place').html(err);
 
 
-                var newCell = document.createElement("td");
-                var newCell1 = document.createElement("td");
-                var newCell2 = document.createElement("td");
-                var newCell3 = document.createElement("td");
-                var newCell4 = document.createElement("td");
-
-                newCell.innerHTML = tache_text;
-                newCell1.innerHTML = description;
-                newCell2.innerHTML = date_debut;
-                newCell3.innerHTML = date_fin;
-                newCell4.innerHTML = '<i class="fa fa-trash" style="color:red" onclick="delete_tache(\'' + new_data + '\', this)"></i>';
-
-                var newRow = document.createElement("tr");
-
-                newRow.append(newCell);
-                newRow.append(newCell1);
-                newRow.append(newCell2);
-                newRow.append(newCell3);
-                newRow.append(newCell4);
-
-                document.getElementById("rows").appendChild(newRow);
-
-                document.getElementById('tache-designation').value = '';
-                document.getElementById('suivie-commentaire_assigant').value = '';
-                document.getElementById('suivie-date_debut').value = '';
-                document.getElementById('suivie-date_prob').value = '';
-
-                msg = '<div class="alert alert-success alert-dismissible show fade" style="margin-bottom: 30px">' +
-                    '<div class="alert-body">' +
-                    'Tache affectée avec succès' +
-                    '</div>' +
-                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                    '<span aria-hidden="true">&times;</span>' +
-                    '</button>' +
-                    '</div>';
-                $('#alert_place').show();
-                $('#alert_place').html(msg);
-
+                    }
+                }else{
+                    var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                        'la date limite ne peut être inférieur à la date de début' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<span aria-hidden="true">&times;</span>' +
+                        '</button>' +
+                        '</div>';
+                    //$('#alert_place_g').show();
+                    $('#alert_place').html(err);
+                }
+                } else {
+                    var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                        'la date limite ne peut pas être dans le passé' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<span aria-hidden="true">&times;</span>' +
+                        '</button>' +
+                        '</div>';
+                    //$('#alert_place_g').show();
+                    $('#alert_place').html(err);
+                }
+            } else{
+                var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                        'la date de début ne peut pas être dans le passé' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<span aria-hidden="true">&times;</span>' +
+                        '</button>' +
+                        '</div>';
+                    //$('#alert_place_g').show();
+                    $('#alert_place').html(err);
             }
 
         } else {
-            var msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' +
-                '<div class="alert-body">' +
-                'Veuillez renseigner les champs' +
-                '</div>' +
+
+            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                'Veuillez renseigner tous les champs' +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                 '<span aria-hidden="true">&times;</span>' +
                 '</button>' +
                 '</div>';
-            $('#alert_place').show();
-            $('#alert_place').html(msg);
+            //$('#alert_place_g').show();
+            $('#alert_place').html(err);
+
         }
     }
 
@@ -277,21 +322,35 @@ $currentDate = date('Y-m-d H:i');
                         if (result == "ok") {
                             document.location.href = "<?php Yii::$app->homeUrl ?>all_affectation";
                         } else {
-                            var err = '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
+                            var err = '<div class="alert alert-warning alert-dismissible" role="alert">' +
                                 'Erreur lors de l\'enregistrement !' +
                                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                                 '<span aria-hidden="true">&times;</span>' +
                                 '</button>' +
                                 '</div>';
-                            $('#alert_place_g').html(err);
+                            //$('#alert_place_g').show();
+                            $('#alert_place_c').html(err);
+                            $('html, body').animate({
+                                scrollTop: $('#place_croll').offset().top
+                            }, 200);
                         }
                     }
                 }
             });
         } else {
-            var err = '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
-                'Veuillez renseigner tous les champs obligatoire' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' + '<span aria-hidden="true">&times;</span>' + '</button>' + '</div>';
+            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                'Veuillez renseigner tous les champs obligatoires' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>';
+            //$('#alert_place_g').show();
             $('#alert_place_g').html(err);
+
+            $('html, body').animate({
+                scrollTop: $('#place_croll').offset().top
+            }, 200); // La durée du défilement en millisecondes (par exemple, 500)
+
         }
     }
 </script>

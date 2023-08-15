@@ -113,7 +113,7 @@ echo $this->render('_modal');
                                                 $droit = Utils::have_access('traiterdemande');
                                                 //if (($data->statut == 0)) {
                                                 $url = 'view_tache?key_tache=' . $data->key_tache;
-                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
+                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '">
                                         <i class=" fa fa-eye"></i>
                                         </a>';
                                                 //}
@@ -133,7 +133,7 @@ echo $this->render('_modal');
                                                 ->one();
                                                 if ($data->statut == 2 || $suivie->statut == 2 ) {
                                                     $url = 'update_tache?key_tache=' . $data->key_tache;
-                                                    return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
+                                                    return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-primary btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
                                                 }
                                             },
                                         ],
@@ -176,6 +176,7 @@ echo $this->render('_modal');
         let url = "<?= Yii::$app->homeUrl ?>delete_tache";
         let key_element = document.getElementById('keyElement').value;
         if (key_element != '') {
+           // alert(key_element)
             $.ajax({
                 url: url,
                 method: 'GET',

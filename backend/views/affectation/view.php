@@ -53,7 +53,22 @@ echo $this->render('_modal_createtache');
                                         'value' => function ($data) {
                                             return $data->iduser0->nom . " " . $data->iduser0->prenoms;
                                         }
-                                    ]
+                                    ],
+                                    [
+                                        'attribute' => 'statut',
+                                        'header' => 'Statut',
+                                        /*  'filter' => ['Y'=>'Active', 'N'=>'Deactive'], */
+                                        'format' => 'raw',
+                                        'value' => function ($affectations) {
+                                            if ($affectations->statut == 1) {
+                                                return '<span style="background-color: #337ab7; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">TERMINEE</span>';
+                                            } elseif ($affectations->statut == 0) {
+                                                return '<span style="background-color: #337ab7; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">EN COURS</span>';
+                                            } elseif ($affectations->statut == 2) {
+                                                return '<span style="background-color: #337ab7; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">EN ATTENTE</span>';
+                                            }
+                                        }
+                                    ],
                                 ],
                             ]) ?>
                         </div>
@@ -67,10 +82,14 @@ echo $this->render('_modal_createtache');
                             </h3>
                         </div>
                         <div class="panel-body">
-                            <p> <?php
-                                echo '<button type="button" onclick="create_tacheaffectation(\'' . $model->id . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#createTacheaffectation"><i class="glyphicon glyphicon-plus"></i> </button>';
+                           <?php if($model->statut == 2)
+                            {?>
+                                <p> <?php
+                                echo  '<button type="button" onclick="create_tacheaffectation(\'' . $model->id . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#createTacheaffectation"><i class="glyphicon glyphicon-plus"></i> </button>';
 
                                 ?></p>
+                          <?php  }  ?>
+                           
                             <?= GridView::widget([
                                 'layout' => '{items}{pager}',
                                 'showOnEmpty' => false,
@@ -152,7 +171,7 @@ echo $this->render('_modal_createtache');
                                             'view' => function ($url, $data) {
 
                                                 $url = 'view_tache?key_tache=' . $data->key_tache;
-                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
+                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '">
                                                 <i class=" fa fa-eye"></i>
                                                 </a>';
                                             },

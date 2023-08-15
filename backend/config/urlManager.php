@@ -43,6 +43,7 @@ $tab_url = array(
 	'valider_demande' => 'demande/valider',
 	'refuser_demande' => 'demande/refuser',
 	'refus_demande' => 'demande/refus',
+	'affiche_motif' => 'demande/get_motif_refus',
 
 	'all_presence' => 'presence/index',
 	'add_presence' => 'presence/create',
@@ -73,6 +74,8 @@ $tab_url = array(
 	'faire_tache' => 'affectation/faire_tache',
 	'vue_realisation' => 'affectation/vue_realisation',
 	'create_tacheaffectation' => 'affectation/createtache',
+	'faire_taches' => 'affectation/fairetaches',
+
 	
 	/* 'add_projettache' => 'projet/createtache',
 	'update_projettache' => 'projet/updatetache',
@@ -93,7 +96,13 @@ $tab_url = array(
 	'update_tache' => 'tache/update',
 	'view_tache' => 'tache/view',
 	'valider_tache' => 'tache/valider',
-	'refus_tache' => 'tache/createsuivie'
+	'refus_tache' => 'tache/createsuivie',
+
+	'all_fonctionnalite' => 'fonctionnalite/index',
+	'add_fonctionnalite' => 'fonctionnalite/create',
+	'delete_fonctionnalite' => 'fonctionnalite/delete',
+	'update_fonctionnalite' => 'fonctionnalite/update',
+	'view_fonctionnalite' => 'fonctionnalite/view',
 
 
 );

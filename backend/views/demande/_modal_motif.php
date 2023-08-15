@@ -8,12 +8,12 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" id="modalContentRefus">
-
-            <!-- <input type="" class="form-control" value="" id="keyElement2" disabled> -->
-            
+            <div class="modal-body" id="modalContentRefus" >
             </div>
-            <input type="" value="" id="motifRefus"> <!-- hidden -->
+            <!-- <input type="" class="form-control" value="" id="keyElement2" disabled> -->
+            <input type="" class="form-control" value="" rows="4" id="motifRefus"disabled >
+            
+            <!-- hidden -->
             
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>

@@ -33,7 +33,17 @@ class DemandeController extends Controller
      * Lists all Demande models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionGet_motif_refus($key_demande) {
+        $model = Demande::findOne(['key_demande' => $key_demande]);
+        if ($model !== null) {
+            return $model->motif_refus;
+        } else {
+            return null;
+        }
+    }
+
+    
+     public function actionIndex()
     {
         $droit_traitement = Utils::have_access('traiterdemande');
         $droit = Utils::have_access('demande_perso');

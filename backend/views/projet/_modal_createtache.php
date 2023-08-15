@@ -18,6 +18,7 @@ use yii\helpers\ArrayHelper;
       <div class="modal-body" id="createTacheContent">
         <!--  FORM -->
         <div class="col-lg-12">
+        <div id="alert_place"></div>
           <div class="">
             <?php $tache = new Tache();
             $form = ActiveForm::begin(); ?>
@@ -37,14 +38,7 @@ use yii\helpers\ArrayHelper;
                 )->error(false)->label('<h5>Type de tache<span class="text-danger">**</span></h5>');
                 ?>
               </div>
-
-              <div class="form-group">
-                <label class="control-label col-md-3">Désignation</label>
-                <div class="col-md-8 col-xs-11">
-                  <input class="form-control form-control-inline input-medium " size="16" type="text" value="" id="createtacheDesignation">
-                  <!-- <span class="help-block">Select date</span> -->
-                </div>
-              </div>
+              <?= $form->field($tache, 'designation')->textInput(['maxlength' => true, 'required' => true, 'id' => 'createtacheDesignation'])->label('<h5>Désignation<span class="text-danger">**</span></h5>') ?>
             </form>
             <?php ActiveForm::end(); ?>
           </div>

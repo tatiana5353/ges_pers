@@ -34,57 +34,54 @@ echo $this->render('_modal');
         </div>
         <div class="panel-body">
 
-            <div class="content-panel">
-                <div class="typeconge-index">
 
 
-                    <div class="row">
+            <div class="row">
 
-                        <div class="col-sm-1">
-                        </div>
-                        <div class="col-sm-10">
-                            <p>
-                                <?= Html::a('Créer un projet', ['create'], ['class' => 'btn btn-info']) ?>
-                            </p>
-                            <div class="content-panel">
-                                <?= GridView::widget([
-                                    'layout' => '{items}{pager}',
-                                    'showOnEmpty' => false,
-                                    'emptyText' => Utils::emptyContent(),
-                                    'dataProvider' => $dataProvider,
-                                    'tableOptions' => [
-                                        'class' => 'table table-bordered',
-                                        'id' => 'hidden-table-info',
-                                        'cellpadding' => "0",
-                                        'cellspacing' => "0",
-                                        'border' => "0"
-                                    ],
-                                    'columns' => [
-                                        [
-                                            'class' => 'yii\grid\SerialColumn',
-                                            'headerOptions' => ['width' => '15'],
-                                            'header' => 'N°'
-                                        ],
-                                        [
-                                            'label' => 'Libellé',
-                                            'value' => 'libelle'
-                                        ],
 
-                                        [
-                                            'class' => 'yii\grid\ActionColumn',
-                                            'template' => '{view}',
-                                            'headerOptions' => ['width' => '10'],
-                                            'buttons' => [
-                                                'view' => function ($url, $data) {
-                                                    $url = 'view_projet?key_projet=' . $data->key_projet;
-                                                    return '<a title="' . Yii::t('app', 'view') . '" class="btn btn-success btn-sm" href="' . $url . '">
+                <div class="col-sm-12">
+                    <p>
+                        <?= Html::a('Créer un projet', ['create'], ['class' => 'btn btn-info']) ?>
+                    </p>
+                    <div class="content-panel">
+                        <?= GridView::widget([
+                            'layout' => '{items}{pager}',
+                            'showOnEmpty' => false,
+                            'emptyText' => Utils::emptyContent(),
+                            'dataProvider' => $dataProvider,
+                            'tableOptions' => [
+                                'class' => 'table table-bordered',
+                                'id' => 'hidden-table-info',
+                                'cellpadding' => "0",
+                                'cellspacing' => "0",
+                                'border' => "0"
+                            ],
+                            'columns' => [
+                                [
+                                    'class' => 'yii\grid\SerialColumn',
+                                    'headerOptions' => ['width' => '15'],
+                                    'header' => 'N°'
+                                ],
+                                [
+                                    'label' => 'Libellé',
+                                    'value' => 'libelle'
+                                ],
+
+                                [
+                                    'class' => 'yii\grid\ActionColumn',
+                                    'template' => '{view}',
+                                    'headerOptions' => ['width' => '10'],
+                                    'buttons' => [
+                                        'view' => function ($url, $data) {
+                                            $url = 'view_projet?key_projet=' . $data->key_projet;
+                                            return '<a title="' . Yii::t('app', 'view') . '" class="btn btn-info btn-sm" href="' . $url . '">
                                             <i class=" fa fa-eye"></i>
                                             </a>';
-                                                },
-                                            ],
-                                        ],
+                                        },
+                                    ],
+                                ],
 
-                                        /*  [
+                                /*  [
                                             'class' => 'yii\grid\ActionColumn',
                                             'template' => '{update}',
                                             'headerOptions' => ['width' => '15'],
@@ -98,30 +95,28 @@ echo $this->render('_modal');
                                             ],
                                         ], */
 
-                                        [
-                                            'class' => 'yii\grid\ActionColumn',
-                                            'template' => '{delete}',
-                                            'headerOptions' => ['width' => '15'],
-                                            'buttons' => [
-                                                'delete' => function ($url, $data) {
-                                                    return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-sm" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_projet(\'' . $data->key_projet . '\')">
+                                [
+                                    'class' => 'yii\grid\ActionColumn',
+                                    'template' => '{delete}',
+                                    'headerOptions' => ['width' => '15'],
+                                    'buttons' => [
+                                        'delete' => function ($url, $data) {
+                                            return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-sm" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_projet(\'' . $data->key_projet . '\')">
                                     <i class="fa fa-trash"></i>
                                             </a>';
-                                                },
-                                            ],
-                                        ]
+                                        },
                                     ],
-                                ]); ?>
-                            </div>
-                        </div>
-                        <div class="col-sm-1">
-                        </div>
-
+                                ]
+                            ],
+                        ]); ?>
                     </div>
-
-
                 </div>
+
+
             </div>
+
+
+
         </div>
     </div>
 

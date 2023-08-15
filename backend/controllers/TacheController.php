@@ -9,6 +9,7 @@ use Yii;
 use backend\models\Tache;
 use backend\models\TypeTache;
 use yii\data\ActiveDataProvider;
+use yii\db\Expression;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -42,17 +43,18 @@ class TacheController extends Controller
         $droit = Utils::have_access('tache');
         if ($droit == 1) {
             $findprojet = Projet::find()->where(['libelle' => 'tache individuelle'])->one();
-            $statusOrder = [0=> 1, // Statut 2 doit être trié en premier
-            2=> 2, // Statut 1 doit être trié en deuxième
-            1 => 3, ];
+            $statusOrder = [
+                0 => 1, // Statut 2 doit être trié en premier
+                2 => 2, // Statut 1 doit être trié en deuxième
+                1 => 3,
+            ];
             $dataProvider = new ActiveDataProvider([
                 'query' => Tache::find()->where(['not in', 'statut', 3])
-                    ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null]),
-                    'sort' => [
-                        'defaultOrder' => ['statut' => $statusOrder],
-                    ],
-            ])
-            ;
+                    ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null])
+                    ->orderBy([
+                        // Tri par statut en plaçant les éléments avec statut = 2 en dernier
+                        new Expression('CASE WHEN statut = 2 THEN 1 ELSE 0 END')])
+            ]);
 
             return $this->render('index', [
                 'dataProvider' => $dataProvider,
@@ -71,6 +73,9 @@ class TacheController extends Controller
                     'key_tache' => $key_element,
                     'statut' => 0
                 ])->one();
+            $affectation = Affectation::find()
+                ->where(['id' => $model->idaffectation])
+                ->one();
 
             if ($model !== null) {
                 $idtache = $model->id;
@@ -86,6 +91,16 @@ class TacheController extends Controller
                     $suivie->statut = 1;
 
                     if ($model->save() && $suivie->save()) {
+                        $nbrtache = Tache::find()
+                            ->where(['idaffectation' => $affectation->id])
+                            ->andwhere(['not in', 'statut', [3, 1]])
+                            ->count();
+                        if ($nbrtache == 0) {
+                            $affectation->statut = 1;
+                            $affectation->updated_by =  Yii::$app->user->identity->id;
+                            $affectation->updated_at = date('Y-m-d H:i:s');
+                            $affectation->save();
+                        }
                         Yii::$app->getSession()->setFlash('success', 'Tâche validée avec succès !');
                     } else {
                         Yii::$app->getSession()->setFlash('error', 'Erreur lors de la validation !');
@@ -126,7 +141,7 @@ class TacheController extends Controller
                 ->where(['idtache' => $idtache])
                 ->one();
 
-            if ($suivie !== null && ($suivie->statut == 0 || $tache->statut == 2 || $tache->statut ==1)) {
+            if ($suivie !== null && ($suivie->statut == 0 || $tache->statut == 2 || $tache->statut == 1)) {
                 return $this->render('view_2', [
                     'model' => $tache,
                     'suivie' => $suivie,
@@ -288,32 +303,35 @@ class TacheController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
+    /**
+     * Deletes an existing Tache model.
+     * 
+     *
+     * 
+     * @return mixed
+     *
+     * @get
+     */
 
     public function actionDelete($key_element)
     {
         //print('rrtttt');die;
         $droit_tache = Utils::have_access('tache');
         if ($droit_tache == 1) {
-            $model = $this->findModel($key_element);
+            $model = Tache::find()
+            ->where(["key_tache" => $key_element])->one();
             if ($model != null) {
-                /* $mt = Typeconge::find()->where([
-                    'statut' => 1, 
-                    'idtypeconge' => $model->id
-                    ])->count();
-                if ($mt > 0) {
-                    Yii::$app->getSession()->setFlash('error', 'Vous ne pouvez pas supprimer ce type de congé car il est déjà enregistré !');
-                }else{ */
+
                 $model->statut = 3;
                 $model->updated_by = Yii::$app->user->identity->id;
                 $model->updated_at = date('Y-m-d H:i:s');
 
                 if ($model->save()) {
                     Yii::$app->getSession()->setFlash('success', 'Tache supprimée avec succès !');
-                    //return $this->redirect('all_tache');
                 } else {
                     Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
                 }
-                //}
+                
             } else Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
         }
     }

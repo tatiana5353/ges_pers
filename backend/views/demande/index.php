@@ -124,11 +124,11 @@ echo $this->render('_modal_motif');
                                             'view' => function ($url, $data) {
                                                 $droit = Utils::have_access('traiterdemande');
                                                 if ($data->statut == 4) {
-                                                    return '<button type="button" class="btn btn-xs btn-info"><a title="' . Yii::t('app', 'Voir') . '" class="" href="#" data-toggle="modal" data-target="#exampleModalRefus" onclick="affiche_motif(\'' . $data->motif_refus . '\')"><i class="fa fa-eye" style="color:white"></i></a> </button>';
+                                                    return '<button type="button" class="btn btn-xs btn-info"><a title="' . Yii::t('app', 'Voir') . '" class="" href="#" data-toggle="modal" data-target="#exampleModalRefus" onclick="affiche_motif(\'' . $data->key_demande . '\')"><i class="fa fa-eye" style="color:white"></i></a> </button>';
                                                 } else {
                                                     $url = 'view_demande?key_demande=' . $data->key_demande;
                                                     return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '"><i class=" fa fa-eye"></i></a>';
-                                                } 
+                                                }
                                             },
                                         ],
                                     ],
@@ -185,12 +185,20 @@ echo $this->render('_modal_motif');
         document.getElementById('keyElement').value = key_element;
     }
 
-    function affiche_motif(motif_refus) {
-        alert('okok');
-        document.getElementById('modalTitleRefus').innerHTML = 'Motif de rejet';
-        document.getElementById('modalContentRefus').innerHTML = 'Cette demande a été rejeté pour le motif suivant : ';
-        document.getElementById('motifRefus').value = '';
-        document.getElementById('motifRefus').value = motif_refus;
+    function affiche_motif(key_demande) {
+        let url = "<?= Yii::$app->homeUrl ?>affiche_motif";
+        $.ajax({
+            url: url, // Remplacez "votre-controller" par le nom de votre contrôleur
+            method: 'GET',
+            data: {
+                key_demande: key_demande
+            },
+            success: function(data) {
+                document.getElementById('modalTitleRefus').innerHTML = 'Motif de rejet';
+                document.getElementById('modalContentRefus').innerHTML = 'Cette demande a été rejetée pour le motif suivant : ';
+                document.getElementById('motifRefus').value = data;
+            }
+        });
     }
 
     function validate_sortie(key_element) {
