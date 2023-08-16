@@ -55,7 +55,7 @@ echo $this->render('_modal_refus');
     </script>
     <div class="panel panel-default">
         <div class="panel-heading" style="background-color: #17a2b8;">
-            <h3 class="panel-title" style="color: #ffffff;"> Détail sur la tache : <h7><?= Html::encode($this->title) ?></h7>
+            <h3 class="panel-title" style="color: #ffffff;"> Détail sur la tâche : <h7><?= Html::encode($this->title) ?></h7>
             </h3>
         </div>
         <div class="panel-body">
@@ -76,6 +76,40 @@ echo $this->render('_modal_refus');
                                                 return $data->idprojet0->libelle ?? '';
                                             }
                                         ],
+
+                                        [
+                                            'attribute' => 'statut',
+                                            'header' => 'Statut',
+                                            /*  'filter' => ['Y'=>'Active', 'N'=>'Deactive'], */
+                                            'format' => 'raw',
+                                            'label' => 'Statut de la tâche',
+                                            'value' =>  function ($data) {
+                                                $suivie = Suivie::find()
+                                                    ->where(['idtache' => $data->id])
+                                                    ->orderBy(['created_at' => SORT_DESC])
+                                                    ->one();
+                                                    $nbr = Suivie::find()
+                                                    ->where(['idtache' => $data->id])
+                                                    ->count();
+                                                if ($data->statut !== 2) {
+                                                    if (($suivie->statut == 0)) {
+                                                        return '<span style="background-color: #808080; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">REALISER</span>';
+                                                    } elseif (($suivie->statut == 1)) {
+                                                        return '<span style="background-color: #5cb85c; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> VALIDEE </span>';
+                                                    } elseif (($suivie->statut == 2)&& ($nbr == 1)) {
+                                                        return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> AFFECTEE </span>';
+                                                    } elseif (($suivie->statut == 2) && ($nbr > 1)) {
+                                                        return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> A REFAIRE </span>';
+                                                    }
+                                                     else {
+                                                        return '';
+                                                    }
+                                                } else {
+                                                    return '<span style="background-color: #D3D3D3; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> NON AFFECTEE </span>';
+                                                }
+                                            },
+                                        ],
+    
                                         [
 
                                             'label' => 'Responsable',
@@ -104,7 +138,7 @@ echo $this->render('_modal_refus');
                                         'designation',
                                         // 'description:ntext',
                                         [
-                                            'label' => 'Description de la tache ',
+                                            'label' => 'Description de la tâche ',
                                             'value' => function ($data) {
                                                 $suivie = Suivie::find()
                                                     ->where(['idtache' => $data->id])

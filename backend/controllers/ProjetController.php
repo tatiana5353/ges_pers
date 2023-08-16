@@ -90,7 +90,7 @@ class ProjetController extends Controller
         $droit = Utils::have_access('projet');
         if ($droit == 1) {
             $dataProvider = new ActiveDataProvider([
-                'query' => Projet::find()->where(['and', ['not in', 'statut', 3]]),
+                'query' => Projet::find()->where(['and', ['not in', 'statut', 3]]), 'pagination' => ['pageSize' => 5],
             ]);
 
             return $this->render('index', [
@@ -124,17 +124,22 @@ class ProjetController extends Controller
                     'or',
                     [
                         'key_projet' => $key_projet,
-                        'statut' => 0
                     ],
-                    [
-                        'key_projet' => $key_projet,
-                        'statut' => 2
-                    ]
+
 
                 ])->one();
             $dataProvider = new ActiveDataProvider([
                 'query' => Tache::find()
                     ->where(['idprojet' => $model->id])->andWhere(['<>', 'statut', 3]), 'pagination' => ['pageSize' => 5]
+            ]);
+            $newdataProvider = new ActiveDataProvider([
+                'query' => $dataProvider->query,
+                'pagination' => $dataProvider->pagination,
+            ]);
+
+            $newdataProvider->query->orderBy([
+                new \yii\db\Expression('CASE WHEN statut = 1 THEN 2 WHEN statut = 0 THEN 0 ELSE 1 END'), // Met les modèles avec statut 1 en dernière position
+                // Ajoutez d'autres critères de tri si nécessaire, par exemple 'autre_colonne' => SORT_ASC,
             ]);
             return $this->render('view', [
                 'model' => $model,
@@ -283,7 +288,7 @@ class ProjetController extends Controller
         //print('rrr');
         $droit = utils::have_access('tache');
         if ($droit == 1) {
-            
+
             $tache = Tache::find()
                 ->where(['key_tache' => $key_tache])
                 ->andWhere(['not in', 'statut', [3, 1]])
@@ -313,7 +318,7 @@ class ProjetController extends Controller
     public function actionCreatetache($idprojet, $idtype_tache, $designation)
     {
         //Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
-       // print('rrr');die;
+        // print('rrr');die;
         $droit = utils::have_access('tache');
         if ($droit == 1) {
             $searchTache = Tache::find()
@@ -342,7 +347,7 @@ class ProjetController extends Controller
         }
     }
 
-    
+
     public function actionUpdate($key_projet)
     {
         $droit_projet = Utils::have_access('projet');

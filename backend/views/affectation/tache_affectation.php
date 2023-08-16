@@ -154,7 +154,7 @@ echo $this->render('_modal_fairetache');
     }
 
     function fairetache_enter() {
-        let url = "<?= Yii::$app->homeUrl ?>fairetaches";
+        let url = "<?= Yii::$app->homeUrl ?>faire_taches";
         let keytache = document.getElementById('keytache').value;
         let commentaire = document.getElementById('fairetacheCommentaire').value;
         //var currentDate = new Date().toISOString().split('T')[0];
@@ -176,7 +176,6 @@ echo $this->render('_modal_fairetache');
                     }
                 });
             }
-       
     }
 </script>
 

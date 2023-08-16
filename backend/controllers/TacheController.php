@@ -50,14 +50,21 @@ class TacheController extends Controller
             ];
             $dataProvider = new ActiveDataProvider([
                 'query' => Tache::find()->where(['not in', 'statut', 3])
-                    ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null])
-                    ->orderBy([
-                        // Tri par statut en plaçant les éléments avec statut = 2 en dernier
-                        new Expression('CASE WHEN statut = 2 THEN 1 ELSE 0 END')])
+                    ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null]), 'pagination' => ['pageSize' => 5]
+
+            ]);
+            $newdataProvider = new ActiveDataProvider([
+                'query' => $dataProvider->query,
+                'pagination' => $dataProvider->pagination,
+            ]);
+
+            $newdataProvider->query->orderBy([
+                new \yii\db\Expression('CASE WHEN statut = 1 THEN 2 WHEN statut = 0 THEN 0 ELSE 1 END'), // Met les modèles avec statut 1 en dernière position
+                // Ajoutez d'autres critères de tri si nécessaire, par exemple 'autre_colonne' => SORT_ASC,
             ]);
 
             return $this->render('index', [
-                'dataProvider' => $dataProvider,
+                'dataProvider' => $newdataProvider,
             ]);
         } else {
         }
@@ -71,10 +78,12 @@ class TacheController extends Controller
             $model = Tache::find()
                 ->where([
                     'key_tache' => $key_element,
-                    'statut' => 0
                 ])->one();
             $affectation = Affectation::find()
                 ->where(['id' => $model->idaffectation])
+                ->one();
+            $projet = Projet::find()
+                ->where(['id' => $model->idprojet])
                 ->one();
 
             if ($model !== null) {
@@ -95,11 +104,21 @@ class TacheController extends Controller
                             ->where(['idaffectation' => $affectation->id])
                             ->andwhere(['not in', 'statut', [3, 1]])
                             ->count();
+                        $nbre = Tache::find()
+                            ->where(['idprojet' => $projet->id])
+                            ->andwhere(['not in', 'statut', [3, 1]])
+                            ->count();
                         if ($nbrtache == 0) {
                             $affectation->statut = 1;
                             $affectation->updated_by =  Yii::$app->user->identity->id;
                             $affectation->updated_at = date('Y-m-d H:i:s');
                             $affectation->save();
+                            if ($nbre == 0) {
+                                $projet->statut = 1;
+                                $projet->updated_by =  Yii::$app->user->identity->id;
+                                $projet->updated_at = date('Y-m-d H:i:s');
+                                $projet->save();
+                            }
                         }
                         Yii::$app->getSession()->setFlash('success', 'Tâche validée avec succès !');
                     } else {
@@ -319,7 +338,7 @@ class TacheController extends Controller
         $droit_tache = Utils::have_access('tache');
         if ($droit_tache == 1) {
             $model = Tache::find()
-            ->where(["key_tache" => $key_element])->one();
+                ->where(["key_tache" => $key_element])->one();
             if ($model != null) {
 
                 $model->statut = 3;
@@ -331,7 +350,6 @@ class TacheController extends Controller
                 } else {
                     Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
                 }
-                
             } else Yii::$app->getSession()->setFlash('error', 'Erreur lors de la suppression !');
         }
     }

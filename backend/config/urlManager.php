@@ -74,7 +74,7 @@ $tab_url = array(
 	'faire_tache' => 'affectation/faire_tache',
 	'vue_realisation' => 'affectation/vue_realisation',
 	'create_tacheaffectation' => 'affectation/createtache',
-	'faire_taches' => 'affectation/fairetaches',
+	'faire_taches' => 'affectation/faire_taches',
 
 	
 	/* 'add_projettache' => 'projet/createtache',

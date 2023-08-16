@@ -195,7 +195,7 @@ $tache = new Tache();
 
                 document.getElementById('tache-idtypetache').value = '';
                 document.getElementById('tache-designation').value = '';
-                var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                var err = '<div class="alert alert-info alert-dismissible" role="alert">' +
                     'Tâche ajoutée avec success' +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">&times;</span>' +

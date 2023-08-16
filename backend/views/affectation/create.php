@@ -5,6 +5,7 @@ use backend\models\Tache;
 use backend\models\User;
 use frontend\widgets\Alert;
 use yii\bootstrap\ActiveForm;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
@@ -50,7 +51,7 @@ $currentDate = date('Y-m-d H:i');
                         <div class="affectation-form">
                             <form action="#">
                                 <?php $form = ActiveForm::begin();
-                                $id = Demande::find()
+                                /* $id = Demande::find()
                                     ->select('created_by')
                                     ->where(['<', 'finconge',  $currentDate])
                                     ->andwhere(['statut' => 1]);
@@ -68,9 +69,21 @@ $currentDate = date('Y-m-d H:i');
                                         }
                                     }
                                     break;
-                                }
+                                } */
 
 
+                                $usersWithoutValidDemandeIds = Demande::find()
+                                    ->select('created_by')
+                                    ->where(['statut' => 1])
+                                    ->andWhere(['>', new Expression('CURDATE()'), 'finconge'])
+                                    ->column();
+
+                                $usersWithoutValidDemande = User::find()
+                                    ->where(['not in', 'id', $usersWithoutValidDemandeIds])
+                                    ->andWhere(['status' => 10])
+                                    ->all();
+
+                                    //var_dump($usersWithoutValidDemande);die;
 
                                 /* for ($i = 0; $i < sizeof($userSansBulletin); $i++) {
                                     $userSansBulletin[$i]->nom = $userSansBulletin[$i]->nom . ' ' . $userSansBulletin[$i]->prenoms;
@@ -78,12 +91,7 @@ $currentDate = date('Y-m-d H:i');
 
                                 ?>
                                 <?= $form->field($affectation, 'iduser')->dropDownList(
-                                    ArrayHelper::map(
-                                        User::find()->where(['status' => 10])
-                                            ->andwhere(['not in', 'id', $usersTacheId])->all(),
-                                        'id',
-                                        'nom',
-                                    ),
+                                    ArrayHelper::map($usersWithoutValidDemande, 'id', 'nom'),
                                     ['prompt' => 'Choisir un employé'],
                                     ['class' => 'form-control']
                                 )->error(false)->label('<h5>Employé<span class="text-danger">**</span></h5>');
@@ -187,77 +195,77 @@ $currentDate = date('Y-m-d H:i');
             var search_position = old_tache_added.search('###' + tache);
             var date_fin_obj = new Date(date_fin); // Convertir la chaîne date_fin en un objet Date
             var date_debut_obj = new Date(date_debut);
-            
+
             if (date_debut_obj > currentdate) {
                 if (date_fin_obj > currentdate) {
                     if (date_fin_obj > date_debut_obj) {
-                        
-                    
-                    if (search_position >= 0) {
 
-                        var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
-                            ' Cette tache est déjà ajoutée à la liste' +
-                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                            '<span aria-hidden="true">&times;</span>' +
-                            '</button>' +
-                            '</div>';
-                        //$('#alert_place_g').show();
-                        $('#alert_place').html(err);
 
+                        if (search_position >= 0) {
+
+                            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                                ' Cette tache est déjà ajoutée à la liste' +
+                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                '<span aria-hidden="true">&times;</span>' +
+                                '</button>' +
+                                '</div>';
+                            //$('#alert_place_g').show();
+                            $('#alert_place').html(err);
+
+                        } else {
+
+                            var new_data = tache + ';;;' + description + ';;;' + date_debut + ';;;' + date_fin;
+
+                            $("#all_tache_added").val(old_tache_added + '###' + new_data + '*');
+
+                            var newCell = document.createElement("td");
+                            var newCell1 = document.createElement("td");
+                            var newCell2 = document.createElement("td");
+                            var newCell3 = document.createElement("td");
+                            var newCell4 = document.createElement("td");
+
+                            newCell.innerHTML = tache_text;
+                            newCell1.innerHTML = description;
+                            newCell2.innerHTML = date_debut;
+                            newCell3.innerHTML = date_fin;
+                            newCell4.innerHTML = '<i class="fa fa-trash" style="color:red" onclick="delete_tache(\'' + new_data + '\', this)"></i>';
+
+                            var newRow = document.createElement("tr");
+
+                            newRow.append(newCell);
+                            newRow.append(newCell1);
+                            newRow.append(newCell2);
+                            newRow.append(newCell3);
+                            newRow.append(newCell4);
+
+                            document.getElementById("rows").appendChild(newRow);
+
+                            document.getElementById('tache-designation').value = '';
+                            document.getElementById('suivie-commentaire_assigant').value = '';
+                            document.getElementById('suivie-date_debut').value = '';
+                            document.getElementById('suivie-date_prob').value = '';
+
+                            var err = '<div class="alert alert-info alert-dismissible" role="alert">' +
+                                'Tache ajoutée avec succès' +
+                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                                '<span aria-hidden="true">&times;</span>' +
+                                '</button>' +
+                                '</div>';
+                            //$('#alert_place_g').show();
+                            $('#alert_place').html(err);
+
+
+                        }
                     } else {
-
-                        var new_data = tache + ';;;' + description + ';;;' + date_debut + ';;;' + date_fin;
-
-                        $("#all_tache_added").val(old_tache_added + '###' + new_data + '*');
-
-                        var newCell = document.createElement("td");
-                        var newCell1 = document.createElement("td");
-                        var newCell2 = document.createElement("td");
-                        var newCell3 = document.createElement("td");
-                        var newCell4 = document.createElement("td");
-
-                        newCell.innerHTML = tache_text;
-                        newCell1.innerHTML = description;
-                        newCell2.innerHTML = date_debut;
-                        newCell3.innerHTML = date_fin;
-                        newCell4.innerHTML = '<i class="fa fa-trash" style="color:red" onclick="delete_tache(\'' + new_data + '\', this)"></i>';
-
-                        var newRow = document.createElement("tr");
-
-                        newRow.append(newCell);
-                        newRow.append(newCell1);
-                        newRow.append(newCell2);
-                        newRow.append(newCell3);
-                        newRow.append(newCell4);
-
-                        document.getElementById("rows").appendChild(newRow);
-
-                        document.getElementById('tache-designation').value = '';
-                        document.getElementById('suivie-commentaire_assigant').value = '';
-                        document.getElementById('suivie-date_debut').value = '';
-                        document.getElementById('suivie-date_prob').value = '';
-
-                        var err = '<div class="alert alert-info alert-dismissible" role="alert">' +
-                            'Tache ajoutée avec succès' +
+                        var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                            'la date limite ne peut être inférieur à la date de début' +
                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                             '<span aria-hidden="true">&times;</span>' +
                             '</button>' +
                             '</div>';
                         //$('#alert_place_g').show();
                         $('#alert_place').html(err);
-
-
                     }
-                }else{
-                    var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
-                        'la date limite ne peut être inférieur à la date de début' +
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                        '<span aria-hidden="true">&times;</span>' +
-                        '</button>' +
-                        '</div>';
-                    //$('#alert_place_g').show();
-                    $('#alert_place').html(err);
-                }
                 } else {
                     var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
                         'la date limite ne peut pas être dans le passé' +
@@ -268,15 +276,15 @@ $currentDate = date('Y-m-d H:i');
                     //$('#alert_place_g').show();
                     $('#alert_place').html(err);
                 }
-            } else{
+            } else {
                 var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
-                        'la date de début ne peut pas être dans le passé' +
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                        '<span aria-hidden="true">&times;</span>' +
-                        '</button>' +
-                        '</div>';
-                    //$('#alert_place_g').show();
-                    $('#alert_place').html(err);
+                    'la date de début ne peut pas être dans le passé' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span>' +
+                    '</button>' +
+                    '</div>';
+                //$('#alert_place_g').show();
+                $('#alert_place').html(err);
             }
 
         } else {

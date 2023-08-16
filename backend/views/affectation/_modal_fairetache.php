@@ -19,16 +19,16 @@
           $currentDate = date('Y-m-d H:i');
           $tache = new Tache();
           $suivie = new Suivie();
-          $form = ActiveForm::begin([
-            'options' => ['class' => 'form-horizontal style-form']
-          ]);
-          ?>
+          $form = ActiveForm::begin();?> 
+          <form action="#" class="form-horizontal style-form">
+         
           <div class="form-group">
             <!-- Contenu de la carte -->
             <div class="panel-body">
               <?= $form->field($suivie, 'commentaire_effectuant')->textarea(['rows' => 4,'id' => 'fairetacheCommentaire'])->label('<span class="text-dark">Description sur la tache</span><span class="text-danger">**</span>') ?>
             </div>
           </div>
+          </form>
           <?php ActiveForm::end(); ?>
         </div>
         <!-- /form-panel -->

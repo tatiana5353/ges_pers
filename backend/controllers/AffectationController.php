@@ -43,11 +43,21 @@ class AffectationController extends Controller
         $droit = Utils::have_access('consulter_affectation');
         if ($droit == 1) {
             $dataProvider = new ActiveDataProvider([
-                'query' => Affectation::find(),
+                'query' => Affectation::find(), 'pagination' => ['pageSize' => 5]
+            ]);
+
+            $newdataProvider = new ActiveDataProvider([
+                'query' => $dataProvider->query,
+                'pagination' => $dataProvider->pagination,
+            ]);
+
+            $newdataProvider->query->orderBy([
+                new \yii\db\Expression('CASE WHEN statut = 1 THEN 2 WHEN statut = 0 THEN 0 ELSE 1 END'), // Met les modèles avec statut 1 en dernière position
+                // Ajoutez d'autres critères de tri si nécessaire, par exemple 'autre_colonne' => SORT_ASC,
             ]);
 
             return $this->render('index', [
-                'dataProvider' => $dataProvider,
+                'dataProvider' => $newdataProvider,
             ]);
         } else {
             return $this->redirect('accueil');
@@ -75,7 +85,7 @@ class AffectationController extends Controller
             $model = Affectation::find()
                 ->where([
                     'key_affectation' => $key_affectation,
-           
+
                 ])->one();
             $dataProvider = new ActiveDataProvider([
                 'query' => Tache::find()
@@ -145,15 +155,15 @@ class AffectationController extends Controller
         ]);
     }
 
-    public function actionFairetaches($key_tache, $commentaire)
+    public function actionFaire_taches($key_tache, $commentaire)
     {
-        Yii::$app->getSession()->setFlash('erreur', 'erreur lors de l\'enregistrement!');
+        //die('Atteint ici');
+        //Yii::$app->getSession()->setFlash('erreur', 'erreur lors de l\'enregistrement!');die;
         $tache = Tache::find()
             ->where([
                 'key_tache' => $key_tache,
-                'statut' => 0
             ])->one();
-           // $model = new Suivie();
+        // $model = new Suivie();
         $id = $tache->id;
         $affectation = Affectation::find()
             ->where(['id' => $tache->idaffectation])
@@ -171,15 +181,18 @@ class AffectationController extends Controller
             $suivie->commentaire_effectuant = $commentaire;
             if ($suivie->save()) {
                 $affectation->statut = 0;
+                $tache->updated_by = Yii::$app->user->identity->id;
+                $tache->updated_at =  date('Y-m-d H:i:s');
+                $tache->save();
                 $affectation->updated_by = Yii::$app->user->identity->id;
                 $affectation->updated_at =  date('Y-m-d H:i:s');
-                $affectation->Save();
+                $affectation->save();
                 Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
             } else {
                 Yii::$app->getSession()->setFlash('erreur', 'erreur lors de l\'enregistrement!');
             }
-        }else{
-            Yii::$app->getSession()->setFlash('erreur', 'erreur lors de l\'enregistrement!');   
+        } else {
+            Yii::$app->getSession()->setFlash('erreur', 'erreur lors de l\'enregistrement!');
         }
     }
 
@@ -196,6 +209,8 @@ class AffectationController extends Controller
                 'query' => Tache::find()
                     ->where(['in', 'id', $idtache])
             ]);
+
+
 
             return $this->render('vue_realisation', [
                 'dataProvider' => $dataProvider,
@@ -237,12 +252,8 @@ class AffectationController extends Controller
                     $final_selected_value = explode(";;;", $all_data[$i]);
 
                     $tache = Tache::findOne($final_selected_value[0]);
-                    // $tache->key_tache =  Yii::$app->security->generateRandomString(32);
                     $tache->idaffectation = $affectation->id;
                     $tache->statut = 0;
-                    /*  $tache->updated_by = Yii::$app->user->identity->id;
-                    $tache->updated_at = date('Y-m-d H:i:s'); */
-                    // $tache->idsuivie = $suivie->id;
                     $tache->save();
 
                     $suivie = new Suivie();
@@ -255,9 +266,22 @@ class AffectationController extends Controller
                     $suivie->idtache = $tache->id;
                     $suivie->key_suivie = Yii::$app->security->generateRandomString(32);
                     $suivie->save();
+                   /*  $nbre = Tache::find()
+                        ->where([
+                            'idprojet' => $tache->idprojet,
+                            'statut' => 0
+                        ])
+                        ->count(); */
+                    $projet = Projet::find()
+                        ->where([
+                            'id' => $tache->idprojet,
 
-
-
+                        ])
+                        ->one();
+                    $projet->statut = 0;
+                    $projet->updated_by = Yii::$app->user->identity->id;
+                    $projet->updated_at = date('Y-m-d H:i:s');
+                    $projet->save();
                     if ($i == sizeof($all_data) - 1) {
                         Yii::$app->session->setFlash('success', 'Affectation faite enregistrée avec succès');
                         return 'ok';
@@ -344,19 +368,22 @@ class AffectationController extends Controller
             ->select(['idtache']); */
 
 
-            $dataProvider = new ActiveDataProvider([
-                'query' => Tache::find()
-                    ->where(['in', 'idaffectation', $userAffectationId])
-                    ->orderBy([
-                        // Tri par statut en plaçant les éléments avec statut = 2 en dernier
-                        new Expression('CASE WHEN statut = 1 THEN 1 ELSE 0 END'),
-                        // Ajoutez d'autres critères de tri ici si nécessaire
-                        'statut' => SORT_ASC,
-                    ]),
-            ]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Tache::find()
+                ->where(['in', 'idaffectation', $userAffectationId]), 'pagination' => ['pageSize' => 5]
+        ]);
+
+        $newdataProvider = new ActiveDataProvider([
+            'query' => $dataProvider->query,
+        ]);
+
+        $newdataProvider->query->orderBy([
+            new \yii\db\Expression('CASE WHEN statut = 1 THEN 2 WHEN statut = 0 THEN 0 ELSE 1 END'), // Met les modèles avec statut 1 en dernière position
+            // Ajoutez d'autres critères de tri si nécessaire, par exemple 'autre_colonne' => SORT_ASC,
+        ]);
 
         return $this->render('tache_affectation', [
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $newdataProvider,
         ]);
     }
 

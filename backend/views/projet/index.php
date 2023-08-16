@@ -66,6 +66,23 @@ echo $this->render('_modal');
                                     'label' => 'Libellé',
                                     'value' => 'libelle'
                                 ],
+                                [
+                                    'attribute' => 'statut',
+                                    'header' => 'Statut',
+                                    /*  'filter' => ['Y'=>'Active', 'N'=>'Deactive'], */
+                                    'format' => 'raw',
+                                    'value' => function ($data) {
+                                        if (($data->statut == 0)) {
+                                            return '<span style="background-color: #A0A0A0; color: #fff; padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">EN COURS</span>';
+                                        } elseif (($data->statut == 1)) {
+                                            return '<span style="background-color: #5cb85c; color: #fff; padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> EFFECTUE </span>';
+                                        } elseif (($data->statut == 2)) {
+                                            return '<span style="background-color: #f0ad4e; color: #fff; padding: 6px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> ATTENTE </span>';
+                                        } else {
+                                            return '';
+                                        }
+                                    },
+                                ],
 
                                 [
                                     'class' => 'yii\grid\ActionColumn',

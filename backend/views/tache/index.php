@@ -88,14 +88,20 @@ echo $this->render('_modal');
                                                 ->where(['idtache' => $data->id])
                                                 ->orderBy(['created_at' => SORT_DESC])
                                                 ->one();
+                                                $nbr = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->count();
                                             if ($data->statut !== 2) {
                                                 if (($suivie->statut == 0)) {
                                                     return '<span style="background-color: #808080; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">REALISER</span>';
                                                 } elseif (($suivie->statut == 1)) {
                                                     return '<span style="background-color: #5cb85c; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> VALIDEE </span>';
-                                                } elseif (($suivie->statut == 2)) {
+                                                } elseif (($suivie->statut == 2)&& ($nbr == 1)) {
                                                     return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> AFFECTEE </span>';
-                                                } else {
+                                                } elseif (($suivie->statut == 2) && ($nbr > 1)) {
+                                                    return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> A REFAIRE </span>';
+                                                }
+                                                 else {
                                                     return '';
                                                 }
                                             } else {

@@ -162,9 +162,8 @@ $typetache = TypeTache::find()
                                                 $suivie = Suivie::find()
                                                     ->where(['idtache' => $data->id])
                                                     ->one();
-                                                if ($data->statut == 2 || $suivie->statut == 2) {
-                                                    $url = 'update_tache?key_tache=' . $data->key_tache;
-                                                    return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
+                                                if ($data->statut == 2) {
+                                                    return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="#" data-toggle="modal" data-target="#updateTache" onclick="update_tacheprojet(\'' . $data->key_tache . '\', \'' . $data->idtypetache . '\', \'' . $data->designation . '\')"><i class="fa fa-edit"></i></a>';
                                                 }
                                             },
                                         ],
@@ -175,8 +174,11 @@ $typetache = TypeTache::find()
                                         'headerOptions' => ['width' => '15'],
                                         'buttons' => [
                                             'delete' => function ($url, $data) {
+                                                $suivie = Suivie::find()
+                                                    ->where(['idtache' => $data->id])
+                                                    ->one();
                                                 if ($data->statut == 2) {
-                                                    return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_tache(\'' . $data->key_tache . '\')">
+                                                    return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_tacheprojet(\'' . $data->key_tache . '\')">
                                         <i class="fa fa-trash"></i>
                                                 </a>';
                                                 }
@@ -239,7 +241,7 @@ $typetache = TypeTache::find()
         let idtype_tache = document.getElementById('tache-idtypetache').value;
         let designation = document.getElementById('tacheDesignation').value;
         if (key_tache != '') {
-            alert(idtype_tache);
+            // alert(idtype_tache);
             if (idtype_tache != '') {
 
 
@@ -255,15 +257,15 @@ $typetache = TypeTache::find()
                         document.location.reload();
                     }
                 });
-            }else{
+            } else {
                 var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
-                            ' Veuillez renseigner tous les champs obligatoires' +
-                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                            '<span aria-hidden="true">&times;</span>' +
-                            '</button>' +
-                            '</div>';
-                        //$('#alert_place_g').show();
-                        $('#alert_place').html(err);
+                    ' Veuillez renseigner tous les champs obligatoires' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span>' +
+                    '</button>' +
+                    '</div>';
+                //$('#alert_place_g').show();
+                $('#alert_place').html(err);
             }
         }
     }
@@ -282,39 +284,39 @@ $typetache = TypeTache::find()
         let designation = document.getElementById('createtacheDesignation').value;
         if (idprojet != '') {
             if (idtype_tache != '') {
-            //alert(idprojet+'g'+idtype_tache+'r'+designation);
-            if (designation != '') {
-            $.ajax({
-                url: url,
-                method: 'GET',
-                data: {
-                    idtype_tache: idtype_tache,
-                    designation: designation,
-                    idprojet: idprojet
-                },
-                success: function(result) {
-                    document.location.reload();
+                //alert(idprojet+'g'+idtype_tache+'r'+designation);
+                if (designation != '') {
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        data: {
+                            idtype_tache: idtype_tache,
+                            designation: designation,
+                            idprojet: idprojet
+                        },
+                        success: function(result) {
+                            document.location.reload();
+                        }
+                    });
+                } else {
+                    var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                        ' Veuillez la désignation de la tâche' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<span aria-hidden="true">&times;</span>' +
+                        '</button>' +
+                        '</div>';
+                    //$('#alert_place_g').show();
+                    $('#alert_place').html(err);
                 }
-            });
-         } else{
-            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
-                            ' Veuillez la désignation de la tâche' +
-                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                            '<span aria-hidden="true">&times;</span>' +
-                            '</button>' +
-                            '</div>';
-                        //$('#alert_place_g').show();
-                        $('#alert_place').html(err);
-            }
-        }else{
+            } else {
                 var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
-                            ' Veuillez renseigner tous les champs obligatoires' +
-                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-                            '<span aria-hidden="true">&times;</span>' +
-                            '</button>' +
-                            '</div>';
-                        //$('#alert_place_g').show();
-                        $('#alert_place').html(err);
+                    ' Veuillez renseigner tous les champs obligatoires' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span>' +
+                    '</button>' +
+                    '</div>';
+                //$('#alert_place_g').show();
+                $('#alert_place').html(err);
             }
         }
     }
