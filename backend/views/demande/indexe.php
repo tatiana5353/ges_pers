@@ -79,7 +79,7 @@ echo $this->render('_modal_motif');
                                         'label' => 'Début d\'absence',
                                         'format' => ['date', 'php:d-m-Y H:i'],
                                         'value' => function ($data) {
-                                            if (($data->created_by == Yii::$app->user->identity->id)) {
+                                            if (($data->iduser == Yii::$app->user->identity->id)) {
                                                 return $data->debutconge;
                                             }
                                         }
@@ -90,7 +90,7 @@ echo $this->render('_modal_motif');
                                         'label' => 'Fin d\'absence',
                                         'format' => ['date', 'php:d-m-Y H:i'],
                                         'value' => function ($data) {
-                                            if (($data->created_by == Yii::$app->user->identity->id)) {
+                                            if (($data->iduser == Yii::$app->user->identity->id)) {
                                                 return $data->finconge;
                                             }
                                         }
@@ -104,13 +104,13 @@ echo $this->render('_modal_motif');
                                         'format' => 'raw',
                                         'value' => function ($data) {
                                             /*  $data = $data['statut']; */
-                                            if (($data->statut == 0) && ($data->created_by == Yii::$app->user->identity->id)) {
+                                            if (($data->statut == 0) && ($data->iduser == Yii::$app->user->identity->id)) {
                                                 return '<span class="label label-primary">EN ATTENTE</span>';
-                                            } elseif (($data->statut == 1) && ($data->created_by == Yii::$app->user->identity->id)) {
+                                            } elseif (($data->statut == 1) && ($data->iduser == Yii::$app->user->identity->id)) {
                                                 return '<span class="label label-success"> ACCORDEE </span>';
                                                 /* } elseif ($data == '2') {
                                             return 'Servie'; */
-                                            } elseif (($data->statut == 4) && ($data->created_by == Yii::$app->user->identity->id)) {
+                                            } elseif (($data->statut == 4) && ($data->iduser == Yii::$app->user->identity->id)) {
                                                 return '<span class="label label-danger"> REJETTEE </span>';
                                             } else {
                                                 return '';
@@ -128,16 +128,16 @@ echo $this->render('_modal_motif');
                                         'headerOptions' => ['width' => '15'],
                                         'buttons' => [
                                             'view' => function ($url, $data) {
-                                                if (($data->statut == 4) && ($data->created_by == Yii::$app->user->identity->id)) {
+                                                if (($data->statut == 4) && ($data->iduser == Yii::$app->user->identity->id)) {
                                                     $url = 'view_demande?key_demande=' . $data->key_demande;
                                                     return '<button type="button" class="btn btn-xs btn-info"><a title="' . Yii::t('app', 'Détail') . '" class="" href="#" data-toggle="modal" data-target="#exampleModal2" onclick="affiche_motif(\'' . $data->motif_refus . '\')"> 
                                                 <i class=" fa fa-eye" style ="color:white";"></i></a> </button>';
-                                                } else if (($data->statut == 0) && ($data->created_by == Yii::$app->user->identity->id)) {
+                                                } else if (($data->statut == 0) && ($data->iduser == Yii::$app->user->identity->id)) {
                                                     $url = 'view_demande?key_demande=' . $data->key_demande;
                                                     return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '">
                                     <i class=" fa fa-eye" ></i>
                                     </a>';
-                                                } else if ($data->created_by == Yii::$app->user->identity->id) {
+                                                } else if ($data->iduser == Yii::$app->user->identity->id) {
                                                     $url = 'view_demande?key_demande=' . $data->key_demande;
                                                     return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '">
                                     <i class=" fa fa-eye"></i>
@@ -153,7 +153,7 @@ echo $this->render('_modal_motif');
                                         'headerOptions' => ['width' => '15'],
                                         'buttons' => [
                                             'update' => function ($url, $data) {
-                                                if (($data->statut == 0) && ($data->created_by == Yii::$app->user->identity->id)) {
+                                                if (($data->statut == 0) && ($data->iduser == Yii::$app->user->identity->id)) {
                                                     //$url = 'sup_sortie?key_sortie=' . $data->key_sortie;
                                                     $url = 'update_demande?key_demande=' . $data->key_demande;
                                                     /* print($data->numero);die; */
@@ -170,7 +170,7 @@ echo $this->render('_modal_motif');
                                         'headerOptions' => ['width' => '15'],
                                         'buttons' => [
                                             'delete' => function ($url, $data) {
-                                                if (($data->statut == 0) && ($data->created_by == Yii::$app->user->identity->id)) {
+                                                if (($data->statut == 0) && ($data->iduser == Yii::$app->user->identity->id)) {
                                                     //$url = 'sup_entree?key_entree=' . $data->key_entree;
                                                     return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_demande(\'' . $data->key_demande . '\')">
                                 <i class="fa fa-trash"></i>

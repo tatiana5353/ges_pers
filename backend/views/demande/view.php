@@ -83,7 +83,7 @@ echo $this->render('_modal_valider');
                         [
                             'label' => 'Nom de l\'employé',
                             'value' => function ($data) {
-                                return $data->createdBy->nom . ' ' . $data->createdBy->prenoms;
+                                return $data->iduser0->nom . ' ' . $data->iduser0->prenoms;
                             }
                         ],
 

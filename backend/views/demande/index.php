@@ -70,7 +70,7 @@ echo $this->render('_modal_motif');
                                     [
                                         'label' => 'Personnel',
                                         'value' => function ($data) {
-                                            return $data->createdBy->nom . ' ' . $data->createdBy->prenoms;
+                                            return $data->iduser0->nom . ' ' . $data->iduser0->prenoms;
                                         }
                                     ],
 
@@ -128,6 +128,24 @@ echo $this->render('_modal_motif');
                                                 } else {
                                                     $url = 'view_demande?key_demande=' . $data->key_demande;
                                                     return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '"><i class=" fa fa-eye"></i></a>';
+                                                }
+                                            },
+                                        ],
+                                    ],
+
+                                    [
+                                        'class' => 'yii\grid\ActionColumn',
+                                        'template' => '{update}',
+                                        'headerOptions' => ['width' => '15'],
+                                        'buttons' => [
+                                            'update' => function ($url, $data) {
+                                                if (($data->statut == 0) && ($data->created_by == Yii::$app->user->identity->id)) {
+                                                    //$url = 'sup_sortie?key_sortie=' . $data->key_sortie;
+                                                    $url = 'update_demande?key_demande=' . $data->key_demande;
+                                                    /* print($data->numero);die; */
+                                                    return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="' . $url . '">
+                                                    <i class=" fa fa-pencil"></i>
+                                                    </a>';
                                                 }
                                             },
                                         ],

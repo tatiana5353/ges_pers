@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use backend\models\Demande;
 use backend\models\TypeConge;
+use backend\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -33,7 +34,8 @@ class DemandeController extends Controller
      * Lists all Demande models.
      * @return mixed
      */
-    public function actionGet_motif_refus($key_demande) {
+    public function actionGet_motif_refus($key_demande)
+    {
         $model = Demande::findOne(['key_demande' => $key_demande]);
         if ($model !== null) {
             return $model->motif_refus;
@@ -42,32 +44,91 @@ class DemandeController extends Controller
         }
     }
 
-    
-     public function actionIndex()
+
+    public function actionIndex()
     {
         $droit_traitement = Utils::have_access('traiterdemande');
         $droit = Utils::have_access('demande_perso');
         if ($droit_traitement == 1) {
-            $dataProvider = new ActiveDataProvider([
-                'query' => Demande::find()->orderBy([
-                    'statut' => SORT_ASC
-                ])->where(['not in', 'statut', 3]),
-            ]);
 
-            return $this->render('index', [
-                'dataProvider' => $dataProvider,
-            ]);
-        } elseif ($droit == 1) {
+
             $dataProvider = new ActiveDataProvider([
                 'query' => Demande::find()
                     ->orderBy([
                         'statut' => SORT_ASC
                     ])->where(['not in', 'statut', 3])
-                    ->andWhere(['created_by' => Yii::$app->user->identity->id])
+                    ->orWhere(['created_by' => Yii::$app->user->identity->id])
+
+                    ->orWhere(['iduser' => Yii::$app->user->identity->id])
+            ]);
+            return $this->render('index', [
+                'dataProvider' => $dataProvider,
+            ]);
+        } elseif ($droit == 1) {
+            $dataProvider = new ActiveDataProvider([
+                'query' => Demande::find()->orderBy([
+                    'statut' => SORT_ASC
+                ])->where(['not in', 'statut', 3])
             ]);
 
             return $this->render('indexe', [
                 'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            return $this->redirect('accueil');
+        }
+    }
+
+    public function actionFaire()
+    {
+        $droit_demande = Utils::have_access('demande');
+        if ($droit_demande == 1) {
+            $user = User::find()
+                ->where(['status' => 10])
+                ->all();
+            $typeconge = TypeConge::find()
+                ->where(['statut' => 1])
+                ->all();
+
+            for ($i = 0; $i < sizeof($user); $i++) {
+                $user[$i]->nom = $user[$i]->nom . ' ' . $user[$i]->prenoms;
+            }
+
+            $model = new Demande();
+            if (Yii::$app->request->post()) {
+
+                if ($model->load(Yii::$app->request->post())) {
+                    $model->created_at = date('Y-m-d H:i:s');
+                    $model->created_by = Yii::$app->user->identity->id;
+                    $model->statut = 0;
+                    $model->key_demande = Yii::$app->security->generateRandomString(32);
+                    $model->numero = 'NE-' . date('md') . '-' . rand(11, 99);
+                    $debutconge = $model->debutconge;
+                    $finconge = $model->finconge;
+
+                    if ((strtotime($finconge) > strtotime($debutconge)) && ((strtotime($finconge) - strtotime($debutconge)) > 30 * 60)) {
+                        if ($model->save()) {
+                            Yii::$app->getSession()->setFlash('success', 'Enregistrement réussie !');
+                            return $this->redirect('all_demande');
+                        } else {
+                            $model->loadDefaultValues();
+                            Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'enregistrement');
+                        }
+                    } else {
+                        Yii::$app->getSession()->setFlash('error', '☻☺L\'heure de fin d\'absence doit etre superieur à l\'heure de debut de votre demande');
+                    }
+                } else {
+                    Yii::$app->getSession()->setFlash('error', 'vous n\'avez rien renseigné !');
+                }
+            } else {
+
+                $model->loadDefaultValues();
+            }
+
+            return $this->render('faire', [
+                'model' => $model,
+                'user' => $user,
+                'typeconge' => $typeconge
             ]);
         } else {
             return $this->redirect('accueil');
@@ -138,10 +199,15 @@ class DemandeController extends Controller
                 Yii::$app->getSession()->setFlash('error', 'vous avez atteint le nombre de congés autorisés !');
             }
             if (Yii::$app->request->post()) {
+                if ($nbrdemande > 2) {
+                    Yii::$app->getSession()->setFlash('error', 'vous avez atteint le nombre de congés autorisés !');
+                }
                 if ($model->load(Yii::$app->request->post())) {
                     $model->created_at = date('Y-m-d H:i:s');
                     $model->created_by = Yii::$app->user->identity->id;
+                    $model->iduser = Yii::$app->user->identity->id;
                     $model->statut = 0;
+                    $model->created_by = $model->created_by;
                     $model->key_demande = Yii::$app->security->generateRandomString(32);
                     $model->numero = 'NE-' . date('md') . '-' . rand(11, 99);
                     $debutconge = $model->debutconge;

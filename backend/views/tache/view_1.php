@@ -109,7 +109,31 @@ echo $this->render('_modal_refus');
                                                 }
                                             },
                                         ],
-                                       
+                                        [
+
+                                            'label' => 'Heure-debut',
+                                            'value' =>
+                                            function ($data){
+                                                $suivie = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->orderBy(['created_at' => SORT_DESC])
+                                                ->one();
+                                                return date('d-m-Y H:i', strtotime($suivie->date_debut));
+                                            }
+                                        ],
+
+                                        [
+
+                                            'label' => 'Heure-limite',
+                                            'value' =>
+                                            function ($data){
+                                                $suivie = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->orderBy(['created_at' => SORT_DESC])
+                                                ->one();
+                                                return date('d-m-Y H:i', strtotime($suivie->date_prob));
+                                            }
+                                        ],
     
                                         [
 
@@ -139,31 +163,6 @@ echo $this->render('_modal_refus');
                                         'designation',
                                         // 'description:ntext',
 
-                                        [
-
-                                            'label' => 'Heure-debut',
-                                            'value' =>
-                                            function ($data){
-                                                $suivie = Suivie::find()
-                                                ->where(['idtache' => $data->id])
-                                                ->orderBy(['created_at' => SORT_DESC])
-                                                ->one();
-                                                return date('d-m-Y H:i', strtotime($suivie->date_debut));
-                                            }
-                                        ],
-
-                                        [
-
-                                            'label' => 'Heure-limite',
-                                            'value' =>
-                                            function ($data){
-                                                $suivie = Suivie::find()
-                                                ->where(['idtache' => $data->id])
-                                                ->orderBy(['created_at' => SORT_DESC])
-                                                ->one();
-                                                return date('d-m-Y H:i', strtotime($suivie->date_prob));
-                                            }
-                                        ],
 
                                         [
                                             'label' => 'Description de la tâche ',
@@ -176,17 +175,7 @@ echo $this->render('_modal_refus');
                                                 return $suivie->commentaire_assigant ?? '';
                                             }
                                         ],
-                                        [
-                                            'label' => 'Description de la realisation',
-                                            'value' => function ($data) {
-                                                $suivie = Suivie::find()
-                                                    ->where(['idtache' => $data->id])
-                                                    ->orderBy(['created_at' => SORT_DESC])
-                                                    ->one();
-
-                                                return $suivie->commentaire_effectuant ?? '';
-                                            }
-                                        ],
+                                       
 
                                     ],
                                 ])

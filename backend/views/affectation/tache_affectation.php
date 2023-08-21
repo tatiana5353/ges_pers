@@ -87,13 +87,13 @@ echo $this->render('_modal_fairetache');
                                     </div>
                                     <?php
                                     // $date_debut = Html::encode($suivie->date_debut);
-                                    $date_prob = $suivie->date_prob;
+                                    $date_debut = $suivie->date_debut;
                                     if ($suivie->statut == 0) { ?>
                                         <div class="col-xs-10">
                                             <del style="font-size: 16px;">
                                                 <?php echo $model->designation ?> &nbsp;
-                                                Debut: <?php echo $date_prob ?> &nbsp;
-                                                Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
+                                                Debut: <?php echo date('d-m-Y H:i', strtotime($date_debut)); ?> &nbsp;
+                                                Fin :<?php echo date('d-m-Y H:i', strtotime($suivie->date_prob)); ?>
                                             </del>
 
                                         </div>
@@ -108,8 +108,8 @@ echo $this->render('_modal_fairetache');
                                         <div class="col-xs-9">
                                             <del style="text-decoration-color:#17a2b8; font-size: 13px;">
                                                 <?php echo $model->designation ?> &nbsp;
-                                                Debut: <?php echo $date_prob ?> &nbsp;
-                                                Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
+                                                Debut: <?php echo date('d-m-Y H:i', strtotime($date_debut)); ?> &nbsp;
+                                                Fin :<?php echo date('d-m-Y H:i', strtotime($suivie->date_prob)); ?>
                                             </del>
                                         </div>
                                         <div class="col-xs-1"></div>
@@ -121,8 +121,8 @@ echo $this->render('_modal_fairetache');
                                     ?>
                                         <div class="col-xs-10" style="text-decoration-color: green; font-size: 16px;">
                                             <?php echo $model->designation ?> &nbsp;
-                                            Debut: <?php echo $date_prob ?> &nbsp;
-                                            Fin :<?php echo date('d/m/Y H:i', strtotime($suivie->date_prob)); ?>
+                                            Debut: <?php echo date('d-m-Y H:i', strtotime($date_debut)); ?> &nbsp;
+                                            Fin :<?php echo date('d-m-Y H:i', strtotime($suivie->date_prob)); ?>
                                         </div>
                                         <div class="col-xs-1">
                                             <a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-sucdcess" href="' . $url . '">

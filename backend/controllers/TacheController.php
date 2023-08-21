@@ -50,7 +50,7 @@ class TacheController extends Controller
             ];
             $dataProvider = new ActiveDataProvider([
                 'query' => Tache::find()->where(['not in', 'statut', 3])
-                    ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null]), 'pagination' => ['pageSize' => 5]
+                    ->andWhere(['idprojet' => ($findprojet !== null) ? $findprojet->id : null]), 'pagination' => ['pageSize' => 10]
 
             ]);
             $newdataProvider = new ActiveDataProvider([
@@ -59,7 +59,7 @@ class TacheController extends Controller
             ]);
 
             $newdataProvider->query->orderBy([
-                new \yii\db\Expression('CASE WHEN statut = 1 THEN 2 WHEN statut = 0 THEN 0 ELSE 1 END'), // Met les modèles avec statut 1 en dernière position
+                new \yii\db\Expression('CASE WHEN statut = 1 THEN 2 WHEN statut = 0 THEN 1 ELSE 0 END'), // Met les modèles avec statut 1 en dernière position
                 // Ajoutez d'autres critères de tri si nécessaire, par exemple 'autre_colonne' => SORT_ASC,
             ]);
 
@@ -146,7 +146,6 @@ class TacheController extends Controller
     {
         $tache = Tache::find()
             ->where(['key_tache' => $key_tache])
-            ->andWhere(['in', 'statut', [0, 2, 1]])
             ->one();
         $tache1 = Tache::find()
             ->where(['key_tache' => $key_tache])
@@ -158,10 +157,17 @@ class TacheController extends Controller
 
             $suivie = Suivie::find()
                 ->where(['idtache' => $idtache])
+                ->andWhere(['not in', 'statut', 3])
+                ->orderBy(['created_at' => SORT_DESC])
                 ->one();
 
-            if ($suivie !== null && ($suivie->statut == 0 || $tache->statut == 2 || $tache->statut == 1)) {
+            if ($suivie !== null && ($suivie->statut !== 2)) {
                 return $this->render('view_2', [
+                    'model' => $tache,
+                    'suivie' => $suivie,
+                ]);
+            }  elseif (($suivie !== null) && ($suivie->statut == 2)) {
+                return $this->render('view_1', [
                     'model' => $tache,
                     'suivie' => $suivie,
                 ]);
@@ -332,13 +338,13 @@ class TacheController extends Controller
      * @get
      */
 
-    public function actionDelete($key_element)
+    public function actionDeletes($key_element)
     {
         //print('rrtttt');die;
         $droit_tache = Utils::have_access('tache');
         if ($droit_tache == 1) {
             $model = Tache::find()
-                ->where(["key_tache" => $key_element])->one();
+                ->where(['key_tache' => $key_element])->one();
             if ($model != null) {
 
                 $model->statut = 3;
@@ -390,15 +396,12 @@ class TacheController extends Controller
     {
         $model = Tache::find()
             ->where([
-                'or',
-                [
-                    'key_tache' => $key_tache,
-                    'statut' => 0
-                ],
-                [
-                    'key_tache' => $key_tache,
-                    'statut' => 2
-                ],
+
+
+                'key_tache' => $key_tache,
+
+
+
             ])->one();
 
         if ($model != null) {

@@ -20,9 +20,11 @@ use Yii;
  * @property int|null $updated_by
  * @property string|null $updated_at
  * @property int $idtypeconge
+ * @property int|null $iduser
  *
  * @property TypeConge $idtypeconge0
  * @property User $createdBy
+ * @property User $iduser0
  * @property User $updatedBy
  */
 class Demande extends \yii\db\ActiveRecord
@@ -44,11 +46,12 @@ class Demande extends \yii\db\ActiveRecord
             [['motif', 'numero', 'finconge', 'key_demande', 'statut', 'created_by', 'created_at', 'idtypeconge'], 'required'],
             [['motif', 'motif_refus'], 'string'],
             [['debutconge', 'finconge', 'created_at', 'updated_at'], 'safe'],
-            [['statut', 'created_by', 'updated_by', 'idtypeconge'], 'integer'],
+            [['statut', 'created_by', 'updated_by', 'idtypeconge', 'iduser'], 'integer'],
             [['numero'], 'string', 'max' => 10],
             [['key_demande'], 'string', 'max' => 32],
             [['idtypeconge'], 'exist', 'skipOnError' => true, 'targetClass' => TypeConge::className(), 'targetAttribute' => ['idtypeconge' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
+            [['iduser'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['iduser' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
         ];
     }
@@ -72,6 +75,7 @@ class Demande extends \yii\db\ActiveRecord
             'updated_by' => 'Updated By',
             'updated_at' => 'Updated At',
             'idtypeconge' => 'Idtypeconge',
+            'iduser' => 'Iduser',
         ];
     }
 
@@ -93,6 +97,16 @@ class Demande extends \yii\db\ActiveRecord
     public function getCreatedBy()
     {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    /**
+     * Gets query for [[Iduser0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIduser0()
+    {
+        return $this->hasOne(User::className(), ['id' => 'iduser']);
     }
 
     /**

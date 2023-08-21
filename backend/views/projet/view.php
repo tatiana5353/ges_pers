@@ -300,7 +300,7 @@ $typetache = TypeTache::find()
                     });
                 } else {
                     var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
-                        ' Veuillez la désignation de la tâche' +
+                        ' Veuillez renseigner la désignation de la tâche' +
                         '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                         '<span aria-hidden="true">&times;</span>' +
                         '</button>' +

@@ -30,6 +30,16 @@ class AppAsset extends AssetBundle
         "template/css/https://getbootstrap.com/assets/css/docs.min.css",
         "template/css/main.css",
 
+       "template/lib/bootstrap/css/bootstrap.min.css",
+       
+       "template/lib/font-awesome/css/font-awesome.css",
+        "template/stylesheet","template/css/zabuto_calendar.css",
+        "template/stylesheet", "template/lib/gritter/css/jquery.gritter.css",
+       "template/css/style.css",
+       "template/css/style-responsive.css",
+        "template/lib/chart-master/Chart.js",
+        
+
         //'css/site.css',
         /////////////////////////// lien pris dans le blank de dashio//////////////////////////////////////////////////////////////
         "template/lib/bootstrap/css/bootstrap.min.css",
@@ -93,6 +103,22 @@ class AppAsset extends AssetBundle
         "template/lib/bootstrap-daterangepicker/moment.min.js",
         "template/lib/bootstrap-timepicker/js/bootstrap-timepicker.js",
         "template/lib/advanced-form-components.js",
+
+        "template/lib/jquery/jquery.min.js",
+
+  "template/lib/bootstrap/js/bootstrap.min.js",
+   "template/lib/jquery.dcjqaccordion.2.7.js",
+  "template/lib/jquery.scrollTo.min.js",
+  "template/lib/jquery.nicescroll.js" ,
+  "template/lib/jquery.sparkline.js",
+ /*  <!--common script for all pages--> */
+  "template/lib/common-scripts.js",
+ "template/lib/gritter/js/jquery.gritter.js",
+ "template/lib/gritter-conf.js",
+  /* <!--script for this page--> */
+  "template/lib/sparkline-chart.js",
+  "template/lib/zabuto_calendar.js",
+  
         
     ];
 

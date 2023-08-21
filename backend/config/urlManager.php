@@ -44,6 +44,7 @@ $tab_url = array(
 	'refuser_demande' => 'demande/refuser',
 	'refus_demande' => 'demande/refus',
 	'affiche_motif' => 'demande/get_motif_refus',
+	'faire_demande' => 'demande/faire',
 
 	'all_presence' => 'presence/index',
 	'add_presence' => 'presence/create',
@@ -92,7 +93,7 @@ $tab_url = array(
 	
 	'all_tache' => 'tache/index',
 	'add_tache' => 'tache/create',
-	'delete_tache' => 'tache/delete',
+	'delete_tache' => 'tache/deletes',
 	'update_tache' => 'tache/update',
 	'view_tache' => 'tache/view',
 	'valider_tache' => 'tache/valider',

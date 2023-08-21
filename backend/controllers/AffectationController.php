@@ -43,7 +43,7 @@ class AffectationController extends Controller
         $droit = Utils::have_access('consulter_affectation');
         if ($droit == 1) {
             $dataProvider = new ActiveDataProvider([
-                'query' => Affectation::find(), 'pagination' => ['pageSize' => 5]
+                'query' => Affectation::find(), 'pagination' => ['pageSize' => 10]
             ]);
 
             $newdataProvider = new ActiveDataProvider([

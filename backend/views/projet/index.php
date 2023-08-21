@@ -67,6 +67,7 @@ echo $this->render('_modal');
                                     'value' => 'libelle'
                                 ],
                                 [
+                                    'headerOptions' => ['width' => '15'],
                                     'attribute' => 'statut',
                                     'header' => 'Statut',
                                     /*  'filter' => ['Y'=>'Active', 'N'=>'Deactive'], */
