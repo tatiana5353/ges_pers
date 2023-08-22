@@ -2,6 +2,7 @@
 
 use backend\assets\AppAsset;
 use backend\models\Affectation;
+use backend\models\Demande;
 use backend\models\Suivie;
 use backend\models\Tache;
 use backend\models\TypeTache;
@@ -105,9 +106,9 @@ AppAsset::register($this);
 
                 $annee = date('Y');
 
-                
+
                 for ($mois = 1; $mois <= 12; $mois++) {
-                    $ce_mois = $mois_fr[$mois-1];
+                    $ce_mois = $mois_fr[$mois - 1];
                     $id_affectations = Affectation::find()
                         ->select(['id'])
                         ->where(['iduser' => $user->id])
@@ -129,8 +130,8 @@ AppAsset::register($this);
                     if ($nbr_taches_assignees == 0) {
                         $nbr_taches_assignees = 1;
                     }
-                    
-                    $performance = ($nbr_taches_validees/$nbr_taches_assignees)*($nbr_taches_validees/$nbr_suvie)*100;
+
+                    $performance = ($nbr_taches_validees / $nbr_taches_assignees) * ($nbr_taches_validees / $nbr_suvie) * 100;
                     //$performance = (0/2)*(0/1)*100;
 
                 ?>['<?= $ce_mois ?>', <?= $performance ?>],
@@ -151,6 +152,78 @@ AppAsset::register($this);
             var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
             chart.draw(data, options);
+        }
+
+
+        google.charts.load('current', {
+            'packages': ['table']
+        });
+        google.charts.setOnLoadCallback(drawTable);
+
+        function drawTable() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('string', 'Numéro');
+            data.addColumn('string', 'Nom du personnel');
+            data.addColumn('string', 'Type d\'absence');
+            data.addColumn('string', 'motif');
+            data.addColumn('string', 'Debut-absence');
+            data.addColumn('string', 'Fin-absence');
+
+            <?php
+            $demandes = Demande::find()->where(['statut' => 1])->orderBy(['created_at' => SORT_ASC])->all();
+
+            foreach ($demandes as $demande) {
+
+                $date = $demande->created_at;
+
+                /* if ($entree->idpartenaire != null) {
+          $partenaire = $entree->idpartenaire0->raison_social;
+        }else {
+          $partenaire = '';
+        } */
+
+                $typeabsence = $demande->idtypeconge0->libelle;
+                $debutabsence = $demande->debutconge;
+                $finabsence = $demande->finconge;
+                $motif = $demande->motif;
+                $numero = $demande->numero;
+                $noms = $demande->iduser0->nom . ' ' . $demande->iduser0->prenoms;
+
+                /*  if ($entree->mode_payement == 'Virement bancaire') {
+          $versement_banque = $recette;
+        }else {
+          $versement_banque = '';
+        } */
+
+
+
+            ?>data.addRows([
+                [
+                    '<?= $date ?>',
+                    '<?= $numero ?>',
+
+                    '<?= $noms ?>',
+                    '<?= $typeabsence ?>',
+                    '<?= $motif ?>',
+                    '<?= $debutabsence ?>',
+                    '<?= $finabsence ?>'
+                ],
+            ]);
+
+
+        <?php } ?>
+
+
+
+
+        var table = new google.visualization.Table(document.getElementById('table_div1'));
+
+        table.draw(data, {
+            showRowNumber: true,
+            width: '100%',
+            height: '100%'
+        });
         }
     </script>
 

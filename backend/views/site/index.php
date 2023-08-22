@@ -1,6 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 
+use backend\models\Demande;
 use backend\models\User;
 use frontend\widgets\Alert;
 use yii\helpers\ArrayHelper;
@@ -10,10 +11,11 @@ $this->title = 'GES_PERS';
 /* echo $this->render('_modal'); */
 ?>
 <?= Alert::widget();
-
+$currentDate = date('Y-m-d H:i');
 $totaluser = User::find()->where(['not in', 'status', 30])->count();
-$totaluserabsent = User::find()->where(['not in', 'status', 30])
-->andwhere([])->count();
+$alldemande_id = Demande::find()->select('iduser')->where(['statut' => 1])->andwhere(['>', 'finconge', $currentDate]);
+$absentuser = User::find()->where(['not in', 'status', 30])
+    ->andwhere(['in', 'id', $alldemande_id])->count();
 ?>
 <div class="site-index">
     <link href="template/img/favicon.png" rel="icon">
@@ -25,11 +27,31 @@ $totaluserabsent = User::find()->where(['not in', 'status', 30])
 
             <!--custom chart end-->
             <div class="row mt">
-                <!-- SERVER STATUS PANELS -->
-                <div class="col-md-3 col-sm-3 mb">
+                <div class="col-md-4 col-sm-3 mb">
+                    <div class="darkblue-panel pn">
+                        <div class="darkblue-header">
+                            <h5>personnels</h5>
+                        </div>
+                        <h1 class="mt">
+                            <i class="fa fa-user fa-3x"></i>
+                        </h1>
+
+                        <footer>
+                            <div class="pull-left">
+                                <h5>Nombre Total</h5>
+                            </div>
+
+                            <h2 style="color:white;"><?php echo $totaluser ?></h2>
+
+                        </footer>
+                    </div>
+                </div>
+                <!--  /darkblue panel -->
+
+                <div class="col-md-4 col-sm-3 mb">
                     <div class="grey-panel pn donut-chart">
                         <div class="grey-header">
-                            <h5>Personnel</h5>
+                            <h5>Absents</h5>
                         </div>
                         <h1 class="mt"><i class="fa fa-user fa-3x"></i></h1>
                         <div class="row">
@@ -37,113 +59,82 @@ $totaluserabsent = User::find()->where(['not in', 'status', 30])
                                 <p><br />Nombre Total:</p>
                             </div>
                             <div class="col-sm-6 col-xs-6">
-                                <h2> <?= $totaluser ?></h2>
+                                <h2> <?= $absentuser ?></h2>
                             </div>
                         </div>
                     </div>
                     <!-- /grey-panel -->
                 </div>
-                <!-- /col-md-4-->
-                <div class="col-md-3 col-sm-3 mb">
-                    <div class="darkblue-panel pn">
-                        <div class="darkblue-header">
-                            <h5>DROPBOX STATICS</h5>
-                        </div>
-                        <canvas id="serverstatus02" height="120" width="120"></canvas>
-                        <script>
-                            var doughnutData = [{
-                                    value: 60,
-                                    color: "#1c9ca7"
-                                },
-                                {
-                                    value: 40,
-                                    color: "#f68275"
-                                }
-                            ];
-                            var myDoughnut = new Chart(document.getElementById("serverstatus02").getContext("2d")).Doughnut(doughnutData);
-                        </script>
-                        <p>April 17, 2014</p>
-                        <footer>
-                            <div class="pull-left">
-                                <h5><i class="fa fa-hdd-o"></i> 17 GB</h5>
-                            </div>
-                            <div class="pull-right">
-                                <h5>60% Used</h5>
-                            </div>
-                        </footer>
-                    </div>
-                    <!--  /darkblue panel -->
-                </div>
                 <!-- /col-md-4 -->
-                <div class="col-md-3 col-sm-3 mb">
+                <div class="col-md-4 col-sm-3 mb">
                     <!-- REVENUE PANEL -->
                     <div class="green-panel pn">
                         <div class="green-header">
-                            <h5>REVENUE</h5>
+                            <h5>Présents</h5>
                         </div>
-                        <div class="chart mt">
-                            <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[200,135,667,333,526,996,564,123,890,464,655]"></div>
+                        <h1 class="mt">
+                            <i class="fa fa-user fa-3x"></i>
+                        </h1>
+                        <div class="row">
+                        
+                            <div class="col-sm-6 col-xs-6 goleft">
+                               <h5 style="color:white"> <p><br /><br />Nombre Total:</p></h5>
+                            </div>
+                            <div class="col-sm-6 col-xs-6">
+                                <h2 style="color:white"> <?= $totaluser-$absentuser ?></h2>
+                            </div>
+                       
                         </div>
-                        <p class="mt"><b>$ 17,980</b><br />Month Income</p>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-3 mb">
-                    <!-- REVENUE PANEL -->
-                    <div class="green-panel pn">
-                        <div class="green-header">
-                            <h5>REVENUE</h5>
-                        </div>
-                        <div class="chart mt">
-                            <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[200,135,667,333,526,996,564,123,890,464,655]"></div>
-                        </div>
-                        <p class="mt"><b>$ 17,980</b><br />Month Income</p>
-                    </div>
-                </div>
+
                 <!-- /col-md-4 -->
             </div>
             <!-- /row -->
 
-            <div class="row mt">
-                <!-- SERVER STATUS PANELS -->
+        </div>
+        <div class="row mt">
+            <!-- SERVER STATUS PANELS -->
 
-                <div class="col-md-6 col-sm-6 mb">
-                    <div id="chart1" style="width: 550px; height: 300px;"></div>
-                </div>
-
-                <div class="col-md-6 col-sm-6 mb">
-
-                    <div id="donutchart" style="width: 550px; height: 300px;"></div>
-
-
-
-                </div>
-                <!--  /darkblue panel -->
+            <div class="col-md-6 col-sm-6 mb">
+                <div id="chart1" style="width: 550px; height: 300px;"></div>
             </div>
-        </div>
 
-        <div class="border-head">
-            <?php $form = ActiveForm::begin();
-            ?>
-            <?= $form->field(new user(), 'id')->dropDownList(
-                ArrayHelper::map(User::find()->where(['not in', 'status', 30])->all(), 'id', 'nom'),
-                ['prompt' => 'Choisir un Personnel', 'id' => 'iduser'],
-                ['class' => 'form-control']
-            )->error(false)->label('<h5>Personnel<span class="text-danger"></span></h5>');
-            ?>
-            <h3>USER VISITS</h3>
-            <?php ActiveForm::end(); ?>
-        </div>
-        <div id="curve_chart">
+            <div class="col-md-6 col-sm-6 mb">
 
+                <div id="donutchart" style="width: 550px; height: 300px;"></div>
+
+
+
+            </div>
+            <!--  /darkblue panel -->
         </div>
+    </div>
+
+
+    <div class="border-head">
+        <?php $form = ActiveForm::begin();
+        ?>
+        <?= $form->field(new user(), 'id')->dropDownList(
+            ArrayHelper::map(User::find()->where(['not in', 'status', 30])->all(), 'id', 'nom'),
+            ['prompt' => 'Choisir un Personnel', 'id' => 'iduser'],
+            ['class' => 'form-control']
+        )->error(false)->label('<h5>Personnel<span class="text-danger"></span></h5>');
+        ?>
+        <h3>USER VISITS</h3>
+        <?php ActiveForm::end(); ?>
+    </div>
+    <div id="curve_chart">
 
     </div>
-    <!-- /col-lg-9 END SECTION MIDDLE -->
-    <!-- **********************************************************************************************************************************************************
+
+</div>
+<!-- /col-lg-9 END SECTION MIDDLE -->
+<!-- **********************************************************************************************************************************************************
               RIGHT SIDEBAR CONTENT
               *********************************************************************************************************************************************************** -->
 
-    <!-- /col-lg-3 -->
+<!-- /col-lg-3 -->
 </div>
 <!-- /row -->
 <!-- </section>

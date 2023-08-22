@@ -72,7 +72,7 @@ $currentDate = date('Y-m-d H:i');
                                 } */
 
 
-                                $usersWithoutValidDemandeIds = Demande::find()
+                                /* $usersWithoutValidDemandeIds = Demande::find()
                                     ->select('created_by')
                                     ->where(['statut' => 1])
                                     ->andWhere(['>', new Expression('CURDATE()'), 'finconge'])
@@ -81,9 +81,17 @@ $currentDate = date('Y-m-d H:i');
                                 $usersWithoutValidDemande = User::find()
                                     ->where(['not in', 'id', $usersWithoutValidDemandeIds])
                                     ->andWhere(['status' => 10])
-                                    ->all();
+                                    ->all(); */
 
-                                    //var_dump($usersWithoutValidDemande);die;
+                                $currentDate = date('Y-m-d H:i');
+                                $alldemande_id = Demande::find()
+                                    ->select('created_by')
+                                    ->where(['statut' => 1])
+                                    ->andWhere(['>', 'finconge', $currentDate])
+                                    ->andWhere(['<', 'debutconge', $currentDate]);
+                                $presentuser = User::find()
+                                    ->where(['not in', 'status', 30])
+                                    ->andWhere(['not in', 'id', $alldemande_id])->all();
 
                                 /* for ($i = 0; $i < sizeof($userSansBulletin); $i++) {
                                     $userSansBulletin[$i]->nom = $userSansBulletin[$i]->nom . ' ' . $userSansBulletin[$i]->prenoms;
@@ -91,7 +99,7 @@ $currentDate = date('Y-m-d H:i');
 
                                 ?>
                                 <?= $form->field($affectation, 'iduser')->dropDownList(
-                                    ArrayHelper::map($usersWithoutValidDemande, 'id', 'nom'),
+                                    ArrayHelper::map($presentuser, 'id', 'nom'),
                                     ['prompt' => 'Choisir un employé'],
                                     ['class' => 'form-control']
                                 )->error(false)->label('<h5>Employé<span class="text-danger">**</span></h5>');

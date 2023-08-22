@@ -8,6 +8,7 @@ $tab_url = array(
 	'entreemouvement' => 'site/indexentreemouvement', */
 	'forget_password' => 'site/forget_password',
 	'reset_password' => 'site/reset_password',
+	'indexetat1' => 'site/indexetat1',
 
 
 	'all_user' => 'user/index',
