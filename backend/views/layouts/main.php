@@ -92,66 +92,77 @@ AppAsset::register($this);
             chart.draw(data, options);
         }
 
-        google.charts.load('current', {
-            'packages': ['corechart']
-        });
-        google.charts.setOnLoadCallback(drawCharte1);
-
-        function drawCharte1() {
-            var data = google.visualization.arrayToDataTable([
-                ['Mois', 'Performance'],
-                <?php
-                $user = User::find()->where(['id' => 3])->one();
-                $mois_fr = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Otobre', 'Novembre', 'Decembre'];
-
-                $annee = date('Y');
 
 
-                for ($mois = 1; $mois <= 12; $mois++) {
-                    $ce_mois = $mois_fr[$mois - 1];
-                    $id_affectations = Affectation::find()
-                        ->select(['id'])
-                        ->where(['iduser' => $user->id])
-                        ->andWhere(['MONTH(created_at)' => $mois, 'YEAR(created_at)' => $annee])
-                        ->all();
-                    $nbr_taches_assignees = Tache::find()->where(['in', 'idaffectation', $id_affectations])->count();
-                    $taches_validees = Tache::find()->where(['statut' => 1])->andWhere(['in', 'idaffectation', $id_affectations])->all();
-                    $nbr_taches_validees = Tache::find()->where(['statut' => 1])->andWhere(['in', 'idaffectation', $id_affectations])->count();
 
-                    $nbr_suvie = 0;
-                    foreach ($taches_validees as $tache) {
-                        $nbr_suivie = Suivie::find()->where(['idtache' => $tache->id])->count() ?? 1;
-                        $nbr_suvie += $nbr_suivie;
+
+        function drawCharte1s() {
+            var idUser = $('#iduser').val();
+
+            if (idUser != '') {
+                var url_submit = "<?= Yii::$app->request->baseUrl ?>/get_user_infos";
+                $.ajax({
+                    url: url_submit,
+                    type: "GET",
+                    data: {
+                        idUser: idUser,
+                    },
+                    success: function(data) {
+                        var info_recup = JSON.parse(data);
+                        var response = info_recup['status'];
+                        if (response === "000") {
+                            /* var dataArray = [
+                                ['Mois', 'Performance']
+                            ]; */
+                            var mois_fr = info_recup['mois'];
+                            var id_affectations = info_recup['id_affectations'];
+                            var nbr_taches_assignees = info_recup['nbr_taches_assignees'];
+                            var nbr_taches_validees = info_recup['nbr_taches_validees'];
+                            var nbr_suivies = info_recup['nbr_suivies'];
+
+                            for (var mois = 0; mois < 12; mois++) {
+                                /* var ce_mois = mois_fr[mois];
+                                var id_affectations_month = id_affectations[mois];
+                                var nbr_taches_assignees_month = nbr_taches_assignees[mois];
+                                var nbr_taches_validees_month = nbr_taches_validees[mois];
+                                var nbr_suivies_month = nbr_suivies[mois];
+
+                                if (nbr_suivies_month == 0) {
+                                    nbr_suivies_month = 1;
+                                }
+
+                                if (nbr_taches_assignees_month == 0) {
+                                    nbr_taches_assignees_month = 1;
+                                }
+
+                                var performance = (nbr_taches_validees_month / nbr_taches_assignees_month) * (nbr_taches_validees_month / nbr_suivies_month) * 100; */
+                                //dataArray.push([ce_mois, performance]);
+                                var data = google.visualization.arrayToDataTable([
+                                    ['Mois', 'Performance'],
+                                    [ce_mois, performance],
+                                    /* ['2005', 1170],
+                                    ['2006', 660],
+                                    ['2007', 1030] */
+                                ]);
+                            }
+
+                            // var data = google.visualization.arrayToDataTable(dataArray);
+
+                            var options = {
+                                title: 'Company Performance',
+                                curveType: 'function',
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            };
+
+                            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+                            chart.draw(data, options);
+                        }
                     }
-                    if ($nbr_suvie == 0) {
-                        $nbr_suvie = 1;
-                    }
-
-                    if ($nbr_taches_assignees == 0) {
-                        $nbr_taches_assignees = 1;
-                    }
-
-                    $performance = ($nbr_taches_validees / $nbr_taches_assignees) * ($nbr_taches_validees / $nbr_suvie) * 100;
-                    //$performance = (0/2)*(0/1)*100;
-
-                ?>['<?= $ce_mois ?>', <?= $performance ?>],
-
-                <?php
-                }
-                ?>
-            ]);
-
-            var options = {
-                title: 'Performance des employés',
-                curveType: 'function',
-                legend: {
-                    position: 'bottom'
-                }
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-            chart.draw(data, options);
+                });
+            }
         }
 
 

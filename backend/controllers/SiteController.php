@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use api\modules\v1\models\User;
 use backend\models\Horaire;
 use backend\models\Presence;
 use Yii;
@@ -31,7 +32,7 @@ class SiteController extends Controller
                         'actions' => ['login', 'error'],
                         'allow' => true,
                     ],
-                   /*  [
+                    /*  [
                         'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -66,12 +67,21 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new User();
+        if (Yii::$app->request->post()) {
+            $model->loadDefaultValues();
+            if ($model->load($this->request->post())) {
+                $model->loadDefaultValues();
+            }
+        }
+        return $this->render('index', [
+            'model' => $model,
+        ]);
     }
 
     public function actionIndexetat1()
     {
-        
+
         return $this->render('indexetat1');
     }
 
@@ -142,7 +152,7 @@ class SiteController extends Controller
         $presence->statut = 3;
         $presence->save();
         } */
-        
+
         Yii::$app->user->logout();
         return $this->goHome();
     }

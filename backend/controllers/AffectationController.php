@@ -155,7 +155,7 @@ class AffectationController extends Controller
         ]);
     }
 
-    public function actionFaire_taches($key_tache, $commentaire)
+    public function actionCochertache($key_tache, $commentaire)
     {
         //die('Atteint ici');
         //Yii::$app->getSession()->setFlash('erreur', 'erreur lors de l\'enregistrement!');die;

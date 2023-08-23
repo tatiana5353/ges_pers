@@ -85,7 +85,7 @@ $currentDate = date('Y-m-d H:i');
 
                                 $currentDate = date('Y-m-d H:i');
                                 $alldemande_id = Demande::find()
-                                    ->select('created_by')
+                                    ->select('iduser')
                                     ->where(['statut' => 1])
                                     ->andWhere(['>', 'finconge', $currentDate])
                                     ->andWhere(['<', 'debutconge', $currentDate]);

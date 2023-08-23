@@ -27,16 +27,11 @@ use yii\bootstrap\Html; ?>
           <span>Accueil</span>
         </a>
       </li>
+
+
       <?php
       $droit = Utils::have_access('side_bar');
       if ($droit == 1) { ?>
-        <li><a class="sidebar-sub-toggle"><i class="fa fa-cogs fa-2x"></i>Parametres systemes <span class="sidebar-collapse-icon ti-angle-down"></span></a>
-          <ul>
-            <!-- <li><a href="\gespers\admin\all_horaire">Horaires</a></li> -->
-            <li><a href="\gespers\admin\all_typeconge">Type d'absence</a></li>
-            <li><a href="\gespers\admin\all_typetache">Type de tâche</a></li>
-          </ul>
-        </li>
 
         <li><a class="sidebar-sub-toggle"><i class="fa fa-list fa-4x"></i>Création des tâches<span class="sidebar-collapse-icon ti-angle-down"></span></a>
           <ul>
@@ -44,13 +39,15 @@ use yii\bootstrap\Html; ?>
             <li><a href="\gespers\admin\all_projet">Projets</a></li>
           </ul>
         </li>
+
       <?php } ?>
       <li><a href="javascript:;" class="sidebar-sub-toggle"><i class="fa fa-calendar fa-lg"></i>Affectation des taches <span class="sidebar-collapse-icon ti-angle-down"></span></a>
         <ul>
-
           <?php
-          // $droit = Utils::have_access('side_bar');
+          $droit = Utils::have_access('side_bar');
           if ($droit == 1) { ?>
+
+
 
             <li><a href="\gespers\admin\all_affectation">Liste des affectations</a></li>
             <li><a href="\gespers\admin\add_affectation">Nouvelle affectation</a></li>
@@ -83,16 +80,36 @@ use yii\bootstrap\Html; ?>
       <?php
       $droit = Utils::have_access('side_bar');
       if ($droit == 1) { ?>
+        <li><a class="sidebar-sub-toggle"><i class="fa fa-cogs fa-2x"></i>Parametres systemes <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+          <ul>
+            <!-- <li><a href="\gespers\admin\all_horaire">Horaires</a></li> -->
+            <li><a href="\gespers\admin\all_typeconge">Type d'absence</a></li>
+            <li><a href="\gespers\admin\all_typetache">Type de tâche</a></li>
+          </ul>
+        </li>
 
-     
+
+      <?php } ?>
+      <?php
+      $droit = Utils::have_access('side_bar');
+      if ($droit == 1) { ?>
+
+
         <li><a href="javascript:;" class="sidebar-sub-toggle"><i class="fa fa-calendar fa-lg"></i>Gestion des utilisateurs<span class="sidebar-collapse-icon ti-angle-down"></span></a>
           <ul>
-
-
             <li><a href="\gespers\admin\all_user">Listes des utilisateurs</a></li>
           </ul>
         </li>
+        <li><a href="javascript:;" class="sidebar-sub-toggle"><i class="fa fa-calendar fa-lg"></i>Etats<span class="sidebar-collapse-icon ti-angle-down"></span></a>
+          <ul>
+            <li><a href="\gespers\admin\indexetat1"></a>Etat des demandes</li>
+          </ul>
+          <ul>
+            <li><a href="\gespers\admin\indexetat1"></a>Etat des affectations</li>
+          </ul>
+        </li>
       <?php } ?>
+
     </ul>
     <!-- sidebar menu end-->
   </div>

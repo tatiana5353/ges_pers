@@ -74,11 +74,11 @@ echo $this->render('_modal_fairetache');
                                             echo '<button type="button" onclick="faire_tache(\'' . $model->key_tache . '\')" class="btn" data-toggle="modal" data-target="#fairetache"><i class="fa fa-square-o" style="color:#3498db; font-size: 18px;"></i> </button>';  
                                             
                                         ?>
-                                           
+<!-- 
                                             <span class="button-style">
                                                 <?= Html::a('<i class="fa fa-square-o" style="color:#3498db; font-size: 18px;"></i>', ['fairetache', 'key_tache' => $model->key_tache]) ?>
                                             </span>
-
+ -->
 
 
                                         <?php } ?>
@@ -154,27 +154,28 @@ echo $this->render('_modal_fairetache');
     }
 
     function fairetache_enter() {
-        let url = "<?= Yii::$app->homeUrl ?>faire_taches";
+        let url = "<?= Yii::$app->homeUrl ?>cocher_taches";
         let keytache = document.getElementById('keytache').value;
         let commentaire = document.getElementById('fairetacheCommentaire').value;
         //var currentDate = new Date().toISOString().split('T')[0];
        
             if (keytache != '') {
-                //alert(keytache+'g'+'r'+commentaire);
+               
                 $.ajax({
                     url: url,
                     method: 'GET',
                     data: {
                         keytache: keytache,
                         commentaire: commentaire
-                        /*   idtype_tache: idtype_tache,
-                          designation: designation,
-                          idprojet: idprojet */
+                       
+
                     },
+                    
                     success: function(result) {
                         document.location.reload();
                     }
                 });
+              //  alert(keytache+'g'+'r'+commentaire);
             }
     }
 </script>

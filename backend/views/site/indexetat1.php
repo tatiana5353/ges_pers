@@ -2,7 +2,12 @@
 
 use yii\bootstrap\Html;
 ?>
-
+<link href="template/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<!--external css-->
+<link href="template/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+<!-- Custom styles for this template -->
+<link href="template/css/style.css" rel="stylesheet">
+<link href="template/css/style-responsive.css" rel="stylesheet">
 
 <div class="row">
     <div class="col-lg-8 p-r-0 title-margin-right">
@@ -31,7 +36,7 @@ use yii\bootstrap\Html;
 </div>
 
 
-<section >
+<section>
     <div class="card">
         <div class="row">
             <?= Html::a('<i class=" fa fa-print"></i> Imprimer', ['/indexetat1'], ['class' => 'btn btn-danger text-white', 'onclick' => 'printData()']) ?>
@@ -83,10 +88,8 @@ use yii\bootstrap\Html;
     }
 
     function telechargerSectionEnPDF() {
-        var fileName = document.getElementById('nomEmploye').textContent + ' ' + document.getElementById('numeroBulletin').textContent;
-        if (fileName == '') {
-            var fileName = 'fiche bulletin type';
-        }
+        var fileName = 'Liste_des_demandes_validees';
+
         var divToPrint = document.getElementById('table_div1');
         var htmlToPrint = '' +
             '<!DOCTYPE html>' +
@@ -127,22 +130,31 @@ use yii\bootstrap\Html;
             '</style>' +
             '</head>' +
             '<body>' +
-            divToPrint.outerHTML +
+            '<div class="container">' + // Utilisez un container Bootstrap pour envelopper le contenu
+            ' <div class="row">' +
+            '  <div class="col-lg-4">EXCELL MEDIA</div>' +
+
+            '  <div class="col-lg-4">Création graphique</div>' +
+            '  <div class="col-lg-4">Production audio-visuelle</div>' +
+            '            <div class="col-lg-4" style="text-align: center; border-bottom: 1px solid; padding-bottom: 2px;">LISTE DES DEMANDES D\'ABSENCES</div>' +
+            ' </div>' +
+            '</div>' +
+
+            divToPrint.innerHTML + // Utilisez innerHTML au lieu de outerHTML
             '</body>' +
             '</html>';
 
-        // If the fileName is not provided, use a default value
+        // Si le nom de fichier n'est pas fourni, utilisez une valeur par défaut
         fileName = fileName || 'generated_pdf';
 
         var newWin = window.open('', '', 'width=800,height=600');
         newWin.document.write(htmlToPrint);
         newWin.document.close();
-        // Wait for the styles and images to be loaded before calling newWin.print()
+        // Attendez le chargement des styles et des images avant d'appeler newWin.print()
         newWin.onload = function() {
-            newWin.document.title = fileName; // Set the document title to be the desired filename
+            newWin.document.title = fileName; // Définir le titre du document comme le nom de fichier souhaité
             newWin.print();
             newWin.close();
         };
     }
-
 </script>
