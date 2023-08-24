@@ -71,14 +71,14 @@ echo $this->render('_modal_fairetache');
                                         ?> <i class="fa fa-check" style="color:#3498db; font-size: 18px;"></i>
                                         <?php  } elseif ($suivie->statut == 1) {;
                                         } else {
-                                            echo '<button type="button" onclick="faire_tache(\'' . $model->key_tache . '\')" class="btn" data-toggle="modal" data-target="#fairetache"><i class="fa fa-square-o" style="color:#3498db; font-size: 18px;"></i> </button>';  
-                                            
+/*                                             echo '<button type="button" onclick="faire_tache(\'' . $model->key_tache . '\')" class="btn" data-toggle="modal" data-target="#fairetache"><i class="fa fa-square-o" style="color:#3498db; font-size: 18px;"></i> </button>';  
+ */                                            
                                         ?>
-<!-- 
+ 
                                             <span class="button-style">
                                                 <?= Html::a('<i class="fa fa-square-o" style="color:#3498db; font-size: 18px;"></i>', ['fairetache', 'key_tache' => $model->key_tache]) ?>
                                             </span>
- -->
+ 
 
 
                                         <?php } ?>

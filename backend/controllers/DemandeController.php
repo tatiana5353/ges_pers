@@ -11,6 +11,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
+use \Mailjet\Resources;
+$mj = new \Mailjet\Client(getenv('a6e0175ea03783f97ac67bbb2413dce6'), getenv('6d6cf421c124cb05e500dc4e81b2ed78'));
+
 /**
  * DemandeController implements the CRUD actions for Demande model.
  */
@@ -374,20 +377,41 @@ class DemandeController extends Controller
                 ])->one();
             /* print($model->id);die; */
             if ($model != null) {
-                /* $mt = Typeconge::find()->where([
-                    'statut' => 1, 
-                    'idtypeconge' => $model->id
-                    ])->count();
-                if ($mt > 0) {
-                    Yii::$app->getSession()->setFlash('error', 'Vous ne pouvez pas supprimer ce type de congé car il est déjà enregistré !');
-                }else{ */
+               
                 $model->statut = 1;
                 $model->updated_by = Yii::$app->user->identity->id;
                 $model->updated_at = date('Y-m-d H:i:s');
 
                 if ($model->save()) {
-                    Yii::$app->getSession()->setFlash('success', 'Demande de congé Valider avec succès !');
+                    Yii::$app->getSession()->setFlash('success', 'Demande d\'absence Valider avec succès !');
                     //return $this->redirect('all_demande');
+
+
+                    
+                    
+                    require 'vendor/autoload.php';
+                    
+                    $body = [
+                        'FromEmail' => "gespers@tutanotq.com",
+                        'FromName' => "gespers",
+                        'Subject' => "Your email flight plan!",
+                        'Text-part' => "Dear passenger, welcome to Mailjet! May the delivery force be with you!",
+                        'Html-part' => "<h3>Dear passenger, welcome to <a href=\"https://www.mailjet.com/\">Mailjet</a>!<br />May the delivery force be with you!",
+                        'Recipients' => [
+                            [
+                                'Email' => "rockayeto1@gmail.com"
+                            ]
+                        ]
+                    ];
+                    $response = $mj->post(Resources::$Email, ['body' => $body]);
+                    $response->success() && var_dump($response->getData());
+                    
+
+
+
+
+
+
                 } else {
                     Yii::$app->getSession()->setFlash('error', 'Erreur lors de la validation!');
                 }

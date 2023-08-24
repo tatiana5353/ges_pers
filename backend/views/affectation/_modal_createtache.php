@@ -19,6 +19,7 @@ use yii\helpers\ArrayHelper;
       <div class="modal-body" id="createTacheContent">
         <!--  FORM -->
         <div class="col-lg-12">
+        <div id="alert_place"></div>
           <div class="">
             <?php 
             $currentDate = date('Y-m-d H:i');

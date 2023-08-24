@@ -1,4 +1,7 @@
 <?php
+
+use backend\models\Affectation;
+
 $tab_url = array(
 
 	'login' => 'site/login',
@@ -78,6 +81,7 @@ $tab_url = array(
 	'vue_realisation' => 'affectation/vue_realisation',
 	'create_tacheaffectation' => 'affectation/createtache',
 	'cocher_taches' => 'affectation/cochertache',
+	'delete_tacheaffectation' => 'affectation/deletetache',
 
 	
 	/* 'add_projettache' => 'projet/createtache',

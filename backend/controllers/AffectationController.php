@@ -350,7 +350,7 @@ class AffectationController extends Controller
                     Yii::$app->getSession()->setFlash('error', 'Erreur lors de l\'enregistrement!');
                 }
             } else {
-                Yii::$app->getSession()->setFlash('error', 'Cette tache existe déjà dans ce projet!');
+                Yii::$app->getSession()->setFlash('error', 'Cette tache est déja affectée!');
             }
         } else {
             $this->redirect('accueil');
@@ -414,11 +414,9 @@ class AffectationController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDeletetache($key_element)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+       
     }
 
     /**

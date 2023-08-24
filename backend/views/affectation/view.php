@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 echo Alert::widget();
 echo $this->render('_modal_createtache');
+echo $this->render('_modaldeletetache');
 ?>
 <div class="affectation-view">
     <div class="content-header">
@@ -82,14 +83,13 @@ echo $this->render('_modal_createtache');
                             </h3>
                         </div>
                         <div class="panel-body">
-                           <?php if($model->statut == 2)
-                            {?>
+                            <?php if ($model->statut == 2) { ?>
                                 <p> <?php
-                                echo  '<button type="button" onclick="create_tacheaffectation(\'' . $model->id . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#createTacheaffectation"><i class="glyphicon glyphicon-plus"></i> </button>';
+                                    echo  '<button type="button" onclick="create_tacheaffectation(\'' . $model->id . '\')" class="btn btn-info btn-sm" data-toggle="modal" data-target="#createTacheaffectation"><i class="glyphicon glyphicon-plus"></i> </button>';
 
-                                ?></p>
-                          <?php  }  ?>
-                           
+                                    ?></p>
+                            <?php  }  ?>
+
                             <?= GridView::widget([
                                 'layout' => '{items}{pager}',
                                 'showOnEmpty' => false,
@@ -152,7 +152,7 @@ echo $this->render('_modal_createtache');
                                                 ->where(['idtache' => $data->id])
                                                 ->orderBy(['created_at' => SORT_DESC])
                                                 ->one();
-                                                $nbr = Suivie::find()
+                                            $nbr = Suivie::find()
                                                 ->where(['idtache' => $data->id])
                                                 ->count();
                                             if (($suivie->statut == 0)) {
@@ -161,7 +161,7 @@ echo $this->render('_modal_createtache');
                                                 return '<span style="background-color: #5cb85c; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> VALIDEE </span>';
                                             } elseif (($suivie->statut == 2) && ($nbr == 1)) {
                                                 return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> NON REALISEE </span>';
-                                            }elseif (($suivie->statut == 2) && ($nbr > 1)) {
+                                            } elseif (($suivie->statut == 2) && ($nbr > 1)) {
                                                 return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> A REFAIRE </span>';
                                             } else {
                                                 return '';
@@ -183,7 +183,23 @@ echo $this->render('_modal_createtache');
                                         ],
                                     ],
 
-
+                                    [
+                                        'class' => 'yii\grid\ActionColumn',
+                                        'template' => '{delete}',
+                                        'headerOptions' => ['width' => '15'],
+                                        'buttons' => [
+                                            'delete' => function ($url, $data) {
+                                                $suivie = Suivie::find()
+                                                    ->where(['idtache' => $data->id])
+                                                    ->one();
+                                                if ($data->statut == 0) {
+                                                    return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#deleteModal" onclick="delete_tacheaffectation(\'' . $data->key_tache . '\')">
+                                        <i class="fa fa-trash"></i>
+                                                </a>';
+                                                }
+                                            },
+                                        ],
+                                    ]
 
                                 ],
 
@@ -198,6 +214,31 @@ echo $this->render('_modal_createtache');
 </div>
 
 <script>
+    function delete_tacheaffectation(key_element) {
+        document.getElementById('modalTitle').innerHTML = 'Confirmation de suppression';
+        document.getElementById('modalContent').innerHTML = 'Vous êtes sur le point de supprimer cette tache. Cette action est irréversible';
+        document.getElementById('keyElement').value = key_element;
+    }
+
+    function delete_real_enter() {
+        let url = "<?= Yii::$app->homeUrl ?>delete_tacheaffectation";
+        let key_element = document.getElementById('keyElement').value;
+        if (key_element != '') {
+            //alert('ggggg');
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: {
+                    key_element: key_element
+                },
+                success: function(result) {
+                    document.location.reload();
+                }
+            });
+        }
+    }
+
+
     function create_tacheaffectation(idaffectation) {
         document.getElementById('createTacheTitle').innerHTML = 'Ajout d\'une tache à l\'affectation';
         document.getElementById('idAffectation').value = idaffectation;
@@ -210,31 +251,76 @@ echo $this->render('_modal_createtache');
         let dateDebut = document.getElementById('createtacheDebut').value;
         let dateProb = document.getElementById('createtacheProb').value;
         let commentaire = document.getElementById('createtacheCommentaire').value;
-        var currentDate = new Date().toISOString().split('T')[0];
-        if (dateDebut > currentDate) {
-            alert('La date ne peut pas être dans le futur.');
-            return false;
-        } else {
-            if (idaffectation != '') {
-                //alert(idaffectation+'g'+designation+'r'+commentaire);
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    data: {
-                        idaffectation: idaffectation,
-                        designation: designation,
-                        datedebut: dateDebut,
-                        dateprob: dateProb,
-                        commentaire: commentaire
-                        /*   idtype_tache: idtype_tache,
-                          designation: designation,
-                          idprojet: idprojet */
-                    },
-                    success: function(result) {
-                        document.location.reload();
+        var currentdate = new Date();
+
+        //var currentDate = new Date().toISOString().split('T')[0];
+        if (designation != '' && dateDebut != '' && dateProb != '' && commentaire != '') {
+
+
+            var date_fin_obj = new Date(dateProb); // Convertir la chaîne date_fin en un objet Date
+            var date_debut_obj = new Date(dateDebut);
+            if (date_debut_obj > currentdate) {
+                if (date_fin_obj > currentdate) {
+                    if (date_fin_obj > date_debut_obj) {
+                        if (idaffectation != '') {
+                            //alert(idaffectation+'g'+designation+'r'+commentaire);
+                            $.ajax({
+                                url: url,
+                                method: 'GET',
+                                data: {
+                                    idaffectation: idaffectation,
+                                    designation: designation,
+                                    datedebut: dateDebut,
+                                    dateprob: dateProb,
+                                    commentaire: commentaire
+                                    /*   idtype_tache: idtype_tache,
+                                      designation: designation,
+                                      idprojet: idprojet */
+                                },
+                                success: function(result) {
+                                    document.location.reload();
+                                }
+                            });
+                        }
+                    } else {
+                        var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                            'la date limite ne peut pas être antérieur à la date actuelle' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                            '</div>';
+                        //$('#alert_place_g').show();
+                        $('#alert_place').html(err);
                     }
-                });
+                } else {
+                    var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                        'la date limite ne peut pas être antérieur à la date actuelle' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                        '<span aria-hidden="true">&times;</span>' +
+                        '</button>' +
+                        '</div>';
+                    //$('#alert_place_g').show();
+                    $('#alert_place').html(err);
+                }
+            } else {
+                var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                    'la date de début ne peut être antérieur à la date actuelle' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span>' +
+                    '</button>' +
+                    '</div>';
+                //$('#alert_place_g').show();
+                $('#alert_place').html(err);
             }
+        } else {
+            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                ' Veuillez renseigner tous les champs' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>';
+            //$('#alert_place_g').show();
+            $('#alert_place').html(err);
         }
     }
 </script>
