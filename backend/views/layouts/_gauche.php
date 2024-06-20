@@ -4,12 +4,14 @@
 <!--sidebar start-->
 <?php
 
+use backend\controllers\Utils;
 use yii\bootstrap\Html; ?>
 <aside>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/themify-icons@1.0.0/css/themify-icons.css">
   <div id="sidebar" class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
     <!-- sidebar menu start-->
     <ul class="sidebar-menu" id="nav-accordion">
-      <p class="centered"><a href="profile.html"><img src="img/ui-sam.jpg" class="img-circle" width="80"></a></p>
+      <p class="centered"><a href="profile.html"><img src="template/img/telechargement.jpg" class="img-circle" width="80"></a></p>
       <h5 class="centered">
 
         <?php
@@ -25,51 +27,84 @@ use yii\bootstrap\Html; ?>
           <span>Accueil</span>
         </a>
       </li>
-      <li><a class="sidebar-sub-toggle"><i class="ti-view-list-alt"></i>Parametres systemes <span class="sidebar-collapse-icon ti-angle-down"></span></a>
-        <ul>
-          <li><a href="\gespers\admin\all_horaire">Horaires</a></li>
-          <li><a href="\gespers\admin\all_typeconge">Type de congés</a></li>
-          <li><a href="\gespers\admin\all_sortie">Horaires</a></li>
-        </ul>
-      </li>
-      <li><a href="javascript:;" class="sidebar-sub-toggle"><i class="ti-view-list-alt"></i>Planification des taches <span class="sidebar-collapse-icon ti-angle-down"></span></a>
-        <ul class="sub">
-          <li><a href="\gespers\admin\all_typetache">Type de taches</a></li>
-          <li><a href="\gespers\admin\all_projet">Projets</a></li>
-          <li><a href="\gespers\admin\all_sortie">Affectation</a></li>
-          <li><a href="\gespers\admin\all_sortie">taches</a></li>
-        </ul>
-      </li>
 
-      <li><a href="javascript:;" class="sidebar-sub-toggle"><i class="ti-view-list-alt"></i>Demande de conge<span class="sidebar-collapse-icon ti-angle-down"></span></a>
-        <ul class="sub">
+
+      <?php
+      $droit = Utils::have_access('side_bar');
+      if ($droit == 1) { ?>
+
+        <li><a class="sidebar-sub-toggle"><i class="fa fa-list fa-4x"></i>Création des tâches<span class="sidebar-collapse-icon ti-angle-down"></span></a>
+          <ul>
+            <li><a href="\gespers\admin\all_tache">Tâches individuelles</a></li>
+            <li><a href="\gespers\admin\all_projet">Projets</a></li>
+          </ul>
+        </li>
+
+      <?php } ?>
+      <li><a href="javascript:;" class="sidebar-sub-toggle"><i class="fa fa-calendar fa-lg"></i>Affectation des taches <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+        <ul>
+          <?php
+          $droit = Utils::have_access('side_bar');
+          if ($droit == 1) { ?>
+            <li><a href="\gespers\admin\all_affectation">Liste des affectations</a></li>
+            <li><a href="\gespers\admin\add_affectation">Nouvelle affectation</a></li>
+
+            <li><a href="\gespers\admin\vue_realisation">Suivie des taches</a></li>
+          <?php } ?>
+          <li><a href="\gespers\admin\tache_affectation">Mes taches</a></li>
+
+        </ul>
+      </li>
+      <?php
+      $droit = Utils::have_access('side_bar');
+      if ($droit == 1) { ?>
+
+        <!-- 
+        <li><a href="javascript:;" class="sidebar-sub-toggle"><i class="fa fa-calendar fa-lg"></i>Réalisations<span class="sidebar-collapse-icon ti-angle-down"></span></a>
+          <ul>
+
+
+            <li><a href="\gespers\admin\vue_realisation">Taches réalisées</a></li>
+          </ul>
+        </li> -->
+      <?php } ?>
+      <li><a href="#" class="sidebar-sub-toggle"><i class="fa fa-suitcase fa-lg"></i>Demande d'absence<span class="sidebar-collapse-icon ti-angle-down"></span></a>
+        <ul>
           <li><a href="\gespers\admin\all_demande">Faire une demande</a></li>
         </ul>
       </li>
-
-      <li class="sidebar-sub-toggle">
-        <a href="javascript:;">
-          <i class="fa fa-cogs"></i>
-          <span>Gestion des types congés</span>
-        </a>
-        <ul class="sub">
-          <li class="sub-menu"><a href="all_typeconge">Liste des types de congés</a></li>
-          <li><a href="add_typeconge">Ajouter un type de congé</a></li>
-        </ul>
       </li>
-      <li class="sub-menu">
-        <a href="javascript:;">
-          <i class="fa fa-book"></i>
-          <span>Gestion des demandes de congés</span>
-        </a>
-        <ul class="sub">
-          <li class="active"><a href="all_demande">Liste des demandes de congés</a></li>
-          <li><a href="add_demande">Ajouter une demande de congé</a></li>
-        </ul>
-      </li>
+      <?php
+      $droit = Utils::have_access('side_bar');
+      if ($droit == 1) { ?>
+        <li><a href="#"><i class="fa fa-cogs fa-2x"></i>Parametres systemes <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+          <ul>
+            <li><a href="\gespers\admin\all_typeconge">Type d'absence</a></li>
+            <li><a href="\gespers\admin\all_typetache">Type de tâche</a></li>
+          </ul>
+        </li>
 
 
-      </li>
+      <?php } ?>
+      <?php
+      $droit = Utils::have_access('side_bar');
+      if ($droit == 1) { ?>
+
+
+        <li><a href="#" class="sidebar-sub-toggle"><i class="fa fa-calendar fa-lg"></i>Gestion des utilisateurs<span class="sidebar-collapse-icon ti-angle-down"></span></a>
+          <ul>
+            <li><a href="\gespers\admin\all_user">Listes des utilisateurs</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="sidebar-sub-toggle"><i class="fa fa-calendar fa-lg"></i>Etats<span class="sidebar-collapse-icon ti-angle-down"></span></a>
+          <ul>
+            <li><a href="\gespers\admin\indexetat1"></a>Etat des demandes</li>
+          </ul>
+          <ul>
+            <li><a href="\gespers\admin\indexetat1"></a>Etat des affectations</li>
+          </ul>
+        </li>
+      <?php } ?>
 
     </ul>
     <!-- sidebar menu end-->

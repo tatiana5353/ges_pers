@@ -1,65 +1,50 @@
 <?php
 
 use backend\controllers\Utils;
+use backend\models\Affectation;
+use backend\models\Suivie;
+use backend\models\User;
 use frontend\widgets\Alert;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Taches';
+$this->title = 'Liste des tâches';
 $this->params['breadcrumbs'][] = $this->title;
 echo $this->render('_modal');
 ?>
 
-<?= Alert::widget() 
+<?= Alert::widget()
 ?>
 
 <div class="tache-index">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <ol class="breadcrumb float-right" style="float: right;">
+                    <li class="breadcrumb-item"><a href="accueil">Accueil</a></li>
+                    <li class="breadcrumb-item active">Liste des taches</li>
+                </ol>
 
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
     <div class="horaire-index">
-        <div class="row">
-            <div class="row-content">
-                <div class="col-lg-8 p-r-0 title-margin-right">
-                    <div class="page-header">
-                        <div class="page-title">
-                            <div class="btn-lg btn-info waves-light " data-class="bg-info">
-                                <marquee behavior="alternate" direction="">
-                                    <?= Html::encode($this->title) ?>
-                                </marquee>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 p-l-1 title-margin-left">
-                    <div class="page-header">
-                        <div class="page-title">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item">
-                                    <a href="/gespers/admin/accueil">Accueil</a>
-                                </li>
-                                <li class="breadcrumb-item active">Liste des taches</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #17a2b8;">
+                <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
             </div>
-        </div>
+            <div class="panel-body">
 
-        <div class="content-panel">
-            <div class="horaire-index">
 
 
                 <div class="row">
-
-                    <div class="col-sm-1">
-                    </div>
-                    <div class="col-sm-10">
+                    <div class="col-sm-12">
                         <p>
-                            <?= Html::a('Ajouter une tache', ['create'], ['class' => 'btn btn-info']) ?>
+                            <?= Html::a('Ajouter une tâche', ['create'], ['class' => 'btn btn-info']) ?>
                         </p>
                         <div class="content-panel">
                             <?= GridView::widget([
@@ -76,8 +61,11 @@ echo $this->render('_modal');
                                     //'class' ="adv-table"
                                 ],
                                 'columns' => [
-                                    ['class' => 'yii\grid\SerialColumn'],
-
+                                    [
+                                        'class' => 'yii\grid\SerialColumn',
+                                        'headerOptions' => ['width' => '15'],
+                                        'header' => 'N°'
+                                    ],
                                     // 'id',
                                     [
                                         'label' => 'Type de tache',
@@ -90,21 +78,37 @@ echo $this->render('_modal');
                                         'value' => 'designation',
                                     ],
                                     [
-                                        'label' => 'Description',
-                                        'value' => 'description',
+                                        'attribute' => 'statut',
+                                        'header' => 'Statut',
+                                        /*  'filter' => ['Y'=>'Active', 'N'=>'Deactive'], */
+                                        'format' => 'raw',
+                                        'label' => 'Etat',
+                                        'value' =>  function ($data) {
+                                            $suivie = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->orderBy(['created_at' => SORT_DESC])
+                                                ->one();
+                                                $nbr = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->count();
+                                            if ($data->statut !== 2) {
+                                                if (($suivie->statut == 0)) {
+                                                    return '<span style="background-color: #808080; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;">REALISER</span>';
+                                                } elseif (($suivie->statut == 1)) {
+                                                    return '<span style="background-color: #5cb85c; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> VALIDEE </span>';
+                                                } elseif (($suivie->statut == 2)&& ($nbr == 1)) {
+                                                    return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> AFFECTEE </span>';
+                                                } elseif (($suivie->statut == 2) && ($nbr > 1)) {
+                                                    return '<span style="background-color: #f0ad4e; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> A REFAIRE </span>';
+                                                }
+                                                 else {
+                                                    return '';
+                                                }
+                                            } else {
+                                                return '<span style="background-color: #D3D3D3; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; border: none; border-radius: 0; display: inline-block; line-height: 1;"> NON AFFECTEE </span>';
+                                            }
+                                        },
                                     ],
-                                
-                                    //'heure_debut',
-                                    //'heure_fin',
-                                    //'key_tache',
-                                    //'statut',
-                                    //'created_by',
-                                    //'created_at',
-                                    //'updated_by',
-                                    //'updated_at',
-                                    //'idaffectation',
-                                    //'idprojet',
-                                   
 
                                     [
                                         'class' => 'yii\grid\ActionColumn',
@@ -113,15 +117,16 @@ echo $this->render('_modal');
                                         'buttons' => [
                                             'view' => function ($url, $data) {
                                                 $droit = Utils::have_access('traiterdemande');
-                                                 //if (($data->statut == 0)) {
-                                                    $url = 'view_tache?key_tache=' . $data->key_tache;
-                                                    return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-success" href="' . $url . '">
+                                                //if (($data->statut == 0)) {
+                                                $url = 'view_tache?key_tache=' . $data->key_tache;
+                                                return '<a title="' . Yii::t('app', 'Détail') . '" class="btn btn-xs btn-info" href="' . $url . '">
                                         <i class=" fa fa-eye"></i>
                                         </a>';
                                                 //}
                                             },
                                         ],
                                     ],
+
                                     [
                                         'class' => 'yii\grid\ActionColumn',
                                         'template' => '{update}',
@@ -129,8 +134,13 @@ echo $this->render('_modal');
                                         //'visible' => $droits[3] == 1 ? true : false,
                                         'buttons' => [
                                             'update' => function ($url, $data) {
-                                                $url = 'update_tache?key_tache=' . $data->key_tache;
-                                                return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-info btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
+                                                $suivie = Suivie::find()
+                                                ->where(['idtache' => $data->id])
+                                                ->one();
+                                                if ($data->statut == 2 || $suivie->statut == 2 ) {
+                                                    $url = 'update_tache?key_tache=' . $data->key_tache;
+                                                    return '<a title="' . Yii::t('app', 'Modifier') . '" class="btn btn-primary btn-xs" href="' . $url . '"><i class="fa fa-edit"></i></a>';
+                                                }
                                             },
                                         ],
                                     ],
@@ -140,9 +150,11 @@ echo $this->render('_modal');
                                         'headerOptions' => ['width' => '15'],
                                         'buttons' => [
                                             'delete' => function ($url, $data) {
-                                                return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_tache(\'' . $data->key_tache . '\')">
+                                                if ($data->statut == 2) {
+                                                    return '<a title="' . Yii::t('app', 'Supprimer') . '" class="btn mini btn-danger btn-xs" href="#" data-toggle="modal" data-target="#exampleModal" onclick="delete_tache(\'' . $data->key_tache . '\')">
                                         <i class="fa fa-trash"></i>
                                                 </a>';
+                                                }
                                             },
                                         ],
                                     ]
@@ -151,22 +163,12 @@ echo $this->render('_modal');
 
 
                         </div>
-
                     </div>
-                </div>
-                <div class="col-sm-1">
                 </div>
 
             </div>
-
-
         </div>
     </div>
-
-
-
-
-
 </div>
 
 <script>
@@ -180,6 +182,7 @@ echo $this->render('_modal');
         let url = "<?= Yii::$app->homeUrl ?>delete_tache";
         let key_element = document.getElementById('keyElement').value;
         if (key_element != '') {
+           // alert(key_element)
             $.ajax({
                 url: url,
                 method: 'GET',

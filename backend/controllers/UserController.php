@@ -2,13 +2,17 @@
 
 namespace backend\controllers;
 
+use backend\models\Affectation;
 use backend\models\Profil;
+use backend\models\Suivie;
+use backend\models\Tache;
 use Yii;
 use backend\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -33,6 +37,28 @@ class UserController extends Controller
      * Lists all User models.
      * @return mixed
      */
+    /* public function actionGet_user_infos()
+    {
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+
+        $idUser = Yii::$app->request->get('idUser');
+        $status = '001';
+
+        $user = user::find()->where(['status' => 10, 'id' => $idUser])->one();
+
+        if ($user != null) {
+            $status = '000';
+        }
+
+        $responseData = [
+            'idUser' => $user->id,
+            'user' => $user,
+        ];
+        return $responseData;
+    } */
+
+    
+
     public function actionIndex()
     {
 
@@ -59,6 +85,7 @@ class UserController extends Controller
      */
     public function actionView($id)
     {
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -120,10 +147,10 @@ class UserController extends Controller
                         ])->one();
                     $email = $model->email;
                     $emailfnd = User::find()
-                    ->where([
-                        'email' => $email,
-                        'status' => 10
-                    ])->one();
+                        ->where([
+                            'email' => $email,
+                            'status' => 10
+                        ])->one();
 
                     if (strtotime($date_naiss) >= strtotime($date_create)) {
                         Yii::$app->getSession()->setFlash('error', 'Date de naissance non valide !');
@@ -139,7 +166,7 @@ class UserController extends Controller
                         Yii::$app->getSession()->setFlash('error', 'adresse email invalide!');
                         $model->loadDefaultValues();
                     }
-                    
+
                     if ($numeroFind == null) {
 
                         if ($model->save()) {

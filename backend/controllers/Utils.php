@@ -5,9 +5,10 @@ use yii\web\Controller;
 use app\models\DemandeDepense;
 use app\models\Entree;
 use backend\models\Profil;
-use app\models\ProfilFonctionnalite;
-use app\models\Fonctionnalite;
+use backend\models\ProfilFonctionnalite;
+use backend\models\Fonctionnalite;
 use app\models\Sortie;
+use backend\models\ProfilFonctionnalite as ModelsProfilFonctionnalite;
 use backend\models\User;
 use Yii;
 

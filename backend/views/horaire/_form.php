@@ -14,11 +14,11 @@ use yii\widgets\ActiveForm;
     <div class="row">
         <div class="col-lg-8">
 
-            <?= $form->field($model, 'heure_arrivee')->textInput(['type' => 'Time', 'required' => true])
-            ->label('<spanp class="text-dark">heure d\'arrivée</span><span class="text-danger">**</span>') ?>
+            <?= $form->field($model, 'heure_arrivee')->textInput(['type' => 'Time', ['format' => 'HH:mm'], 'required' => true])
+            ->label('<spanp class="text-dark">Heure-arrivée</span><span class="text-danger">**</span>') ?>
 
             <?= $form->field($model, 'heure_depart')->textInput(['type' => 'Time', 'required' => true])
-            ->label('<spanp class="text-dark">Heure de départ</span><span class="text-danger">**</span>') ?>
+            ->label('<spanp class="text-dark">Heure-départ</span><span class="text-danger">**</span>') ?>
         </div>
         <div class="col-lg-4">
 

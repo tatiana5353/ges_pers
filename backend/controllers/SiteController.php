@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use api\modules\v1\models\User;
 use backend\models\Horaire;
 use backend\models\Presence;
 use Yii;
@@ -31,8 +32,13 @@ class SiteController extends Controller
                         'actions' => ['login', 'error'],
                         'allow' => true,
                     ],
-                    [
+                    /*  [
                         'actions' => ['logout', 'index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ], */
+                    [
+                        'actions' => ['logout', 'index', 'indexetat1'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -61,7 +67,22 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new User();
+        if (Yii::$app->request->post()) {
+            $model->loadDefaultValues();
+            if ($model->load($this->request->post())) {
+                $model->loadDefaultValues();
+            }
+        }
+        return $this->render('index', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionIndexetat1()
+    {
+
+        return $this->render('indexetat1');
     }
 
     public function actionLogin()
@@ -73,7 +94,7 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $droit_presence = Utils::have_access('presence');
+            /* $droit_presence = Utils::have_access('presence');
             $horaire = Horaire::find()
                 ->where(['statut' => 1])
                 ->one();
@@ -101,7 +122,7 @@ class SiteController extends Controller
                 }
             }
 
-            $model2->save();
+            $model2->save(); */
             /* if ($model2->save()) {
                 $hnor_arrivee = $horaire->heure_arrivee;
                if ($formattedDateTime > $hnor_arrivee) {
@@ -120,7 +141,7 @@ class SiteController extends Controller
     public function actionLogout()
     {
         $droit_presence = Utils::have_access('presence');
-        if ($droit_presence !== 1) {
+        /* if ($droit_presence !== 1) {
             $presence = Presence::find()
             ->where(['created_by' => Yii::$app->user->identity->id])
             ->andWhere(['OR', ['statut' => 1], ['statut' => 2]])
@@ -130,8 +151,8 @@ class SiteController extends Controller
         $presence->heure_depart = date('Y-m-d H:i:s');
         $presence->statut = 3;
         $presence->save();
-        }
-        
+        } */
+
         Yii::$app->user->logout();
         return $this->goHome();
     }

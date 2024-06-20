@@ -10,22 +10,36 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Projet */
 
-$this->title = 'Create Projet';
+$this->title = 'Creation d\'un projet';
 $this->params['breadcrumbs'][] = ['label' => 'Projets', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $tache = new Tache();
 ?>
 <?= Alert::widget() ?>
 <div class="projet-create">
-    <div id="alert_place_g"></div>
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <ol class="breadcrumb float-right" style="float: right;">
+                    <li class="breadcrumb-item">
+                        <a href="/gespers/admin/accueil">Accueil</a>
+                    </li>
+                    <li class="breadcrumb-item active"> <a href="/gespers/admin/all_typetache">Liste des projets</a></li>
+                    <li class="breadcrumb-item active">Création d'un projet
+                    </li>
+                </ol>
 
-    <div class="row">
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    
+    <!--  <div class="row">
         <div class="col-lg-8 p-r-1 title-margin-right">
             <div class="page-header">
                 <div class="page-title">
                     <div class="btn-lg btn-info waves-light " data-class="bg-info">
                         <marquee behavior="alternate" direction="">
-                            <?= Html::encode($this->title) ?>
+                            <= Html::encode($this->title) ?>
                         </marquee>
 
                     </div>
@@ -47,100 +61,90 @@ $tache = new Tache();
                 </div>
             </div>
         </div>
-    </div>
-
-
-
-
-
-
-
+    </div> -->
 
     <!--  DATE PICKERS -->
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Titre de la carte</h3>
+        <div class="panel-heading" style="background-color: #17a2b8;">
+            <h3 class="panel-title" style="color: #ffffff;"> <?= Html::encode($this->title) ?></h3>
         </div>
         <div class="panel-body">
-            Contenu de la carte
 
+        <div id="alert_place_g"></div>
             <div class="col-lg-12">
 
-                <div class="">
-                    <form action="#" class="form-horizontal style-form">
-                        <?php $form = ActiveForm::begin(); ?>
-                        <div class="projet-form">
+                <!-- <div class=""> -->
+                <form action="#" class="style-form">
+                    <?php $form = ActiveForm::begin(); ?>
+                    <div class="projet-form">
+
+                        <div class="">
 
                             <div class="">
-
-                                <div class="">
-                                    <?= $form->field($projet, 'libelle')->textInput(['maxlength' => true, 'required' => true])->label('<h5>Nom du projet<span class="text-danger">**</span></h5>') ?>
-                                </div>
+                                <?= $form->field($projet, 'libelle')->textInput(['maxlength' => true, 'required' => true])->label('<h5>Nom du projet<span class="text-danger">**</span></h5>') ?>
                             </div>
-                            <div class="panel panel-default" style="background-color: #7dc3e8; color: #ffffff;">
-                                <!-- Contenu de la carte -->
-                                <div class="panel-body">
+                        </div>
+                        <div class="panel panel-default" style="background-color: #7dc3e8; color: #ffffff;">
+                            <!-- Contenu de la carte -->
+                            <div class="panel-body">
 
-                                    <div class="row clearfix">
-                                        <div id="alert_place"></div>
-                                        <div class="col-xs-3">
-                                            <?= $form->field($tache, 'idtypetache')->dropDownList(
-                                                ArrayHelper::map(
-                                                    TypeTache::find()->where(['statut' => 1])->all(),
-                                                    'id',
-                                                    'libelle',
-                                                ),
-                                                ['prompt' => 'Choisir un type de tache'],
-                                                ['class' => 'form-control']
-                                            )->error(false)->label('<h5>Type de tache:<span class="text-danger">**</span></h5>');
-                                            ?>
-                                        </div>
-                                        <div class="col-xs-3 col-xs-offset-1">
-                                            <?= $form->field($tache, 'designation')->textInput(['maxlength' => true, 'required' => true,])->label('<h5>Tache :<span class="text-danger">**</span></h5>'); ?>
-                                        </div>
-
-                                        <textarea name="all_tache_added" id="all_tache_added" cols="30" rows="10" style="display: none;"></textarea>
-
-                                        <div class="col-xs-4">
-                                            <button type="button" class="btn" style="background-color: #4DB6AC; color: #FFFFFF;" onclick="add_tache()"><i class="fa fa-plus"></i> Ajouter</button>
-                                            <?= Html::resetButton('<i class="fa fa fa-undo fx-8"></i>  Annuler', ['class' => 'btn btn-default']) ?>
-                                        </div>
-                                        <div class="clearfix"></div>
+                                <div class="row clearfix">
+                                    <div id="alert_place"></div>
+                                    <div class="col-xs-4">
+                                        <?= $form->field($tache, 'idtypetache')->dropDownList(
+                                            ArrayHelper::map(
+                                                TypeTache::find()->where(['statut' => 1])->all(),
+                                                'id',
+                                                'libelle',
+                                            ),
+                                            ['prompt' => 'Choisir un type de tache'],
+                                            ['class' => 'form-control']
+                                        )->error(false)->label('<h5>Type de tache:<span class="text-danger">**</span></h5>');
+                                        ?>
                                     </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </div>
-                            <table class="table" id="tab_temp_preview">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Type de tache</th>
-                                        <th scope="col">Tache</th>
-                                        <!-- <th scope="col">Motif</th>
-                                <th scope="col">Action</th> -->
-                                    </tr>
-                                </thead>
-                                <tbody id="rows">
+                                    <div class="col-xs-4 ">
+                                        <?= $form->field($tache, 'designation')->textInput(['maxlength' => true, 'required' => true,])->label('<h5>Tache :<span class="text-danger">**</span></h5>'); ?>
+                                    </div>
 
-                                </tbody>
-                            </table>
+                                    <textarea name="all_tache_added" id="all_tache_added" cols="30" rows="10" style="display: none;"></textarea>
+
+                                    <div class="col-xs-4">
+                                        <button type="button" class="btn" style="background-color: #4DB6AC; color: #FFFFFF;" onclick="add_tache()"><i class="fa fa-plus"></i> Ajouter</button>
+                                        <?= Html::resetButton('<i class="fa fa fa-undo fx-8"></i>  Annuler', ['class' => 'btn btn-default']) ?>
+                                    </div>
+
+                                </div>
+
+                            </div>
                         </div>
-                        <div class="card-footer">
-                            <button type="button" class="btn btn-primary" onclick="save_projet()">Valider</button>
-                            <!-- ?= Html::a(' Quitter', ['/all_demande'], ['class' => 'btn badge-danger']) ?> -->
-                        </div>
-                        <?php ActiveForm::end(); ?>
-                    </form>
-                </div>
+                        <table class="table" id="tab_temp_preview">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Type de tache</th>
+                                    <th scope="col">Tache</th>
+                                    <!-- <th scope="col">Motif</th>
+                                <th scope="col">Action</th> -->
+                                </tr>
+                            </thead>
+                            <tbody id="rows">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" onclick="save_projet()">Valider</button>
+                        <!-- ?= Html::a(' Quitter', ['/all_demande'], ['class' => 'btn badge-danger']) ?> -->
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </form>
+                <!-- </div> -->
 
                 <!-- /form-panel -->
             </div>
-            <div class="clearfix"></div>
         </div>
     </div>
     <!-- /col-lg-12 -->
 </div>
-
-
 
 <script>
     function add_tache() {
@@ -154,10 +158,18 @@ $tache = new Tache();
             var search_position = old_tache_added.search('###' + typetache + ';;;' + designation);
 
             if (search_position >= 0) {
-                msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' + ' <div class="alert-body">' +
+                /* msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' + ' <div class="alert-body">' +
                     ' Cette tache est déjà ajoutée à la liste </div> </div>';
                 $('#alert_place').show();
-                $('#alert_place').html(msg);
+                $('#alert_place').html(msg); */
+                var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                    'Cette tâche est déjà ajoutée à la liste' +
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span>' +
+                    '</button>' +
+                    '</div>';
+                //$('#alert_place_g').show();
+                $('#alert_place').html(err);
             } else {
 
                 var new_data = typetache + ';;;' + designation;
@@ -183,37 +195,27 @@ $tache = new Tache();
 
                 document.getElementById('tache-idtypetache').value = '';
                 document.getElementById('tache-designation').value = '';
-
-
-                msg = '<div class="alert alert-success alert-dismissible show fade" style="margin-bottom: 30px">' +
-                    '<div class="alert-body">' +
-                    'Tache ajoutée avec succès' +
-                    '</div>' +
+                var err = '<div class="alert alert-info alert-dismissible" role="alert">' +
+                    'Tâche ajoutée avec success' +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">&times;</span>' +
                     '</button>' +
                     '</div>';
-
-
-
-
-                $('#alert_place').show();
-                $('#alert_place').html(msg);
+                //$('#alert_place_g').show();
+                $('#alert_place').html(err);
 
             }
 
         } else {
-            msg = '<div class="alert alert-danger alert-dismissible show fade" style="margin-bottom: 30px">' +
-                '<div class="alert-body">' +
-                'Veuillez renseigner les champs' +
-                '</div>' +
+
+            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                'Veuillez renseigner  les champs obligatoires' +
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                 '<span aria-hidden="true">&times;</span>' +
                 '</button>' +
                 '</div>';
-
-            $('#alert_place').show();
-            $('#alert_place').html(msg);
+            //$('#alert_place_g').show();
+            $('#alert_place').html(err);
         }
     }
 
@@ -246,21 +248,31 @@ $tache = new Tache();
                         if (result == "ok") {
                             document.location.href = "<?php Yii::$app->homeUrl ?>all_projet";
                         } else {
-                            var err = '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
-                                'Erreur lors de l\'enregistrement !' +
+
+                            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                                'Erreur lors de l\enregistrement' +
                                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                                 '<span aria-hidden="true">&times;</span>' +
                                 '</button>' +
                                 '</div>';
+                            //$('#alert_place_g').show();
                             $('#alert_place_g').html(err);
                         }
                     }
                 }
             });
         } else {
-            var err = '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
-                'Veuillez renseigner tous les champs obligatoire' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' + '<span aria-hidden="true">&times;</span>' + '</button>' + '</div>';
+            var err = '<div class="alert alert-danger alert-dismissible" role="alert">' +
+                'Veuillez renseigner tous les champs obligatoires' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>';
+            //$('#alert_place_g').show();
             $('#alert_place_g').html(err);
+            $('html, body').animate({
+                scrollTop: $('#place_croll').offset().top
+            }, 200);
         }
     }
 </script>

@@ -23,6 +23,11 @@ return [
     'bootstrap' => ['log'],
     'modules' => [],
     'components' => [
+        'formatter' => [
+            'dateFormat' => 'php:Y-m-d',
+            'datetimeFormat' => 'php:Y-m-d H:i:s',
+            'timeZone' => 'Africa/Lome', // Définir le fuseau horaire du Togo ici
+        ],
 	   'request' => [
             'baseUrl' => $baseUrl,
             'enableCookieValidation' => true,
